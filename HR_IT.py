@@ -1,118 +1,176 @@
-import os
+"""
+Medical HR RAG Backend
+Stack:
+- LangChain
+- OpenRouter - LLM
+- OpenAI-compatible API
+- Chroma Cloud
+- RAG
+"""
 
+import os
 import chromadb
 from dotenv import load_dotenv
-
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_classic.chains import create_retrieval_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 
 load_dotenv()
 
-# --------------------------------------------------
-# Environment Variables
-# --------------------------------------------------
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 CHROMADB_API_KEY = os.getenv("CHROMADB_API_KEY")
 CHROMADB_TENANT = os.getenv("CHROMADB_TENANT")
 CHROMADB_DB = os.getenv("CHROMADB_DB")
 
-if not OPENAI_API_KEY:
-    raise RuntimeError("OPENAI_API_KEY not found.")
+# can remove once API keys all work
+if not OPENROUTER_API_KEY:
+    raise RuntimeError(
+        "OPENROUTER_API_KEY is missing from your .env file."
+    )
 
 if not CHROMADB_API_KEY:
-    raise RuntimeError("CHROMADB_API_KEY not found.")
+    raise RuntimeError(
+        "CHROMADB_API_KEY is missing from your .env file."
+    )
 
 if not CHROMADB_TENANT:
-    raise RuntimeError("CHROMADB_TENANT not found.")
+    raise RuntimeError(
+        "CHROMADB_TENANT is missing from your .env file."
+    )
 
 if not CHROMADB_DB:
-    raise RuntimeError("CHROMADB_DB not found.")
+    raise RuntimeError(
+        "CHROMADB_DB is missing from your .env file."
+    )
 
-# --------------------------------------------------
-# OpenAI Models
-# --------------------------------------------------
+# OpenRouter LLM
 
+llm = ChatOpenAI(
+    model="google/gemma-4-26b-a4b-it:free",
+    api_key=OPENROUTER_API_KEY,
+    base_url="https://openrouter.ai/api/v1",
+    temperature=0,
+    max_tokens=512,
+)
+
+# OpenAI Embeddings
 embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small",
 )
 
-llm = ChatOpenAI(
-    model="gpt-4.1-mini",
-    temperature=0,
-)
 
-# --------------------------------------------------
 # Chroma Cloud
-# --------------------------------------------------
-
-client = chromadb.CloudClient(
+chroma_client = chromadb.CloudClient(
     api_key=CHROMADB_API_KEY,
     tenant=CHROMADB_TENANT,
     database=CHROMADB_DB,
 )
 
+
 vectorstore = Chroma(
-    client=client,
-    collection_name="medical_hr",
+    client=chroma_client,
+    collection_name="medical_hr_documents",
     embedding_function=embeddings,
 )
 
+# Retriever
+
 retriever = vectorstore.as_retriever(
-    search_kwargs={"k": 4}
+    search_kwargs={
+        "k": 4
+    }
 )
 
-# --------------------------------------------------
-# Prompt
-# --------------------------------------------------
+# Medical HR Prompt
 
-prompt = ChatPromptTemplate.from_template(
-    """
-You are an HR assistant for a medical organization.
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+You are a Medical HR Assistant for a company called Daisy_Health.
 
-Use ONLY the supplied HR documentation to answer questions.
+Your job is to answer questions using ONLY
+the information contained in the retrieved
+HR documentation.
 
-If the answer cannot be found in the provided context, reply:
+The documentation may contain information
+about:
 
-"I don't know based on the available HR documentation."
+- Employee policies
+- PTO
+- Benefits
+- Leave
+- HIPAA training
+- Compliance
+- Employee handbooks
+- Workplace policies
+- Credentialing
+- Medical staff policies
+- Scheduling
+- HR procedures
 
-Keep answers professional and concise.
+Do not invent policies.
 
-At the end of your response include the document names you used if available.
+Do not use outside knowledge.
 
-Context:
+If the retrieved documentation does not
+contain enough information to answer the
+question, say:
+
+"I don't know based on the available HR
+documentation."
+
+When possible, mention the source document
+used to answer the question.
+""",
+        ),
+        (
+            "human",
+            """
+Retrieved HR documentation:
+
 {context}
 
-Question:
+Employee question:
+
 {input}
-"""
+""",
+        ),
+    ]
 )
 
-# --------------------------------------------------
-# RAG Chain
-# --------------------------------------------------
+# Document Chain
 
 document_chain = create_stuff_documents_chain(
     llm,
     prompt,
 )
 
+# RAG Chain
+
 rag_chain = create_retrieval_chain(
     retriever,
     document_chain,
 )
 
-# --------------------------------------------------
-# Chat
-# --------------------------------------------------
+# Chat Function -for testing purposes
+
 
 def chat(question: str) -> str:
-    """Ask the Medical HR knowledge base."""
+    """
+    Send a question through the Medical HR RAG pipeline.
+    """
 
-    if not question.strip():
+    if not isinstance(question, str):
+        raise TypeError("Question must be a string.")
+
+    question = question.strip()
+
+    if not question:
         return "Please enter a question."
 
     response = rag_chain.invoke(
@@ -123,25 +181,36 @@ def chat(question: str) -> str:
 
     return response["answer"]
 
+# Test
 
-# --------------------------------------------------
-# CLI Demo
-# --------------------------------------------------
 
 if __name__ == "__main__":
 
     print("Medical HR Assistant")
+    print("--------------------")
+    print("Using OpenRouter + Chroma Cloud")
     print("Type 'quit' to exit.\n")
 
     while True:
 
         question = input("Question: ")
 
-        if question.lower() in {"quit", "exit"}:
+        if question.lower() in {
+            "quit",
+            "exit",
+        }:
             break
 
-        answer = chat(question)
+        try:
 
-        print("\nAnswer:\n")
-        print(answer)
-        print()
+            answer = chat(question)
+
+            print("\nAnswer:")
+            print(answer)
+
+        except Exception as error:
+
+            print("\nError:")
+            print(error)
+
+        print("\n" + "-" * 60 + "\n")
