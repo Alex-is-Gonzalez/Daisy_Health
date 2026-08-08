@@ -2,20 +2,29 @@
 Medical HR RAG Backend
 Stack:
 - LangChain
-- OpenRouter - LLM
-- OpenAI-compatible API
-- Chroma Cloud
+- OpenRouter - LLM - open source 
+- OpenAI-compatible API - paid API Key 
+- Chroma Cloud - vector database
 - RAG
 """
-
 import os
 import chromadb
+
 from dotenv import load_dotenv
+
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
+
+from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.document_loaders import PyPDFLoader
+
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from langchain_classic.chains import create_retrieval_chain
-from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+from langchain_classic.chains.combine_documents import (
+    create_stuff_documents_chain
+)
 
 load_dotenv()
 
@@ -75,6 +84,10 @@ vectorstore = Chroma(
     collection_name="medical_hr_documents",
     embedding_function=embeddings,
 )
+print(
+    "Documents currently in Chroma:",
+    vectorstore._collection.count()
+)
 
 # Retriever
 
@@ -91,7 +104,7 @@ prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-You are a Medical HR Assistant for a company called Daisy_Health.
+You are a Medical HR Assistant for a company called Daisy Health.
 
 Your job is to answer questions using ONLY
 the information contained in the retrieved
@@ -122,7 +135,7 @@ contain enough information to answer the
 question, say:
 
 "I don't know based on the available HR
-documentation."
+documentation. Please e-mail HR at people@daisyhealth.com"
 
 When possible, mention the source document
 used to answer the question.
@@ -189,7 +202,12 @@ if __name__ == "__main__":
     print("Medical HR Assistant")
     print("--------------------")
     print("Using OpenRouter + Chroma Cloud")
-    print("Type 'quit' to exit.\n")
+    print()
+
+    print(
+        "Chroma documents:",
+        vectorstore._collection.count()
+    )
 
     while True:
 

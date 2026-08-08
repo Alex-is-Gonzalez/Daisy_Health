@@ -1,188 +1,150 @@
-# HIPAA and Data Security Policy
-**Daisy Health**
-**Policy ID:** HR-DS-003
-**Effective Date:** January 1, 2025
-**Last Reviewed:** June 1, 2025
-**Owner:** Compliance and Information Security
-
----
-
-## Purpose
-
-Daisy Health handles protected health information (PHI) and sensitive personal data every day. This policy outlines how all employees must handle, protect, and report on that data. Compliance is not optional — violations can result in federal penalties, patient harm, and termination.
-
----
-
-## Scope
-
-This policy applies to all Daisy Health employees, contractors, and vendors who access Daisy Health systems or patient data. Clinical and non-clinical staff alike are covered.
-
----
-
-## 1. HIPAA Basics
-
-The Health Insurance Portability and Accountability Act (HIPAA) sets federal standards for protecting patient health information. As a virtual primary care company, Daisy Health is a covered entity under HIPAA.
-
-### What Is PHI?
-
-Protected Health Information (PHI) includes any information that can identify a patient and relates to their health condition, care, or payment. Examples include:
-
-- Patient name combined with a diagnosis
-- Medical record numbers
-- Appointment dates and clinical notes
-- Insurance information
-- Any demographic data linked to health information
-
-### Minimum Necessary Standard
-
-Employees must access only the PHI they need to do their job. Do not look up patient records out of curiosity, even for patients you know personally.
-
----
-
-## 2. Required HIPAA Training
-
-All employees must complete HIPAA training:
-
-- **New hire training:** Within 7 days of start date, through the Daisy Health Learning Management System (LMS)
-- **Annual refresher:** Every 12 months, required for all staff
-- **Role-specific training:** Clinical staff complete additional training on documentation standards and telehealth privacy requirements
-- **Completion is tracked** — managers are notified if direct reports are overdue
-
-Failure to complete required training on time may result in suspension of system access until training is complete.
-
----
-
-## 3. Device and Endpoint Security
-
-### Company-Issued Devices
-
-All employees handling PHI must use a **Daisy Health-issued device**. Company devices come pre-configured with:
-
-- Full disk encryption
-- Endpoint detection and response (EDR) software
-- Automatic screen lock after 5 minutes of inactivity
-- Remote wipe capability
-
-### Personal Devices (BYOD)
-
-Personal devices may only be used for work with explicit IT approval and must be enrolled in Daisy Health's Mobile Device Management (MDM) system. Personal devices may never be used to access, store, or transmit PHI without MDM enrollment.
-
-### Screen Lock
-
-Lock your screen whenever you step away from your device. On Mac: Command + Control + Q. On PC: Windows + L.
-
----
-
-## 4. Network and VPN Requirements
-
-Employees must connect through the **Daisy Health VPN** whenever accessing:
-
-- The electronic health record (EHR) system
-- Patient records or case management tools
-- Internal HR systems containing employee PII
-- Any internal Daisy Health application
-
-**Public Wi-Fi** (coffee shops, airports, hotels) must never be used without VPN active. If VPN is unavailable, stop work and reconnect before proceeding.
-
----
-
-## 5. Password and Access Management
-
-- Passwords must be at least **14 characters** and include uppercase, lowercase, numbers, and symbols
-- Do not reuse passwords across work and personal accounts
-- Use the company-provided **password manager** for all work credentials
-- **Multi-factor authentication (MFA)** is required for all Daisy Health systems — no exceptions
-- Do not share your login credentials with anyone, including colleagues or IT support staff
-- If you believe your credentials have been compromised, notify IT Security immediately at security@daisyhealth.com
-
----
-
-## 6. Email and Communication Security
-
-- PHI must never be sent via **personal email** (Gmail, Yahoo, etc.)
-- PHI sent via Daisy Health email must be **encrypted** — use the [Encrypt] button in Outlook before sending
-- Do not send PHI via SMS or personal messaging apps
-- Patient-facing communications must only occur through the **Daisy Health secure messaging platform**
-- Be alert to **phishing emails** — do not click unknown links or attachments. Report suspicious emails to security@daisyhealth.com
-
----
-
-## 7. Remote Work and Privacy Requirements
-
-When working remotely, employees must:
-
-- Ensure their workspace is **private** — no patient conversations where others can overhear
-- Use a **privacy screen filter** if working in a semi-public location (not recommended for clinical staff)
-- Never leave patient information visible on screen in shared living spaces
-- Use **headphones** for all telehealth encounters to prevent audio from being overheard
-
-Clinical staff conducting patient visits must ensure their background is professional and their environment is HIPAA-compliant. Patients must not see or hear other household members during clinical encounters.
-
----
-
-## 8. Data Storage and Handling
-
-- Patient data must only be stored in **Daisy Health-approved systems** — never in personal cloud storage (Google Drive personal, Dropbox, iCloud)
-- Do not download patient data to local device storage unless absolutely necessary and approved by IT
-- Hard copies of PHI must be stored in locked containers and shredded when no longer needed — use designated secure shredding bins
-- Do not take screenshots of patient records unless required for a clinical or technical workflow, and store them only in approved systems
-
----
-
-## 9. Incident Reporting
-
-If you suspect a data breach, privacy violation, or security incident, you must report it **immediately** — do not wait.
-
-### What to Report
-
-- Lost or stolen device
-- Accidental disclosure of PHI (sent to wrong person, left visible, etc.)
-- Suspected unauthorized access to patient or employee records
-- Phishing attack or malware infection
-- Any situation where you are unsure if PHI was exposed
-
-### How to Report
-
-- **Email:** security@daisyhealth.com
-- **Phone:** IT Security Hotline at 1-800-DAISY-SEC (available 24/7)
-- **Your manager** — notify them simultaneously
-
-HIPAA requires Daisy Health to investigate and, if applicable, notify affected patients within **60 days** of discovering a breach. Prompt reporting is critical.
-
-### No Retaliation
-
-Employees who report incidents in good faith will not face retaliation, even if the incident resulted from their own mistake. Daisy Health encourages a culture of transparency around security events.
-
----
-
-## 10. Consequences of Violations
-
-HIPAA violations are taken seriously at Daisy Health and carry both organizational and personal consequences.
-
-| Violation Type | Potential Consequence |
-|---|---|
-| Accidental, promptly reported | Retraining, documented warning |
-| Negligent (avoidable, unreported) | Suspension, termination |
-| Willful — no harm | Up to $10,000 federal fine per violation |
-| Willful — harm caused | Up to $250,000 federal fine; criminal charges possible |
-
-Daisy Health will cooperate fully with any regulatory investigation and will not shield employees who willfully violate HIPAA.
-
----
-
-## Related Policies
-
-- HR-RW-001: Remote Work Policy
-- HR-LC-004: Licensure and Credentialing Policy
-- HR-ET-008: Equipment and Technology Policy
-
----
-
-## Sample Employee Questions This Document Answers
-
-1. What counts as PHI and how should I handle it?
-2. Can I use my personal laptop for work if I do not have my work laptop?
-3. What do I do if I accidentally send patient information to the wrong person?
-4. Do I need to use VPN when working from home?
-5. When is my HIPAA training due?
-6. Can I take notes about a patient on my personal phone?
+%PDF-1.4
+%���� ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 12 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/Contents 13 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/Contents 14 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+7 0 obj
+<<
+/Contents 15 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+8 0 obj
+<<
+/Contents 16 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+9 0 obj
+<<
+/PageMode /UseNone /Pages 11 0 R /Type /Catalog
+>>
+endobj
+10 0 obj
+<<
+/Author (\(anonymous\)) /CreationDate (D:20260808143202+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20260808143202+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (\(anonymous\)) /Trapped /False
+>>
+endobj
+11 0 obj
+<<
+/Count 5 /Kids [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R ] /Type /Pages
+>>
+endobj
+12 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1461
+>>
+stream
+Gatm:>uTcA'Rf.GgrF4Y\<]?gHXAheZ7YFID$l]q$ST@tLq:%U8ht,[IBV_a"QC8Q0F>joaS-\1Hg\Egi8]a*cb'>SZ@nj",<u<4Y(/oH"NtTU\iflaN9k^7.Eo't2rg>sI$2_[4FO,VLd.np1CQ\F@P96j)aN?@g<XQ%"^W&!T*grj?7k;\TV?rEC+.lC]M[I#@3J:8Da2)/+'ALFkBi74Vn_`oS6+//$D;g^,SG5fLu09#&t*!$Y.&AlBPH$<emSD8C?%O:);:Ir*Q^drCgbIkqc44]Bb(5G(S=uPRpWX=!gbk/(UrSA+-*'brd.JVY#[)4r/oZsZ30</<&@QkJP76VK6WVG0RF=]CT7j!YXctsX>n.:"FCeA$/Pd`k=..J!;`atlB5).1T.W2Z'),]L.foeDNp(J&ok,o%'K#u7UUjuhb]N)D%c?t=d3;:09,o]Kq$uGKR9_N.%]CA$+G]2EAiI^VaGjk:8MmrcF@eMco"8WRUX[C>&#s]O#Y:pG_[#Xa%W1T^[Y]/fS4X]mZTj,Z"=JuQ8gn]c*52KQV9cKUqq4^"g$H#pg3@V-B$'J]2)08RL.5EgXJo2.;0$A[3YIeYZhIGojG>m\kC5BDOXigVW7f0eoCl"/:jMCjHeaseR0K+4Jj-[WP_W8QHB1_0PbDCNjl2hY!GV-6cn&f77)2aOME*-V5(4;VZLAmVDNNK=L!H,gf6/cCH0e!MAqtf/6(.d)l>);h"0B)M5-"<egF(R,O9>N[gs("PT7M2NpmCJ,^GRNDf]'BME_GDP^X<W6O3,&/$cVe#@qaQ#s1#m)C:'b1X^"-=\&,$S3ei^;)C40kuJO[9GI74CtAAhShmKWBJrWX<Z>(ROK+Yu:;#3^4@eqpBL7UJ]N`a;Y#`Vus$6$Q%'d(2=>;;>0I$Z;$I`O)ocn#a-A*/W+J1@b#f.)`g0;o?Wd1a;o+FNjqJI.GKDcIZZhO=aEm6Y)>m]=8B420)3-rnDH^V4/R-2"r7)(S)%D&`)2u9^i7ecV1Je8/d"g1sq[D'c%_is\8VKQA2*m?K<F@]s]CP7RHp8X=c\uTQq[aXD6_<q5m,QWO$DN-n*4dtCjWn&;\%Au#mSh);sE+i]YUQC-8GkNqL%l;ukK^:#[D`]5I1uPV7AX#_"%hg,.X0k*"/rP1+p(]b2T3UGg;kWMcI\4kd2r3h^ie>YE$Dl,H7QUipOu^/>dr!ZpX0/hn;['XmVQP[&ep"P;54?>>s!ToH5.uUK4IR1<GasjHH6kG9R.*OZ6C4-&JmP_7SOUuK8aIMe!X3C"P,D,qqB2TrUHM>7oHXXu=lFa/Z!8dNhPRm)qo^DI/3!rU?It>J;siAte\-LinF>YX`pohUXC`IPa^k+P2@:;tV]?Uc?*Hpb-sEg"hVJY1\3I4I3,&nOBTu1EI.>IeO"lR]=GEiTi"'G?\@'*+SY;(Kb(>WfSG`t;B)q/~>endstream
+endobj
+13 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1621
+>>
+stream
+Gatm;>>siG&:WeDlrugbWT?e>nAaEbkWfX`1=PJ]?A'mD*GihfP"GW@]CIP)(t1KU#]XZ`g2Fa^Dc\.@i#er5iuI"#!e.m05[7Ee5l@SlM]90.*;hc=m@.MeZY5(Hj0P]mbsso;i(VQP7Ntsqbt:a;P$M^@OVaFe(t4S5g&R+BVDUo,<FAi9m]N_[[0"0H!_,L#m6+P?>s;$B>_8%A1+Aih/>/Yj1LWPR=K2Lj.1OAj&/O/3nLI;m;K8\HWK)MB0EJ.Ph%U<`/E'aQ2&&_u.;5#Idr$LYq[NR3HQ:TXmlY^tT/mEC"P3AJ-aGRQaF"3@@-34S?DG<(7r\LKJZ*5Ci!2'NB(.K^GrB=\(rYJ2D-VlS876Lu*,iP1VP&d/$cK*@'\-'$Vf9t2P[%W.Y-.4g:LTqF(L0(^;FKZrTJ[g5Sk%.Trhls<CR05:4IC&QIP9aZ_1Xnp117;L/s^b.$u9-)X_T:o^'2o3(td'uJ8Kj')Tg4?Z)leuJ_C/9P9gN&W/]@/W*bqi`R_7[inqQ*/2;^j\QNnQ+XFG3Uea8qWXR`%G(aU-Z@#j+C-&7t=)c,lAl`lgW3Ya*/J[o7jf!c;.1_\%/;N?Jk4W5/36Hjq%f>SjS@b[cPVb`2Vi'^R;nLmm]J*@=Eg04*<r**ZD)9Z+)0K`N:X`1f,hd0umUaCuFhqOYnouEXB,M2t["Z"]4IRPNE*IJ]a]JYMfYs\H$ajJfN^tSL[6@9/%u+Y3eO6c@r.W-j7u3_87qlqt]uKKAEQ;PMg,]j2ZXeiDV<`ktf/]`c:s<`,iQ)rBOJe0_nCUe267UFm9+6&CZ8#/QGqc0dIhmK8-JiH1Q]u-ZQ(?]`WR%s=+;pb,oZ,C_bKKr9;4!XX6<bY8)B1E=XfW:lDag(4U=kqPD**1X%XT*&(J6n7*<UY&5/.&W*Ub"R:=)Mh;_?).DU2X6N+0W)^CWs[3O\bhB"PXR7QGP2kIQa6+*,U6]4FRt#6#U+bP-f/_UO%H_2`#3mhj_M1ohNEWoIls92)J-a\gl?1Of[j2qu`#QedY#GI7:Z,Hd-bb\!a.HI_DfeB%HGfXH4L0lO9D2>4M:T0hjQ40G]YH9"b.`K"FW;Z9X!Bs"Y.NHSXS*ST^"jeFm*WnNcalh]13ZHEk@8@X*Q-=Tsi[YBcME9H1-XS'])T\AG;?J:phqGBe7A1o;HkP*.ecn[IoXFR':,4Z$cVkoM9G*a%fX;Gi31DrCZ9at#L_jlY5Y^/gU"\#(;*sg,^N>L>h0_[,b=Cg$r?kCe=54\%bHU0KM$EiR\6^N#a3M9:rL?6TC?dHd%6ajJk+sPE)9uqA\Ro#0>;i^6$p#5+s=^<q4T!_PD[;LNn>@]kY#-Jb-MaGN%S832H(,F0D6HLdbX]@9j_-VkUP(1ku/!5)-(#.!q&H0@,^U7cYpTl:WJeNC7;E['WSk[s$lKr70'lHYV2YKD0Es-8/NJ2;3CM9FGBl/m=64sc.AJ4@+.R,b9\3W9:@do.F0d/c,)Reep8Q9hY>d%8IW'-^rm01ioZCED42t&WZ:Z8@i:rOfjeE/[I^YphSO@T6AbmsIK\2udg'8&j:>3"8[35s0>XX29>!L,S@4QOeC9LLHN3;=$;jZ/P~>endstream
+endobj
+14 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1765
+>>
+stream
+Gatm<>uTcA'Rf.GgrId`\rf4?\51rJZ4!5/V3#ku;u3.88uuJp?:cKg^[IHc!@5Z=%?h2Y[Nh>iFj@O!-8<7HnUF[Bn6l@TIj.-E=KI(l5n&ZYi,!E(m=[;lcK6fTVt_rP$cn!s;Z[KMq'8R"d$k[gLid,SYUFJG&4km&S\%`hE<'@Uh(!gX<3G/?X"SG:^K!VlJkKlS@IXjZ^2pX\L7^U3,Y/g^$#K._cR6OKlL4E/'BpSj+ASeYbi,F3Lj;l/Z%%2Q%K.Q,fYp+'5(&)3/s7>n^3TmVZ_G[oNcP:kALoM]-"e!0VH(%GnArGdj:gL%55Ig(ftf\H\]n@\ReuLA,M6U5np@Nj1<,:cEq@1V?DaM_W-I1\lN-S:!-(`-HBm4+h-/beh3-G"(5SOE(l_Qo0Z\"ERPUdAE'$*B^V2i7ZSRm`KCGW)-l?%8$D^-IYlU\P;8]*#P&<Bt^abT[;hn&-_JgYMf9598IbdD.geq?+,d%XHL'2I<EA7`/1-#]]Has7+6?tmB>*c^,Qmj>:!$l:.99j%Vo^^mrp-A[eT)c$o--cp+`Oeq*JB>8FVUfNVN6,%5`^#51Q*tq'.Ecdb"S/jtl+Z4T)8:^)YaMMm2[@L,\E<ltXSoo.>NSd/krfbA?06MC`i9Y4=)h3=Fh$LJV)acD1!Wk1<l&0iP(%aKP(&*2ES@:L["]9lc5%QoVX\JSa*BF3?Y`G/r6.:N1Unc/a/>\;3=/Mo`b_3O>lro1j+5BK@RF:Ve+>V$NmjpS\9L%r?mNT8;btMK^lo_lW8hTN)7`0fjIG6*^*+`9=[k8HNGEUN@@%KJ=^J4lSn6$OF.Y2JC>5?&W`\76a6q?8Sn;%T?Z;i$+\.p97g2dN>=?_$fgSQ%<k*7B((d]Ic7cDhW9T'L)b5Z9d%YbFjhE#O=7DS,8h,&R:j)MAKnA/WG`0$#E.*gh'J7ZoYG5KoYE4?f^5u'P*eA_]ianBZnSX>VE)8"m$PCkmMlq7!l2C#6!GZ%^21.'`l6:K4dV\6Y%Ds&9*q4Xs0AV`-JPDm!Bk!1^*-S@1aP;c:O0e*\(Wis]'%pN2h3BjpEYQ`pikFV_/AND.dD""Fl$>Jq3L[o?6*>A.9Y"FjUo;sO?t$!25K90i]Xm0/HE([Z#V6p)(T1C(*7,YM.P32PbG%8VVc[_XW;d*B2YV]+\`KePRfLJIN2cNGK<'FW'hudhQA$aOSKmRA6f+U]9ER7)Ye#,gq+2;i-!U)P\K/m/R2jt]8!CHlk(RMVX8[F=?_(Qjoc1uZOS=>Jg/MjYgngaC\bYTpO5Wm'.5_<I=jX[q1MI/n@6aHe(Gu?Q_0ocE*b&49p*8OZl!8$!l7`KV79*jQJ">-9r=-rm>$Pk8M-hd&.s9Hc;NDM;SOX)X)^![R\'B[`q7p:[2jZJKMn50&YYCf1B3*Xc&%ZFFAk2!thM8V0:n-Ji;)D"%P%ZY/Tfuet!VBF2*s1[^>isOFap1(dbid"Mo`<gAS85Tf3i%6P9NH(MOB[L"Of-L)?6k8PJ30^jSQ&f"\WD$LAl*7lbP]XL^jUZ;4=X8:-<0Zbb1@:d%0+A8ah5B(`qZ.9T"Jdh:8Z@]o?=q=K^%65m5(*X!]O$H[I*[j[(*#MpZcrP,WsMP8_nOV?_%T5^Nm0V8G@Rk3VnVMQ>cU>mBhp+hi58HFY0r9QQ^'M`ol:m"li8p-VtM_clSZ*.H@Sa3tR?D^?,;[_03"uhIPR,'MFL$S7A%.*+%V!g&Rl\'])7?lb,"2j?KW^"@3~>endstream
+endobj
+15 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1897
+>>
+stream
+Gatm<gN)%,&:Ml+m%`!k'ja>/:Nb\SFskaY@s'i#nI%a:,&.`u#Z-ETp"]dBfs,5A'72"j6A*(F4hG?Njb&=!hnE\[^oqNupR;\B!:'^aBG&)W'7<osq>/,"=!f@IdhEVY2-`:Lp/CIIYcbeQkn^mf8"2&]rn20tG3^L^r1uD-GRNheE*:O@Rl.>#Z0VHOCH7_XLs#4q?Sq+,"&Zj?[<FrT5tKd"o3.YAh51f&<%;BI-jd@=W=6-r;g$>rc>tC5$X"dOaB3$J>lOp_D-0Zj^)ap4b!5Fd4jkTp80=LLKK:C*pEhrr%d5!^a'5K%gMpoR1bK5@NOI?^cCN<k;fTU64_hp29@fiVQ.Q[>h6;k(8JC.G(`D<(\Tl=da][Jb9(qF3F?fS`<>??WEElP4'"H.b-]ong7R>KIAq\:;>UV"(<PsP)&;@:&45,&p9=,loO0<lO,RGNF_'9S/fZr@JN.Y[[1*uNE1M"bG"u0LBe=AK'7!C3f;f^:&L1PS`(4kQi1nmkOf,?ZebnscnMiNA,j\E0Tes9YPQWMf%k@YWZ9dQ/`$b1AXp#f.fC6#C)5RmgKS)HlfBjRehLRQg6nn-adB^5,L+ab@kHnja+Ga46_11#[0=+07?+85L(4*l57q5Yemian@!pn#L^.YZ1jhai)q%2">c#8Q$QS=GV2Oc8!-`BC[o*U(E>Hg6<c;lX?JFC8UjTL^H-dfiu1_r/P5Q>O1okRq7&#9Fk-;WKD6"6'?.$L[^`Zsi%(G^S=?LTQ&"-Ms`mS:K;6;6i5j3ajuuOpDb[a/OF%KKd2Jc-.up@,10hTg!/-ldK[a%>"_Y'e.q=_2,AtSlMf6+/kuVl0[i4;Hm,$$P[?)>Wp-rWnF=hEtIg)`b@_uP1@t=:J.YYd(#rZ.%<K4g<3*nr0YUW9.3&)"=hLg:1VXIA:#[S9OD0HXf;l=l[Yp2<]+Y'2H0lV*C4TRE4):U&UQ1KEJ[SLMUVp75o"?eH0%$bNa;j0a(^qu9Lod"Z<!=eDlRRL&kds)b]8U]9$ZZNZ$HP)U4U\;@Omk?8DkA"SD/UJE$OFSFbp2"7rb,G$SMi@?h`GVB@n6nl^]YnZ1%u6WFiWM*XHQWf1r]$rFX(W:=<j$<k9s6%ht;_ccJ0L(=+%;4\9*g]A0*G@4Wk!!q22JG3"#1fC)Z;<J34"`m4rmj*$."@.>^e\lun7bX>3jI--E'c2[!@(oK#cd4c'M!!Uc,JpQ"h]!(X"#j>7h#M"CnFMfp$7[uSW>0aEo%R[;-'<8@/fUO/.k(YQ(,nBe,mU<H-[8$^1:)$c;MjXrBU,&aPa%X]_o^A2%PBAtZUCg:0(_+D16&][/,)AQM9OL/iQt7Wsd?.Q25tCQkaUG/E,B_.f@'k^pM>)UNplhErermgKW*E)n-]NqW(E@Xj3?G.@#`Vj/p344&hTdrH2u7!EXkU:fB63Fj$SsX%F5SBL9Gb&Y9OD2eN=/RIUJA,?Pc>JuiYRnXFgCsf09#*PNr>b7@,omtjJ5el9BMQ+;Ws:D"#C/Y?okr4eK3ld)ILit9UX#O^#_n#P;i[Pe%$>&CE+BgM+G[2Y"':g_`cJa^GSXTaf3-aND1.:'#-n*?)mkp'$=RY@ogOC4lS8q\&VtMTk:%qq*]uBAc!dOp<_'$$_1!>bmdaXB\52%PGa.@Xl3kgh+M=`]OU8F^ctITn*K'3lK6:Cc%l%\X)*R,(sU2hoIcQW83[AedIJrjUZe&s7\9Sti>QB@6ud0OL)+o5)(%@=F+$?!b"@.D&e6-NX?<Q?fo^>hQS^fE""63agi72L(<[CL8TRKHCkO;)T<-90&9(0`@akeglX#s!AB\/%=ATO+",/5mb8i&bc2:U3qT=_[E/RZb:epD=3#XQJT,P8^WgNG#")n/@n_rF_~>endstream
+endobj
+16 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1711
+>>
+stream
+Gatm<bAu>q']&X:m\5UbA#f`>,1B!$Fkf$GN5oqfGiK6"5nXeC?pN-Yjm.6nRe2N8>UcEQWCu_E&'qp#,7cHi^9`FTY8R<<2^@J6CdBVBKJ`QsVmD!t#OHWq1ngm](IL)h;a1UfReU=,JgjF\[i^`8*^C>'FU'`RT[tR2>.mu&X)h"%U?9#I[FFJ!c+_TlNA^D9Y6P9l1p@0+9B56e%A2AKA%O:+%3m"aT&J.mbk4G]MUj:P7[2WV,ZQ2S6IcgrBW:Zp(0oE@>0B#UV/-"Q";^_A+-O,GMWBBSQ0</,MQ4d6J_Q/:\tEA<M);$[M@*M:r4A?C4"dQCSI(n*MGT^Y$t$k!:)Oa&7Z`@>_c9]WKBjK97Q5'WQ,jjgl]&5X=-M%U7F=ro+uU]8-!`\PXmu4;]VZ`CA"#f*3;%5a+tl[Snt-$GmOBWD@N9Ic4CC/hZk3`CirpHrX?f="a2AA6VhL+V5R"<nM5r/u-?Pt^-%7\l(K-(mIZZ[8jf6>K'W&pI"&m]<T2>E6=hIVs:PN=GmNt$To^)OqnM/kl&HDf_/9hj_@&.\?*2'5P,)HCF))l.p?T!:IZfFaXF:*9\Y*Qq(p.#Y=ls@t,d1f%.E/\3\+SR<qGHjA>=drY3KG;E4*VgkM+BlF/)Z/eP,;0Q\:XY?0.57/ZE=rL9[T%?q6P>HZMuE[R/P+Ug3'PdQpsQ(i<R$"[Q8(MZ<r?p@p-!;-[OK2%7I```B+l)m#(K1:ind&oaHG_.FFg`[5Z>+T'?=8!Rlip2&r]uE^iW5k@Qk_(NX!mO%$sSdjWVlkeeBeJ[U+#bA^=P=.A#s<mp%Db\[7pdqA$cmEmDG^ifG)/"aU&m1s?ubIVu/`W64e4>*qXVnLfa_-.p>d(&Hsbam%ORVs'>OihdP%BLb/aQ;hYrNHp:#`fGh@$NoHBU_9!?mT=KT6C.$]Ta_P1g/M;'\Kg4n7d3E=_u,-B,AeHBb2<FmKq?(Q>u_NA)Xuqm52RFR1=tGFc7L$@fe_C4qDJSHpH[`o>LQo,HD`(R>:I1r)bf#oERMtE^T@nlSIF<-b&GeOI-A!WmBO"hl"O'']qORujho=mR)Z`rj9L[q%>L;%5Td2W'q-,d[?ds!>7+Rm!2N(+QKgq=[9U.^DEDf%;cYCtni;R(")2,mFc/=pD8@gF%0WFH3f)hTT]>"q,`',d)8B_I$_h;#K[9GdU']c^ZeqU`)4K$.c=J?Akd2-[DnfF.nA9`Yr%/oqSd(6`'fb*SflTi!QUdBD8"RcX@TQO%2:IgKhqNB6A't)#EAVSkqsaf$_mf88B':(Tj'aZg@`5o"&'u)!i^PcMY$9^AS\^<H/Y2lSA8/Z]F(6Q&Q.!3LDI2CV5?*t')3i.U&GLW-BHnAdkAL10&)ofpY_Jfg1J=>Yb;+710O)YVhVHI8FKDK"-N:9_Yr(0YqnnS=n,[0+fle>P="A*+YW'!0F'd85fm<s^Q!T)*FT_2^O.NH8aFpYp*"DJ!l?;aZKIb\Aj/6A8n"D/mAZ\U/BL?S4]ZLBnc*_'U'u+aHh1^%2\;0%OXl9_/"l%<'k6UOSCNP\2fZbMLO@=k&E4KXd&ge+c(WP0B4R$]nj*pjH?@KVp/h-n1L1Qk$0,Ng8I+[$(9Nes3s.,h&Kc'Q:q0V8IrdRl"'"(s2DJ)6+B&%F<+/iBlfq#dpM>bc`X)>^sI<AANq]ICj>!6k]%fQR")T&9~>endstream
+endobj
+xref
+0 17
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000516 00000 n 
+0000000711 00000 n 
+0000000906 00000 n 
+0000001101 00000 n 
+0000001296 00000 n 
+0000001365 00000 n 
+0000001646 00000 n 
+0000001730 00000 n 
+0000003283 00000 n 
+0000004996 00000 n 
+0000006853 00000 n 
+0000008842 00000 n 
+trailer
+<<
+/ID 
+[<6012a2fb1c36185c4d7776ce6160e7a7><6012a2fb1c36185c4d7776ce6160e7a7>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 10 0 R
+/Root 9 0 R
+/Size 17
+>>
+startxref
+10645
+%%EOF

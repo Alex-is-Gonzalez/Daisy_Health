@@ -1,169 +1,150 @@
-# Clinical Staff Policy
-**Daisy Health**
-**Policy ID:** HR-CS-010
-**Effective Date:** January 1, 2025
-**Last Reviewed:** June 1, 2025
-**Owner:** Clinical Operations and People Operations
-
----
-
-## Purpose
-
-Daisy Health clinical staff deliver virtual primary care to thousands of patients. This policy establishes expectations for clinical practice, supervision, scope of practice, and professional conduct specific to clinical employees.
-
----
-
-## Scope
-
-This policy applies to all clinical employees including physicians (MDs, DOs), nurse practitioners (NPs), physician assistants (PAs), registered nurses (RNs), clinical pharmacists (PharmDs), and behavioral health counselors (LCSWs, LPCs, psychologists).
-
----
-
-## 1. Scope of Practice
-
-All clinical staff must practice within the scope defined by:
-
-- Their professional license and training
-- Applicable state law in the state where the patient is located
-- Daisy Health clinical protocols and guidelines
-- Any collaborative practice agreements (CPAs) or supervision agreements in effect
-
-### Physicians (MD/DO)
-
-Physicians practice with full independent authority within their specialty and state licensure. Daisy Health physicians provide primary care services including evaluation and management, chronic disease management, preventive care, and referrals.
-
-### Nurse Practitioners (NP)
-
-NPs practice under a collaborative practice agreement (CPA) with a Daisy Health supervising physician in states that require physician oversight. In full-practice-authority states, NPs may practice independently. The Credentialing team maintains a current list of full-practice-authority states. NPs must confirm their practice authority status with Credentialing before seeing patients in a new state.
-
-### Physician Assistants (PA)
-
-PAs practice under a supervision agreement with a Daisy Health supervising physician. Supervision requirements vary by state. PAs may not perform services beyond their training, licensure, or the terms of their supervision agreement.
-
-### Registered Nurses (RN)
-
-RNs at Daisy Health function in care coordination, triage, and patient education roles. RNs do not independently diagnose or prescribe. Clinical questions beyond the RN scope must be escalated to a physician, NP, or PA.
-
-### Clinical Pharmacists (PharmD)
-
-Clinical pharmacists support medication management, chronic disease optimization, medication reconciliation, and patient education. Clinical pharmacists with prescriptive authority (CPA or collaborative practice) may prescribe within the scope of their agreement. All prescribing must be documented in the EHR.
-
-### Behavioral Health Counselors (LCSW, LPC, Psychologist)
-
-Behavioral health staff provide individual counseling, assessment, and care coordination for mental health and substance use conditions. Behavioral health staff do not prescribe medications. Psychiatric medication management is escalated to an MD or NP with psychiatric training.
-
----
-
-## 2. Collaborative Practice and Supervision Agreements
-
-Daisy Health maintains collaborative practice agreements (CPAs) and supervision agreements with supervising physicians for applicable clinical roles. These agreements are:
-
-- State-specific and maintained by the Credentialing team
-- Available for review upon request by the covered clinician
-- Updated when state law changes or when a supervising physician changes
-
-NPs and PAs must not see patients in a state where a required CPA or supervision agreement is not in place. Contact the Credentialing team before seeing patients in a new state.
-
----
-
-## 3. Telehealth Standards
-
-All patient encounters at Daisy Health are conducted via the Daisy Health telehealth platform. Clinical staff must:
-
-- Use only the **approved Daisy Health telehealth platform** for patient video visits â€” no personal Zoom, FaceTime, or other video tools
-- Verify patient identity at the start of each encounter
-- Confirm the patient's physical location at the start of each encounter â€” this determines which state's laws apply
-- Document all clinical encounters in the EHR within **4 hours** of the encounter
-- Follow Daisy Health's telehealth clinical protocols for prescribing, referrals, and escalation
-
-### Prescribing via Telehealth
-
-Prescribers must comply with all applicable federal and state telehealth prescribing requirements, including:
-
-- Ryan Haight Act requirements for controlled substance prescribing via telehealth
-- State-specific telehealth prescribing laws
-- Daisy Health's controlled substance prescribing policy
-
-When in doubt about prescribing authority in a telehealth context, consult with the Compliance team before prescribing.
-
----
-
-## 4. Clinical Documentation Standards
-
-Accurate and timely documentation is a professional and legal obligation. All clinical staff must:
-
-- Document all patient encounters in the Daisy Health EHR within **4 hours** of the encounter
-- Use the appropriate note template for the encounter type (SOAP, progress note, phone encounter, etc.)
-- Never document care that was not provided
-- Correct documentation errors using the standard EHR amendment process â€” never delete or overwrite original entries
-- Cosign notes as required by role and state law (supervising physicians cosign NP and PA notes where required)
-
-Late or missing documentation will be flagged by Clinical Operations and may affect performance review.
-
----
-
-## 5. Clinical Quality and Peer Review
-
-Daisy Health maintains a clinical quality program to ensure safe, high-quality care:
-
-- **Random chart reviews:** A sample of each clinician's encounters is reviewed monthly by a peer or clinical lead
-- **Focused reviews:** Triggered by patient complaints, adverse events, or identified concerns
-- **Quality metrics:** Each clinician receives a quarterly quality scorecard covering documentation completeness, clinical guideline adherence, patient satisfaction scores, and escalation rates
-
-Quality review findings are used for coaching and improvement, not punitive action, unless a serious safety concern is identified.
-
----
-
-## 6. Patient Safety and Escalation
-
-Patient safety is the highest priority at Daisy Health. Clinical staff must:
-
-- Escalate urgent or emergent patient situations to the on-call physician immediately
-- Call 911 or direct patients to the emergency department when a life-threatening situation is identified
-- Never attempt to manage an emergency condition via telehealth without simultaneously arranging in-person emergency care
-- Document all escalations, referrals, and patient safety events in the EHR and notify Clinical Operations
-
-**Mandatory Reporting:** Clinical staff are mandatory reporters in all states where they are licensed. This includes suspected child abuse, elder abuse, and certain communicable diseases. Consult the Compliance team for state-specific mandatory reporting requirements.
-
----
-
-## 7. After-Hours and On-Call Responsibilities
-
-Daisy Health provides after-hours clinical coverage through a rotating on-call schedule. On-call responsibilities include:
-
-- Responding to urgent patient messages within 15 minutes
-- Conducting urgent telehealth encounters as needed
-- Coordinating after-hours care escalation
-
-On-call assignments are published 4 weeks in advance and rotated equitably among eligible clinical staff. On-call compensation is specified in your offer letter.
-
----
-
-## 8. Professional Boundaries
-
-Clinical staff must maintain appropriate professional boundaries with patients at all times. This includes:
-
-- Never engaging in personal relationships with patients
-- Never accepting gifts from patients valued over $25
-- Never using personal contact information to communicate with patients outside the Daisy Health platform
-- Reporting any patient behavior that feels threatening or inappropriate to Clinical Operations
-
----
-
-## Related Policies
-
-- HR-RW-001: Remote Work Policy
-- HR-DS-003: HIPAA and Data Security Policy
-- HR-LC-009: Licensure and Credentialing Policy
-- HR-HS-008: Holidays and Schedule Policy
-
----
-
-## Sample Employee Questions This Document Answers
-
-1. Can I practice independently as an NP in all states?
-2. How soon do I need to document a patient encounter after the visit?
-3. What do I do if a patient needs emergency care during a telehealth visit?
-4. Can I prescribe controlled substances via telehealth?
-5. What is the on-call schedule and how is it assigned?
-6. Can I use my personal Zoom account for patient visits?
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 12 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/Contents 13 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/Contents 14 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+7 0 obj
+<<
+/Contents 15 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+8 0 obj
+<<
+/Contents 16 0 R /MediaBox [ 0 0 612 792 ] /Parent 11 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+9 0 obj
+<<
+/PageMode /UseNone /Pages 11 0 R /Type /Catalog
+>>
+endobj
+10 0 obj
+<<
+/Author (\(anonymous\)) /CreationDate (D:20260808143203+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20260808143203+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (\(anonymous\)) /Trapped /False
+>>
+endobj
+11 0 obj
+<<
+/Count 5 /Kids [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R ] /Type /Pages
+>>
+endobj
+12 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1570
+>>
+stream
+Gatm:9lo;R&A@7.oT<r9*m5WBcRg)JG@i=oYR+<Va[Iones<R'Oq#ULhj031"Ck>$$=g:cG<`LllYZnZI@.\q97YotnDt/bb_,."=Ps<9]n:7PMdI9:].t;@0_T07NB,3onW:TTGNATWW>6:\M!`le0$17$T!`A%GN9uj@Q-3/1DnnZ+r:R3i2Pf/3D<s1P0G:Hs+T]UE.+sVi;?<A6V(&Vab0G9N?Msh0Xoo._(Z^ITf;H]Gugf%[ncg/:tn4=ko6,9m`&@hNF</sIAmAYl>==tnQ0M]K[qao_"Yn8gS\hR\\2;OpH;itc0(IY@YHMu,p'Vran(Cj%BqAP>VGFIi!nQGi/[+9*cWKFNO*-p<K;!<cFim2Iotm4Nh!QUH72V[;TN)FcY"pt=_,$$g5F%[iA_bK3_-Yla'_X!T>\t+W!&W0(dqoU)22rjK#^)/Er4E#JoF8q,_9IO@GKrh*-L3H)m6nTSma,Yhb%BhV(nrK+Z8u4,7J$/h"hAID2t:'hRKi+Y>)YNG?J_XPb``2#0otZ)Ns7<[EU3XbX`NW<^N&dN>>,;N></0&5!7?.P"6+clhLJ&0ik^[0+lWBIIUM,?]?7KMJf6aoMGl89%j;c)'.)/JKQ]-?o^*,*&dYVD\"-a9&K)G2BI.:i_TM/>6,YREqn/"AQ>D>U5!+FkGEgAWb(DU3?AC.Yq5?P_2hT@Q\J$s!dRLU(`!M'=dr\Ys(S8-PP\"aS6i&E8\\U)t6AFqoHCq1gUla5](bfZODl?*(6B/eP,$3.+4(jM;Z=ekJ:M8I0JX9rHrkoH)3?8BkI-sb,i+FR)tXhmG#F5I7/$`4ft1.=;)#X1kl?M[5Bc5G]0L'4AWLknq>TI(X:F]Xt[53_3D-V<'4qZVH\>g.bC%Z$gR0RkoTtU2n>c3Tf5Om1ML*XTjE'B;:K^mOl&1A5*=LsYgZ+pM9#K-8i$^DRd;c^Arkg,Gj\(cZqm6#QV;hZ4e&7":7C),o=7W@bDMaC-69s,Pc;_Q+6,7\c>YCV@c5GlCYs$o0KYtS9a3WbQ,;k%_Wk@,c]%'F9i7k,r(J"t,-PR&WAn`A?h?Z(Sh"OR&8k0&8>u6TM-,UrnMN-XZ30D,9c9_hD<V*o-CIP@DUs^s#X=!D]Ac_m8t!c%DR:1E0Z>ukh@@a#ifD&,Vck^ZN5%p4c`M0,.)&N69<9r(X\EXtQ$TVbmk:BEU2?\&d<_?oA+=56^*8Wl,hbcH1Htr]gaNgTQ%N-'CelCA_lWiKr:#*e#DeqLo.2j;erp8O&&NlW@:#(N76\Tjkseq<'m3;EPaai+P%JP-6Hn(a)JkgWV,JgbC@8H?@EY?Rhl0imEt18hD2p/-."Jhe=_0ZKlY"=\^9D6A74M<#.+pYL$&tI.]>(4>\=u3B0ucRd[hR+b;:XrMY#s/S]H1_EkHNn$QLN!n#sZ<2GLQq7F?X?,8om[[CY*Q]^2&nj)GCC@,=Fs/:r(CLY>u\NcSC:u-B;,`qs@(`6e=@F;HX&u:R(F5cKA7TL^q&j78e31`?HlSplSd<?8j:8GPnOZ>_1SGP&FNsYJLS^rr\\Z@C#~>endstream
+endobj
+13 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1657
+>>
+stream
+Gatm;>uU&I&:N_Clm$Ume&WW9e$n+OgH-FuUl\>YGYqut;+J'RA;A;*oj,\"SU`CG0][jgdV=3UfqUEU$2tP2a`;p8/,8pA![N<H#"US2@!)S/<Ypf5Un*pL0MSH))6]#%BO6"3JLa;.N23]#Rn/_iP)XN3MN!lA5Di&S`j"0:=D2T%$7\KLKo4>!E[lqRhZbL5>&,)^.80n[".NK:0;YPI&r_=6FgY.O<!P)lXgf7dmF#7Ul5s.,"IFCnCR?S06K_24\Bo2"$0NgS"&GZF4\KD32bJ-FSD.BsXTXY%&-_2rn>BmEnSpVnkth4=#:a^Y4hhm?/USfMib4&H7Ni'O(u*@ZIXu+`J/J>1-X\QN#:#V/"jDrlGc4@)iGpr.\/NR?ML@KZ_D`kP"#$Lo\`ltnO]mb.R(D@)08r_`eQ-a_>7M[l'X"Dh#PcTD`1PjZMt$7k`c0f?kigOoYnl&I19d\Q!:,sF1"\$tH@S=^J1Hbk*-oF-N#UjJTSfgN5c%=\\D%98`HYg+bt"G6*C]Yc]U'//X]aYsRmGok=m3[]T$BNPpH-)X[Q-qpDJO+!-2m7TR.PVAp_!o\mj%f!(2L6;B6$oe-j#&-l[r'9)lAkF6p^4Z&`PG,(87VH6sE:!Z^SF5cq<$W[;e!6=mT6MZOFo/8>-I$N0ThNVSsJ<?XUPS7O:1Jgt7.TUgm@X9U-Tf+fm]^3\!uc337XR>BTc]ToD$//Eao-PDKOpW,ouidG3R,E^t7I)05/fg]"c*AiiUs^:]',8j&Pgg$UUE:GTb\.$^qXkF$!Tb\;VBgYs%NgM)A"O>+SOjf>IN/q10:kSKdh2``f0;RBB83]UXF1`'dUXW2;PrMdIp>V;=`jKdNr.4OLbC$I#dXm=rgq+%>3(DE'Mp!\_pZ\.*9?nQ$"`&_!NY\pX<Z.dJkV7!SBID6_c<(),Z&Z22[*+/N%mKMIY4;R<NeV2s[Be-<T`Vn[=\61FRYVZTn;c6br):huYqOAjjhWZR=.IPn'U8"+dU9+&4is9-An=LW>=d-JhEb`r+9d;g%S/2A4GU.e[Vm9g1h8%;pp"CI[p'<Ht+n"?+A.5XfeC`9-@!YQ-.Yf*<=UWfi,JHbN@@l.L!In?Yn$u`4]'_q.LY&2P_U.I<@Gkoi_B<T<,4L9ShiY+qKZp;INi,`0_='4PbYktJm@nR#Eer^(IS73FlqG'=G[3)?G:RC>+bBVSSV4>9Jr)Q\LJBM%dn>4WE)t?/Y/<V1:YH)A+3W4DJJTTj3,TCfO-l`i]`&iW_)*&,>-&j:FeShJhgBUop?f-Bb'J[qNVaSM[moGM5,N>G:8H`qbdcr3AVhuP>tZ`1UC4Qo2E(-gCgSa.?NspKAq#][oF6`jU$rphTu6)F,RN8\G4:D=3>3@5(OOb(\?NWM?`^o$*.t4c-6Gio^8F:Ye1?EEmfbm9e>7#.\8,0+Bed#>9jIiR_EO2!8YZf-oiIPAa*HD/U1p>fdO./cBsGX;&i4YTeDHo@k7)$jpre1Umk+]i\9!nGDVlMCeq*A]m+J^JF$#aRScKPZa+b"k52_]='=;0e9_8cc.4MU*V*ajZl4r9*_D<ABrM;crpm(096[ai+PMh^SLd/("l0/#+F,+EJ>k7Sb`PO2^Wj=u_V;]Ib)0PE9#;5uZ!7SAm~>endstream
+endobj
+14 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1696
+>>
+stream
+Gau0CgN)%,&:O:Sls#a8U@9X1I<1shSk^VP*4;@%p]Vj-&KMFE!RQ`'^'g$s`0d8];*2?V\Eqm3HZnA#LC`:UB,/4c96b[HK-.n7!'co@Yl"bKQ<-j`IQK>W@@kba160T\BV&seKe*+>1I$S)ea2?S45#$/f:9a5(e02[.Pb-76^7jbi&tLp#BuDO;Z]f11+DcT1Gjl"7_k7q5K-GobNA,F'2qG%c/==4_(rmb_"&RLrX9HW85VWPC\,_u%'b2r7itOdn9dG=HO\+BA;JF$>A/J!!?D.]Glf=RIZhJgRXu6$kA5@?^Ujs/fb:[E./Ah[c@K^HmZ3b9%X'IPAiZ.OY*m],(^(-N#oiN8'Ltpn>KU[f[j7_A<m`AS"qkcNm;aEtf;%1/UX<bM:VuRpm@;Y8iD6IUZ0P*',DBQ<B4Gg"K+UucA-%p*jae)?p3?*fH^Yc\)g!;n_,TMkDlrk-_ku4'9-)qG_a,`s(tc@QPY=G>nTVqTeZ^W.<Z\Tn:u%P(/TQ6FiO^gHEOm!]>PL7f]pDl-=U,U6Z)l3&iuDRG_>/'E!*b2$M\hnBTTlk40,TJsmE/ML-;MDc\8j)[QePhAT_jbTU'$/'@q:>4D=TtiSLM!V@Qal`$`Xp"H4!($JH$2K,!'K5Hq4:t-tq$'8J"B"`"RiRR)$q[#Or2TCU'R+r?Kk)5FCWPCtSh-2(=K>9_+>gPMWtbQ4$_);.(nbUa(L:N?p"LG/YmE1oKP'k<DJrSh_=[;=pi"MH]$(BubQI11'/=s/>-NMdufpP[5Ol%m(unNj*Y?i&WYWq]&P=WYgF@6flkk$F,GHp(4cDo;_RRoCN)W^KS+\eJjs^Jn:kXCR&DZL,c]YL@=^"XD^!0#r8Mh;)H5EaT"QOr`)j)Ke&M_$C,HSCXY(qe>AJQ<YLukH:!0bkVk<*?ZaOe6ZXbf2jX0]@5F-I*GJRhq9d)A)b'$$ZI]Hh8,WY,%pOG[Ndb)TraHADGTJ.PI\sBZ8E&O:/)aN/(t^itEqoM%jDZhq7[O\='?9oIl.Z;g3..T0\9JmI\.c*n`?BADL^pOe=(n$HM)5u.;>DV5_q:IGm>1Kh8>1=C&p+i4L8YiALTO@7.iN:oZ`I2.g8r@5ClD0uo,]e@mDKd/JniPH8*-Ug]#JZ/`S&s>S&+c;`I2=<)$\qO*\Z4,\\&@gkd9(sT\">ccRhGEUh<#9VI?fjZou\,bT"N;d"HL0WNp@rFirRI#L%'QiGnG]oC`(3`c-oOXkbK)=\:ul]^OEFJXUEKpgt5`4?/C56ubH=B/FL%1W\oOa->4jDMb^FRVKJ*I+3s+]Zd'.;CRLRYtoR[RNsYaelGr.cI_0d,7),B\MG-ubcEUiqaLYnKbqWL4!%)bDPOY=b]])MR;fj<;2gMB7GpV$,1C?[>b!NootLFgYhB,D2L<m#?ti&]kSgWtp&\gKS%A`0Bs=G\mITT!/\&Q5G3mRmnb,A_c,V9n09X.FpZII@b&sF0IO*4B:bh>Gn&KFk0_JM7'V)8V%J3E.59j>j906Mr_0]9]=>&MRp:=u(@L#iZB1BA*A^HJS_s$+T`-B>Ys.gM.d>;q]'6YDgos0_t+-jbt2<!sqCUlbd+!-s47fDJ'QPIHTjuFHsI%;a@]kU@UL.l'B+c!)ke09!,9(;7"0qEHH8YAY+P$2>8rH:EIWnM.V9A0RSY5SUIp[4a~>endstream
+endobj
+15 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1915
+>>
+stream
+Gatm;?$E&%&:Mm.R(&qUM2O&qHf+NAgH@]:G;nj.^*kZP[318.amm.7Q,)%t&nd]p`/.t4dbHo?pPo@[p_!LD=qSGPe#shsM3-:KM.d[Pq@C/@TA?)qiQfE*P3!<8iu7@B>o$'G$*>]jF8(Jt,]J[c_Vo&aFT/aO/Eg_Ms+;9-iJ-r>WO'11[#h.2_fq",m@3(3h(%U[QE70VP,Z``AQho6.]lSpohUlUVfenA2O9RJf&2Le>.6r2V40&.C7'ufFo;]=f4K86Q;k06G$b77=8X&U?%c-qkKcNmYtdB=fH(4-2JTR,K3Jn1,?r-uV6gGMWH;o/87m&Gb/AMj56Hhdn?9tL*_L4=ZI/@kU1jOp$2iN!;RK`/\2>b,J95pu00i<9h6BCHDEB,7%<?PP/7R'Hhb3!k!2n6ab!9)5JDd0Q@gY@Fgp1N"'#na*3fnn'%%[gQ#W=;))D0f_/lT5U^Q[\VB>bS3qXqtOQ;=hG:E4]lY6I?m*:S*lDr;H:]mF(=Dm#59^*"h*3Wj&WA!hY?jK;U#;!>E._5aLii5SW76+Us5l*P3A..tY6W7*%p!P]BYf%gVpgrc.lf2*`q=n\[J3s@ZO/LNg(X(_(hcnL(>nbYBr=Tr9"cn%qd7=b,D*+6JGhp/TYWhLn:n6XPPM4KusHRpN(M39"g_JL]7s1Sp(X7(*BpF-Dse`T+b84bS3013^+lNqX>?]?p`P,LpqiZX,&LOVnolN\$Jj*li?f>IR8NtkeS=^tgYqY+Zbp9n?Ye>?W3nj/6P=+[`S%oV(4I:??f`Ji[B]#qH:c`-2GqrT/K+XSFp<m)j7h[/R6k['$j`>PUE6^WkNJW<"kp]$;fXkM'5#N0?XYL]%bXJD`Gg0T&(<H4n?:q8^m,>)!4LYJlkFM.(u[OWM+TUCD'NF@j`%Ip?#b.*!.\o+DBJi1-J<&n<oKjdBL?.Y.iOLh]`pRQXD9,'K)b@N@8KLh70XmZL&J&-48lD3OABcWF1C:SobkQ=(HQV@3gn!#)Zc%W>K\lW`GG:llq=12!_U^>I&NKJMhS3%^Ahb`R\#"DZ9/Ib]BM,lah,#;b;_r*E51:VN3fS&4R&SO0a7W[?_]c!$^5.OaeY5M'+B9dDU2B#Ng)8Q)k:P&nIa_mOp@lGG$I^nnH*VTIQd`U<g1q]?,s,!CZ>FR3MF&SPDSF>9[eXQ5aSp*(lNK4tWR%L^lV[,5t/m[Gq5!\$%#>18eL3LmU>r[nmC"['F?pgK%ckLA&.9)^t]ReO;&=8fcY5X(6%joh9l>bi[e[_Vr0E>_-ZF"Ek:EU4&j=,TI`W>^VMD/.5c8G@N\KEQ]Q=uWW4#jC\%,Z5A<0qoXdKo#-31Z:Yq8i5>Q`O8n_g1mq51(TpM1,E=a:oFHHCH/PQ_3OQq02*!X=q98?*eC0$?`*taf*\;dl^0-k)T$UR"-(BL@kL-IN9=J\[`'Q$?R>'iK9.qV&r7!g-M1nDGrg":$nfUeBcEUCg(f/Prs-K\1;&$RKk,*]&KNZL.O?.2Hmf09`&Y:+k$aBGO2%=k!hVC?E;J!,,RusmYR&cSBkOR&DB,0;GZ<ac%0LI*:9OJc((?u]21%b'M<5X9V9e/,&jj-5;WCq@]D]4nsKYBe.L&3[F&<R]Z)kc9rT\D%5Zm)o=qsaB6RY`?$H/!`7Ic;=stbo)$f.1<*!k#'@QNH/U>;W/(Yk(+lg2NK*D@qP1XIV>&Y74-fP,cH,,qL9sL(cA!'FonX):B;(k@#\OSb":Dga!;D)s:0QiCN!ccSHG:;BCRO<bcM"meO#8+$a4^]!hn(ch*^a)OF!H&sJ3"3SpQ1b\>)e^T/&oL6Y%`.%]i4YrQk?uuh=KSTnPon6WDiP%<.C,8g-_s3+U16YWh6Pm.2iYBumfu\)0K]bqKk_YOH&tudq[[@J1ii~>endstream
+endobj
+16 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1020
+>>
+stream
+Gatn%hf$st&BE]*=53lg")0&Vo5cQuCqr<bf\/r]&2.@1D%2LGChH]GHd:m0!K095:fF97*;ag745ZGl5TeRb70W1($*W5B?m.(&^nPNGb=d)hSG\bYa,t'?Bu"C9oh@g+?=l?o2g7Vk"uB@^gR3Y2VO=(>kUT;)\AESL^l&80-e''c@c]/BN38i9:8">2pKTUYK(^ErK^h];IY6`4%rt%0hdDU(r#6&;r^P@=:K!sm>&ak&<fRt+KN`(g&X6>S1j)l"UI;p=_Llfs-XPUg.nTrR5re&E[W$e&]$1`_W0Z67\HXXBP7b+GZ.>ccPcJst#'[T9pHffCiso+GdaCpDA:jA^l%r6LY)TTDn90q^B2Wt!-%%%*3ofTMG*I@?B>&;'mqcb`K*V7%,#e)`jU"W@,YA0MB5s#G0`Nh(h-1U^Ue1V"(-O1oHIiH"GiCi6'USV!)*H`]@$^hlFTCr4lECqIji-slc]K2=Oa4(*-j1"e'Be=2IU"_dfpfhO3m>H#9;[+q`p%;(otLXQ`Vat0HQ31TK]8lWjS)kq^2L,g#Ao@IYm[0WB]7VN>^X1J4f)O<Bu`1C$S32@>^H`E`5Y,KSe4A>!gfWHAK-7BaI0l-G)bG.mu7E7_K[WQKi]KD2/'7X\$k=!'H8SBM2*4XX?T$"H2%(%KCZeD_)UXc-d)=sU*SDb2JOTlGZBqon#4bg,2>"g]3GN_NNdB)Ml-%_n5S'Gb3MD57S,RWRmu/VrFbROg&4icS8e]STf,l*-q5XYQWU$Ri@/!h5#1&$R_"&C$._sSZ>Tr,%+?qnWZT#k.YFQE.YX)gWD\sBOnl`LTIP&YS?ME4hti4T0<B-1E,<aTimu_i%ZD=2qLuqA>/1KiR_W)T3:6@$nr,5ci)&F1X4%:rcLN\OIHO>3Kb8O]SM6"gP'"(U*P"r\8B2eA/(?7JRZCHBfZlQ^*>_uim?3LU5TB8Q4W!0_CW0Ic3D>Wq&,!pd<:/-Xm#._S+WV5E3!#S@p.k"&odna(ne:F3XX!~>endstream
+endobj
+xref
+0 17
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000516 00000 n 
+0000000711 00000 n 
+0000000906 00000 n 
+0000001101 00000 n 
+0000001296 00000 n 
+0000001365 00000 n 
+0000001646 00000 n 
+0000001730 00000 n 
+0000003392 00000 n 
+0000005141 00000 n 
+0000006929 00000 n 
+0000008936 00000 n 
+trailer
+<<
+/ID 
+[<c6b5266ab4011df546e3efb1c449f6ac><c6b5266ab4011df546e3efb1c449f6ac>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 10 0 R
+/Root 9 0 R
+/Size 17
+>>
+startxref
+10048
+%%EOF
