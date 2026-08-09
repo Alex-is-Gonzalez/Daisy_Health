@@ -212,7 +212,7 @@ A general-purpose LLM does not automatically know Daisy Health's internal HR pol
 
 Instead of asking the model to memorize company policies, this system uses Retrieval-Augmented Generation:
 
-```Mermaid
+```mermaid
 ---
 config:
   layout: elk
@@ -300,7 +300,7 @@ The model runs locally on the development machine.
 
 The embedding architecture is:
 
-```Mermaid
+```mermaid
 ---
 config:
   layout: elk
@@ -327,7 +327,7 @@ flowchart TB
 
 The language-model architecture is separate:
 
-```Mermaid
+```mermaid
 ---
 config:
   layout: elk
@@ -530,7 +530,7 @@ Run it when:
 
 For example:
 
-```Mermaid
+```mermaid
 ---
 config:
   layout: elk
@@ -621,7 +621,7 @@ How can I use my PTO?
 
 The system performs:
 
-```Mermaid
+```mermaid
 ---
 config:
   layout: elk
@@ -782,7 +782,7 @@ Daisy Health demonstrates a complete Retrieval-Augmented Generation architecture
 
 The project separates document ingestion from application inference:
 
-```Mermaid
+```mermaid
 ---
 config:
   layout: elk
