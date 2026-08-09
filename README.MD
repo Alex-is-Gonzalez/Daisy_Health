@@ -79,7 +79,7 @@ config:
     primaryBorderColor: "#475569"
     lineColor: "#94a3b8"
     fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "16px"
+    fontSize: "12px"
 ---
 flowchart TB
     A["DAISY HEALTH<br/>MEDICAL HR RAG"] --> B["INGESTION PIPELINE"] & C["QUERY PIPELINE"]
@@ -773,69 +773,5 @@ For a production deployment, additional controls would be required, including:
 - Data-retention controls
 - Access controls
 - Appropriate compliance review
-
----
-
-# Portfolio Summary
-
-Daisy Health demonstrates a complete Retrieval-Augmented Generation architecture for an internal HR knowledge base.
-
-The project separates document ingestion from application inference:
-
-```mermaid
----
-config:
-  layout: elk
-  theme: dark
-  themeVariables:
-    background: "#0b1120"
-    primaryTextColor: "#f8fafc"
-    lineColor: "#64748b"
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "17px"
----
-flowchart TB
-    subgraph INGEST["1. ingest.py — Document Ingestion"]
-        direction TB
-        A["PDF Files"] --> B["Text Extraction"]
-        B --> C["Text Chunks"]
-        C --> D["Hugging Face<br/>Embeddings"]
-        D --> E[("Chroma Cloud")]
-    end
-
-    subgraph QUERY["2. Daisy_Health.py — HR Question Answering"]
-        direction TB
-        F["Employee Question"] --> G["Hugging Face<br/>Embedding"]
-        G --> H["Chroma Similarity<br/>Search"]
-        H --> I["Relevant HR<br/>Context"]
-        I --> J["LangChain RAG<br/>Pipeline"]
-        J --> K["OpenRouter / Gemma"]
-        K --> L(["Grounded HR Answer"])
-    end
-
-    E -. "Stores document vectors" .-> H
-
-    class A source
-    class B,C process
-    class D,G embedding
-    class E,H storage
-    class F input
-    class I context
-    class J pipeline
-    class K model
-    class L output
-
-    classDef source fill:#172554,stroke:#818cf8,color:#f8fafc,stroke-width:3px,font-weight:bold
-    classDef process fill:#431407,stroke:#fb923c,color:#fed7aa,stroke-width:3px,font-weight:bold
-    classDef embedding fill:#2e1065,stroke:#a78bfa,color:#ddd6fe,stroke-width:3px,font-weight:bold
-    classDef storage fill:#082f49,stroke:#38bdf8,color:#bae6fd,stroke-width:3px,font-weight:bold
-    classDef input fill:#172554,stroke:#818cf8,color:#f8fafc,stroke-width:3px,font-weight:bold
-    classDef context fill:#2e1065,stroke:#a78bfa,color:#ddd6fe,stroke-width:3px,font-weight:bold
-    classDef pipeline fill:#1e293b,stroke:#64748b,color:#e2e8f0,stroke-width:3px,font-weight:bold
-    classDef model fill:#431407,stroke:#fb923c,color:#fed7aa,stroke-width:3px,font-weight:bold
-    classDef output fill:#052e16,stroke:#4ade80,color:#bbf7d0,stroke-width:3px,font-weight:bold
-```
-
-This separation allows the knowledge base to be updated independently of the conversational application and demonstrates the core components of a production-style RAG system.
 
 ---
