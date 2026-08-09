@@ -1,40 +1,46 @@
 """
 Medical HR RAG Backend
+
 Stack:
 - LangChain
-- OpenRouter - LLM - open source 
-- OpenAI-compatible API - paid API Key 
+- OpenRouter - LLM
+- Hugging Face - local embeddings
 - Chroma Cloud - vector database
 - RAG
 """
+
 import os
 import chromadb
 
 from dotenv import load_dotenv
 
 from langchain_chroma import Chroma
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
-
-from langchain_community.document_loaders import DirectoryLoader
-from langchain_community.document_loaders import PyPDFLoader
-
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import (
-    create_stuff_documents_chain
+    create_stuff_documents_chain,
 )
 
-load_dotenv()
 
+# ============================================================
+# Environment
+# ============================================================
+
+load_dotenv()
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 CHROMADB_API_KEY = os.getenv("CHROMADB_API_KEY")
 CHROMADB_TENANT = os.getenv("CHROMADB_TENANT")
 CHROMADB_DB = os.getenv("CHROMADB_DB")
 
-# can remove once API keys all work
+
+# ============================================================
+# Validate environment variables
+# ============================================================
+
 if not OPENROUTER_API_KEY:
     raise RuntimeError(
         "OPENROUTER_API_KEY is missing from your .env file."
@@ -55,7 +61,10 @@ if not CHROMADB_DB:
         "CHROMADB_DB is missing from your .env file."
     )
 
+
+# ============================================================
 # OpenRouter LLM
+# ============================================================
 
 llm = ChatOpenAI(
     model="google/gemma-4-26b-a4b-it:free",
@@ -65,13 +74,20 @@ llm = ChatOpenAI(
     max_tokens=512,
 )
 
-# OpenAI Embeddings
-embeddings = OpenAIEmbeddings(
-    model="text-embedding-3-small",
+
+# ============================================================
+# Hugging Face Embeddings
+# ============================================================
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
 
+# ============================================================
 # Chroma Cloud
+# ============================================================
+
 chroma_client = chromadb.CloudClient(
     api_key=CHROMADB_API_KEY,
     tenant=CHROMADB_TENANT,
@@ -81,15 +97,20 @@ chroma_client = chromadb.CloudClient(
 
 vectorstore = Chroma(
     client=chroma_client,
-    collection_name="medical_hr_documents",
+    collection_name="medical_hr_documents_hf",
     embedding_function=embeddings,
 )
+
+
 print(
     "Documents currently in Chroma:",
     vectorstore._collection.count()
 )
 
+
+# ============================================================
 # Retriever
+# ============================================================
 
 retriever = vectorstore.as_retriever(
     search_kwargs={
@@ -97,7 +118,10 @@ retriever = vectorstore.as_retriever(
     }
 )
 
+
+# ============================================================
 # Medical HR Prompt
+# ============================================================
 
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -135,7 +159,8 @@ contain enough information to answer the
 question, say:
 
 "I don't know based on the available HR
-documentation. Please e-mail HR at people@daisyhealth.com"
+documentation. Please e-mail HR at
+people@daisyhealth.com"
 
 When possible, mention the source document
 used to answer the question.
@@ -156,22 +181,30 @@ Employee question:
     ]
 )
 
+
+# ============================================================
 # Document Chain
+# ============================================================
 
 document_chain = create_stuff_documents_chain(
     llm,
     prompt,
 )
 
+
+# ============================================================
 # RAG Chain
+# ============================================================
 
 rag_chain = create_retrieval_chain(
     retriever,
     document_chain,
 )
 
-# Chat Function -for testing purposes
 
+# ============================================================
+# Chat Function
+# ============================================================
 
 def chat(question: str) -> str:
     """
@@ -194,14 +227,17 @@ def chat(question: str) -> str:
 
     return response["answer"]
 
-# Test
 
+# ============================================================
+# Test
+# ============================================================
 
 if __name__ == "__main__":
 
     print("Medical HR Assistant")
     print("--------------------")
     print("Using OpenRouter + Chroma Cloud")
+    print("Embeddings: Hugging Face")
     print()
 
     print(
