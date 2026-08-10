@@ -1,0 +1,69 @@
+{
+  "hr_tickets": [
+    {
+      "ticket_id": "TKT-0001",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "PTO Request",
+      "status": "Approved",
+      "priority": "Normal",
+      "subject": "PTO Request - August 18-20",
+      "description": "Employee requested 3 days PTO for personal travel.",
+      "created_date": "2025-08-10",
+      "resolved_date": "2025-08-11",
+      "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0002",
+      "employee_id": "EMP-004",
+      "employee_name": "Alex Nguyen",
+      "ticket_type": "Remote Work Request",
+      "status": "Pending",
+      "priority": "Normal",
+      "subject": "Temporary Remote Work from Nevada - 3 weeks",
+      "description": "Employee requesting to work remotely from Nevada for 3 weeks while caring for a family member.",
+      "created_date": "2025-08-05",
+      "resolved_date": null,
+      "assigned_to": "Taylor Brooks"
+    },
+    {
+      "ticket_id": "TKT-0003",
+      "employee_id": "EMP-007",
+      "employee_name": "Marcus Williams",
+      "ticket_type": "Expense Reimbursement",
+      "status": "Approved",
+      "priority": "Normal",
+      "subject": "Home Office Chair Reimbursement",
+      "description": "Employee submitted receipt for ergonomic chair purchase - $389.",
+      "created_date": "2025-07-15",
+      "resolved_date": "2025-07-18",
+      "assigned_to": "Taylor Brooks"
+    },
+    {
+      "ticket_id": "TKT-0004",
+      "employee_id": "EMP-009",
+      "employee_name": "James Kim",
+      "ticket_type": "HR Case",
+      "status": "Under Review",
+      "priority": "High",
+      "subject": "Workplace Conduct Concern",
+      "description": "Employee reported a workplace conduct concern. Under investigation per HR-WC-006.",
+      "created_date": "2025-08-01",
+      "resolved_date": null,
+      "assigned_to": "Taylor Brooks"
+    },
+    {
+      "ticket_id": "TKT-0005",
+      "employee_id": "EMP-006",
+      "employee_name": "Priya Patel",
+      "ticket_type": "Benefits Question",
+      "status": "Resolved",
+      "priority": "Normal",
+      "subject": "HSA Eligibility Question",
+      "description": "Employee asked about switching to Bronze plan to become HSA eligible during next open enrollment.",
+      "created_date": "2025-07-22",
+      "resolved_date": "2025-07-23",
+      "assigned_to": "Taylor Brooks"
+    }
+  ]
+}
