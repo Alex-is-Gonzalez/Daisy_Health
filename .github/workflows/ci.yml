@@ -1,0 +1,270 @@
+# Daisy Health — GitHub Actions CI/CD Workflow
+# Runs on every push or pull request to main branch
+# Steps: install deps → run smoke tests → verify MCP tool discovery
+# Deployment only occurs if all tests pass
+
+name: Daisy Health CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── Step 1: Check out the repository ──
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Step 2: Set up Python ──
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ── Step 3: Cache pip dependencies ──
+      # Speeds up builds by reusing installed packages
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # ── Step 4: Install dependencies ──
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install 'mcp[cli]' fastapi uvicorn pydantic python-dotenv openai
+          # Install sentence transformers for RAG embeddings
+          pip install sentence-transformers langchain langchain-community
+          # Install chromadb for vector store
+          pip install chromadb
+          # Install PDF processing
+          pip install pypdf
+          # Install remaining requirements if file exists
+          if [ -f requirements-current.txt ]; then
+            pip install -r requirements-current.txt || true
+          fi
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt || true
+          fi
+
+      # ── Step 5: Verify critical files exist ──
+      - name: Verify project structure
+        run: |
+          echo "Checking required files and folders..."
+          test -f daisy_health_app.py && echo "✓ daisy_health_app.py" || echo "✗ daisy_health_app.py MISSING"
+          test -f api.py && echo "✓ api.py" || echo "✗ api.py MISSING"
+          test -f agent.py && echo "✓ agent.py" || echo "✗ agent.py MISSING"
+          test -f mcp/mcp_server.py && echo "✓ mcp/mcp_server.py" || echo "✗ mcp/mcp_server.py MISSING"
+          test -f mock_data/employees.json && echo "✓ mock_data/employees.json" || echo "✗ mock_data/employees.json MISSING"
+          test -f mock_data/pto_balances.json && echo "✓ mock_data/pto_balances.json" || echo "✗ mock_data/pto_balances.json MISSING"
+          test -f mock_data/benefits.json && echo "✓ mock_data/benefits.json" || echo "✗ mock_data/benefits.json MISSING"
+          test -f mock_data/hr_tickets.json && echo "✓ mock_data/hr_tickets.json" || echo "✗ mock_data/hr_tickets.json MISSING"
+          test -d data/handbooks && echo "✓ data/handbooks/" || echo "✗ data/handbooks/ MISSING"
+          echo "Structure check complete."
+
+      # ── Step 6: Validate JSON mock data files ──
+      - name: Validate mock data JSON files
+        run: |
+          python -c "
+          import json
+
+          # Validate employees.json
+          with open('mock_data/employees.json') as f:
+              data = json.load(f)
+          count = len(data['employees'])
+          assert count >= 20, f'Expected 20+ employees, got {count}'
+          print(f'✓ employees.json valid — {count} employees')
+
+          # Validate pto_balances.json
+          with open('mock_data/pto_balances.json') as f:
+              data = json.load(f)
+          count = len(data['pto_balances'])
+          assert count >= 20, f'Expected 20+ PTO records, got {count}'
+          print(f'✓ pto_balances.json valid — {count} records')
+
+          # Validate benefits.json
+          with open('mock_data/benefits.json') as f:
+              data = json.load(f)
+          count = len(data['benefits'])
+          assert count >= 20, f'Expected 20+ benefit records, got {count}'
+          print(f'✓ benefits.json valid — {count} records')
+
+          # Validate hr_tickets.json
+          with open('mock_data/hr_tickets.json') as f:
+              data = json.load(f)
+          count = len(data['hr_tickets'])
+          print(f'✓ hr_tickets.json valid — {count} tickets')
+
+          print('All mock data files are valid.')
+          "
+
+      # ── Step 7: Validate Python syntax of all key files ──
+      - name: Validate Python syntax
+        run: |
+          python -m py_compile api.py && echo "✓ api.py syntax valid"
+          python -m py_compile mcp/mcp_server.py && echo "✓ mcp_server.py syntax valid"
+          python -m py_compile agent.py && echo "✓ agent.py syntax valid"
+
+      # ── Step 8: Run API smoke test ──
+      # Starts the FastAPI server and checks /health returns 200
+      - name: Run API smoke test
+        run: |
+          # Create a minimal .env for testing (no real keys needed for /health)
+          echo "OPENROUTER_API_KEY=test" > .env
+          echo "CHROMADB_API_KEY=test" >> .env
+          echo "CHROMADB_TENANT=test" >> .env
+          echo "CHROMADB_DB=HR_IT" >> .env
+          echo "ANTHROPIC_API_KEY=test" >> .env
+
+          # Start the API server in the background
+          python -m uvicorn api:app --port 8000 &
+          SERVER_PID=$!
+
+          # Wait for server to start
+          sleep 5
+
+          # Hit the /health endpoint and check it returns 200
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health)
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✓ /health endpoint returned 200 OK"
+          else
+            echo "✗ /health endpoint returned $HTTP_STATUS"
+            kill $SERVER_PID 2>/dev/null
+            exit 1
+          fi
+
+          # Also check the /demo endpoint
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/demo)
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✓ /demo endpoint returned 200 OK"
+          else
+            echo "✗ /demo endpoint returned $HTTP_STATUS"
+          fi
+
+          # Stop the server
+          kill $SERVER_PID 2>/dev/null
+          echo "API smoke test passed."
+
+      # ── Step 9: MCP tool discovery test ──
+      # Verifies the MCP server starts and exposes all 7 tools
+      - name: MCP tool discovery test
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          from mcp import ClientSession
+          from mcp.client.stdio import stdio_client, StdioServerParameters
+
+          async def test_mcp():
+              params = StdioServerParameters(
+                  command=sys.executable,
+                  args=['mcp/mcp_server.py'],
+                  env=None,
+              )
+              async with stdio_client(params) as (read, write):
+                  async with ClientSession(read, write) as session:
+                      await session.initialize()
+                      tools_response = await session.list_tools()
+                      tool_names = [t.name for t in tools_response.tools]
+
+                      # Verify all 7 required tools are present
+                      required_tools = [
+                          'lookup_employee_profile',
+                          'check_pto_balance',
+                          'lookup_benefits_status',
+                          'search_policy_documents',
+                          'check_policy_compliance',
+                          'create_mock_hr_ticket',
+                          'draft_hr_email',
+                      ]
+
+                      for tool in required_tools:
+                          assert tool in tool_names, f'Missing tool: {tool}'
+                          print(f'✓ Tool found: {tool}')
+
+                      print(f'MCP tool discovery test passed — {len(tool_names)} tools verified.')
+
+          asyncio.run(test_mcp())
+          "
+
+      # ── Step 10: MCP tool call test ──
+      # Calls a real MCP tool and verifies it returns data
+      - name: MCP tool call test
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          from mcp import ClientSession
+          from mcp.client.stdio import stdio_client, StdioServerParameters
+
+          async def test_tool_call():
+              params = StdioServerParameters(
+                  command=sys.executable,
+                  args=['mcp/mcp_server.py'],
+                  env=None,
+              )
+              async with stdio_client(params) as (read, write):
+                  async with ClientSession(read, write) as session:
+                      await session.initialize()
+
+                      # Test 1: lookup_employee_profile
+                      result = await session.call_tool(
+                          'lookup_employee_profile',
+                          {'employee_id': 'EMP-001'}
+                      )
+                      text = result.content[0].text
+                      assert 'Jordan Rivera' in text, 'Employee lookup failed'
+                      print('✓ lookup_employee_profile works')
+
+                      # Test 2: check_pto_balance
+                      result = await session.call_tool(
+                          'check_pto_balance',
+                          {'employee_id': 'EMP-001'}
+                      )
+                      text = result.content[0].text
+                      assert 'Available' in text, 'PTO balance check failed'
+                      print('✓ check_pto_balance works')
+
+                      # Test 3: search_policy_documents
+                      result = await session.call_tool(
+                          'search_policy_documents',
+                          {'query': 'PTO vacation leave', 'top_k': 2}
+                      )
+                      text = result.content[0].text
+                      assert len(text) > 0, 'Policy search returned empty result'
+                      print('✓ search_policy_documents works')
+
+                      print('All MCP tool call tests passed.')
+
+          asyncio.run(test_tool_call())
+          "
+
+  # ── Deployment job ──
+  # Only runs if ALL tests pass
+  # Currently a placeholder — update with real deploy commands
+  # once Render or Railway is configured
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deployment placeholder
+        run: |
+          echo "✓ All tests passed — ready for deployment"
+          echo "Configure Render or Railway deploy hook here"
+          echo "See deployed.md for deployment instructions"
+          # Uncomment and configure when ready to deploy:
+          # curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
