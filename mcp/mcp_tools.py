@@ -1,34 +1,23 @@
 """
-Daisy Health — MCP Server
-Compatible with mcp 2.0.0
+Daisy Health — MCP Tool Functions
+These are the actual tool implementations, importable as plain Python functions.
 
-Uses MCPServer from mcp.server.mcpserver.server with @tool decorator.
+The mcp_server.py wraps these with the MCP protocol for agent use.
+The daisy_health_app.py imports these directly for Streamlit use.
 
-IMPORTANT: Do NOT print to stdout — it breaks MCP stdio communication.
-
-Install: pip install 'mcp[cli]'
-Run:     python mcp/mcp_server.py
+This separation avoids the stdio conflict when importing mcp_server.py directly.
 """
 
 import json
 import re
-import sys
 from datetime import datetime
 from pathlib import Path
-
-# ── Correct import for mcp 2.0 ──
-from mcp.server.mcpserver.server import MCPServer
 
 # ─────────────────────────────────────────────
 # PATHS
 # ─────────────────────────────────────────────
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).parent.parent  # Goes up from mcp/ to project root
 MOCK_DATA_DIR = BASE_DIR / "mock_data"
-
-# ─────────────────────────────────────────────
-# CREATE SERVER INSTANCE
-# ─────────────────────────────────────────────
-server = MCPServer("daisy-health-hr")
 
 # ─────────────────────────────────────────────
 # DATA LOADERS
@@ -57,7 +46,7 @@ def save_hr_tickets(tickets):
         json.dump({"hr_tickets": tickets}, f, indent=2)
 
 def load_policy_docs():
-    for d in [BASE_DIR/"data"/"handbooks", BASE_DIR/"docs", BASE_DIR/"data"]:
+    for d in [BASE_DIR / "data" / "handbooks", BASE_DIR / "docs", BASE_DIR / "data"]:
         if d.exists():
             docs = []
             for f in d.glob("*.md"):
@@ -81,17 +70,10 @@ APPROVED_STATES = [
 ]
 
 # ─────────────────────────────────────────────
-# TOOLS — registered with @server.tool()
-# Each function becomes an MCP-exposed tool
+# TOOL FUNCTIONS
 # ─────────────────────────────────────────────
 
-@server.tool()
-async def lookup_employee_profile(employee_id: str) -> str:
-    """
-    Look up a Daisy Health employee profile by their employee ID.
-    Always call this first before checking PTO or benefits.
-    Example: employee_id = 'EMP-001'
-    """
+def tool_lookup_employee_profile(employee_id: str) -> str:
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     if emp_id not in employees:
@@ -110,13 +92,7 @@ async def lookup_employee_profile(employee_id: str) -> str:
         f"Location: {e['office_location']}"
     )
 
-
-@server.tool()
-async def check_pto_balance(employee_id: str) -> str:
-    """
-    Check the current PTO balance for a Daisy Health employee.
-    Example: employee_id = 'EMP-001'
-    """
+def tool_check_pto_balance(employee_id: str) -> str:
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     pto = load_pto_balances()
@@ -135,13 +111,7 @@ async def check_pto_balance(employee_id: str) -> str:
         f"Last updated: {b['last_updated']}"
     )
 
-
-@server.tool()
-async def lookup_benefits_status(employee_id: str) -> str:
-    """
-    Look up benefits enrollment status for a Daisy Health employee.
-    Example: employee_id = 'EMP-001'
-    """
+def tool_lookup_benefits_status(employee_id: str) -> str:
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     benefits = load_benefits()
@@ -151,33 +121,26 @@ async def lookup_benefits_status(employee_id: str) -> str:
         return f"No benefits record for {emp_id}."
     e = employees[emp_id]
     b = benefits[emp_id]
-    hsa = "Eligible" if b["hsa_eligible"] else "Not eligible (not on Bronze plan)"
-    fsa = f"Enrolled - ${b['fsa_balance']:.2f}" if b["fsa_enrolled"] else "Not enrolled"
+    hsa = "Eligible ✓" if b["hsa_eligible"] else "Not eligible (not on Bronze plan)"
+    fsa = f"Enrolled — ${b['fsa_balance']:.2f}" if b["fsa_enrolled"] else "Not enrolled"
     return (
         f"Benefits — {e['name']} ({emp_id})\n"
         f"Health Plan: {b['health_plan']}\n"
         f"HSA: {hsa}\nFSA: {fsa}\n"
-        f"Dental: {'Yes' if b['dental'] else 'No'} | "
-        f"Vision: {'Yes' if b['vision'] else 'No'} | "
-        f"Life: {'Yes' if b['life_insurance'] else 'No'}\n"
+        f"Dental: {'✓' if b['dental'] else '✗'} | "
+        f"Vision: {'✓' if b['vision'] else '✗'} | "
+        f"Life: {'✓' if b['life_insurance'] else '✗'}\n"
         f"STD: {'Eligible' if b['std_eligible'] else 'Not eligible'} | "
         f"LTD: {'Eligible' if b['ltd_eligible'] else 'Not eligible'}\n"
-        f"401k: {'Yes' if b['retirement_401k'] else 'No'} ({b['employer_match_pct']}% match)\n"
-        f"EAP: {'Yes' if b['eap_enrolled'] else 'No'}"
+        f"401(k): {'✓' if b['retirement_401k'] else '✗'} ({b['employer_match_pct']}% match)\n"
+        f"EAP: {'✓' if b['eap_enrolled'] else '✗'}"
     )
 
-
-@server.tool()
-async def search_policy_documents(query: str, top_k: int = 3) -> str:
-    """
-    Search Daisy Health HR policy documents for relevant information.
-    Use for any policy question about PTO, remote work, benefits, expenses, etc.
-    Example: query = 'PTO request approval process', top_k = 3
-    """
+def tool_search_policy_documents(query: str, top_k: int = 3) -> str:
     top_k = max(1, min(top_k, 5))
     docs = load_policy_docs()
     if not docs:
-        return "Policy documents not found. Ensure data/handbooks contains .md files."
+        return "Policy documents not found."
     words = set(query.lower().split())
     scored = []
     for doc in docs:
@@ -208,108 +171,75 @@ async def search_policy_documents(query: str, top_k: int = 3) -> str:
         )
     return out
 
-
-@server.tool()
-async def check_policy_compliance(
-    employee_id: str,
-    policy_area: str,
-    scenario: str = ""
-) -> str:
-    """
-    Check whether an employee action is compliant with Daisy Health policy.
-    policy_area options: remote_work, pto_request, expense, benefits_eligibility
-    Example: employee_id='EMP-001', policy_area='expense', scenario='home office chair'
-    """
+def tool_check_policy_compliance(employee_id: str, policy_area: str, scenario: str = "") -> str:
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     if emp_id not in employees:
         return f"Employee ID '{emp_id}' not found."
     e = employees[emp_id]
     area = policy_area.lower()
-
     if "remote" in area:
         approved = e["state"] in APPROVED_STATES
         clinical = e["employee_type"] == "Clinical"
         result = (
-            f"Remote Work Compliance - {e['name']}\n"
-            f"State: {e['state']} - {'Approved' if approved else 'Not approved'}\n"
+            f"Remote Work Compliance — {e['name']}\n"
+            f"State: {e['state']} — {'✓ Approved' if approved else '✗ Not approved'}\n"
         )
         if scenario:
             result += f"Scenario: {scenario}\n"
-        result += "\nApproved for remote work.\n" if approved else "\nLocation Change Request required.\n"
+        result += "\n✓ Approved.\n" if approved else "\n⚠️ Location Change Request required.\n"
         if clinical:
             result += (
-                "\nCLINICAL STAFF - Additional requirements:\n"
-                "- Active license in patient's state\n"
-                "- Notify Credentialing within 5 business days\n"
-                "- Confirm malpractice coverage\n"
-                "Source: HR-RW-001 Section 3, HR-LC-009"
+                "\n🏥 CLINICAL: Active license in patient state required. "
+                "Notify Credentialing within 5 days. Source: HR-RW-001 §3, HR-LC-009"
             )
         else:
-            result += "\nSource: HR-RW-001 - Temporary under 4 weeks: notify manager 5 days ahead."
+            result += "\nSource: HR-RW-001 — Temporary (<4 weeks): notify manager 5 days ahead."
         return result
-
     elif "pto" in area:
         pto = load_pto_balances()
         available = pto.get(emp_id, {}).get("available_days", 0)
-        result = f"PTO Compliance - {e['name']}\nAvailable: {available} days\n\n"
+        result = f"PTO Compliance — {e['name']}\nAvailable: {available} days\n\n"
         if scenario:
             nums = re.findall(r'\d+\.?\d*', scenario)
             if nums:
                 requested = float(nums[0])
                 result += (
-                    f"COMPLIANT: {requested} days requested, {available} available. Submit via HR Portal."
+                    f"✓ COMPLIANT: {requested} days requested, {available} available."
                     if requested <= available else
-                    f"INSUFFICIENT: {requested} requested but only {available} available."
+                    f"⚠️ INSUFFICIENT: {requested} requested but only {available} available."
                 )
         return result
-
     elif "expense" in area:
-        result = f"Expense Compliance - {e['name']} ({e['employment_type']})\n\n"
+        result = f"Expense Compliance — {e['name']} ({e['employment_type']})\n\n"
         if scenario:
             s = scenario.lower()
             if any(x in s for x in ["chair", "desk", "monitor", "keyboard", "webcam"]):
-                result += "COMPLIANT: $500 home office stipend covers this.\nSource: HR-EX-004 Section 2"
+                result += "✓ COMPLIANT: $500 home office stipend covers this. Source: HR-EX-004 §2"
             elif "laptop" in s:
-                result += "REQUIRES APPROVAL: Manager and Finance must approve first.\nSource: HR-EX-004 Section 4"
+                result += "⚠️ REQUIRES APPROVAL: Manager + Finance must approve first. Source: HR-EX-004 §4"
             elif any(x in s for x in ["travel", "flight", "hotel"]):
-                result += "COMPLIANT IF PRE-APPROVED: Economy class, $75/day meals.\nSource: HR-EX-004 Section 7"
+                result += "✓ IF PRE-APPROVED: Economy class, $75/day meals. Source: HR-EX-004 §7"
             else:
-                result += "Must be work-related with receipt. Over $500 needs pre-approval.\nSource: HR-EX-004"
+                result += "Must be work-related with receipt. Over $500 needs pre-approval. Source: HR-EX-004"
         return result
-
     elif "benefit" in area:
         benefits = load_benefits()
         b = benefits.get(emp_id, {})
-        result = f"Benefits Compliance - {e['name']}\nType: {e['employment_type']} | Plan: {b.get('health_plan','Unknown')}\n\n"
+        result = f"Benefits Compliance — {e['name']}\nType: {e['employment_type']} | Plan: {b.get('health_plan','Unknown')}\n\n"
         result += (
-            "Part-time: limited benefits. 30+ hrs/week needed.\nSource: HR-BI-002"
+            "ℹ️ Part-time: limited benefits. 30+ hrs/week needed. Source: HR-BI-002"
             if e["employment_type"] == "Part-Time" else
-            "Full-time: all benefits eligible. Open enrollment: November.\nSource: HR-BI-002"
+            "✓ Full-time: all benefits eligible. Open enrollment: November. Source: HR-BI-002"
         )
         return result
-
     return f"Unknown policy area '{policy_area}'. Options: remote_work, pto_request, expense, benefits_eligibility."
 
-
-@server.tool()
-async def create_mock_hr_ticket(
-    employee_id: str,
-    ticket_type: str,
-    subject: str,
-    description: str,
-    priority: str = "Normal"
-) -> str:
-    """
-    Create a mock HR support ticket saved to hr_tickets.json.
-    ticket_type options: PTO Request, Remote Work Request, Expense Reimbursement,
-    Benefits Question, HR Case, General Inquiry
-    priority options: Normal, High, Urgent
-    """
+def tool_create_mock_hr_ticket(employee_id, ticket_type, subject, description, priority="Normal"):
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     if emp_id not in employees:
-        return f"Cannot create ticket - Employee ID '{emp_id}' not found."
+        return f"Cannot create ticket — Employee ID '{emp_id}' not found."
     e = employees[emp_id]
     tickets = load_hr_tickets()
     ticket_id = f"TKT-{len(tickets) + 1:04d}"
@@ -329,25 +259,14 @@ async def create_mock_hr_ticket(
     tickets.append(new_ticket)
     save_hr_tickets(tickets)
     return (
-        f"HR Ticket Created (MOCK)\n"
+        f"✓ HR Ticket Created (MOCK)\n"
         f"ID: {ticket_id} | Type: {ticket_type} | Priority: {priority}\n"
         f"Employee: {e['name']} | Assigned: {e['manager_name']}\n"
         f"Subject: {subject}\nStatus: Open\n"
         f"Note: Mock ticket for demonstration purposes."
     )
 
-
-@server.tool()
-async def draft_hr_email(
-    employee_id: str,
-    email_type: str,
-    context: str = ""
-) -> str:
-    """
-    Draft an HR-related email for an employee. Does NOT send it.
-    email_type options: pto_request, remote_work_request, expense_inquiry,
-    hr_escalation, benefits_question, general_inquiry
-    """
+def tool_draft_hr_email(employee_id, email_type, context=""):
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     if emp_id not in employees:
@@ -356,45 +275,29 @@ async def draft_hr_email(
     et = email_type.lower()
     today = datetime.now().strftime("%B %d, %Y")
     mgr = e["manager_name"].split()[0] if e["manager_name"] else "there"
-
     if "pto" in et:
-        subject = f"PTO Request - {e['name']}"
+        subject = f"PTO Request — {e['name']}"
         to = f"{e['manager_name']} <{e['manager_id'].lower()}@daisyhealth.com>"
         body = f"Hi {mgr},\n\nI would like to request paid time off.\n\n{context or 'Please see my request in the HR portal.'}\n\nThank you,\n{e['name']}\n{e['role']}\n{e['email']}"
     elif "remote" in et:
-        subject = f"Remote Work Request - {e['name']}"
+        subject = f"Remote Work Request — {e['name']}"
         to = f"{e['manager_name']} <{e['manager_id'].lower()}@daisyhealth.com>"
         body = f"Hi {mgr},\n\nI am requesting a temporary remote work location change.\n\n{context or 'I would like to discuss the details.'}\n\nThank you,\n{e['name']}\n{e['role']}\n{e['email']}"
     elif "escalat" in et or "case" in et:
-        subject = f"HR Concern - Confidential - {e['name']}"
+        subject = f"HR Concern — Confidential — {e['name']}"
         to = "people@daisyhealth.com"
         body = f"Hi People Operations,\n\nI am reaching out regarding a concern.\n\n{context or 'I would like to discuss this confidentially.'}\n\nSincerely,\n{e['name']}\n{e['role']}\n{e['email']}"
     elif "benefit" in et:
-        subject = f"Benefits Question - {e['name']}"
+        subject = f"Benefits Question — {e['name']}"
         to = "people@daisyhealth.com"
         body = f"Hi People Operations,\n\nI have a question about my benefits.\n\n{context or 'I would appreciate your guidance.'}\n\nThank you,\n{e['name']}\n{e['role']}\n{e['email']}"
     else:
-        subject = f"HR Inquiry - {e['name']}"
+        subject = f"HR Inquiry — {e['name']}"
         to = "people@daisyhealth.com"
         body = f"Hi People Operations,\n\n{context or 'I have a question and would appreciate guidance.'}\n\nThank you,\n{e['name']}\n{e['role']}\n{e['email']}"
-
     return (
-        f"DRAFT EMAIL (not sent - employee must review and send)\n"
-        f"{'='*50}\n"
+        f"📧 DRAFT EMAIL (not sent)\n{'='*50}\n"
         f"To: {to}\nFrom: {e['name']} <{e['email']}>\n"
         f"Date: {today}\nSubject: {subject}\n{'='*50}\n\n"
         f"{body}\n\n{'='*50}\nReview before sending."
     )
-
-
-# ─────────────────────────────────────────────
-# ENTRY POINT
-# ─────────────────────────────────────────────
-def main():
-    sys.stderr.write("Daisy Health MCP Server ready\n")
-    sys.stderr.flush()
-    # MCPServer.run("stdio") handles everything internally
-    server.run("stdio")
-
-if __name__ == "__main__":
-    main()
