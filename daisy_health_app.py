@@ -950,23 +950,32 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
 
-        # System status
-        try:
-            chroma_count = get_document_count() if RAG_AVAILABLE else "Unavailable"
-            rag_status = "Online" if RAG_AVAILABLE else "Unavailable"
-        except Exception:
-            chroma_count = "Unavailable"
-            rag_status = "Error"
+        # ── Real system status check ──
+        # Cache in session state so it doesn't re-check on every rerun
+        if "system_status" not in st.session_state:
+            try:
+                from health_check import get_system_status, render_status_html
+                st.session_state.system_status = get_system_status()
+                st.session_state.status_html = render_status_html(
+                    st.session_state.system_status
+                )
+            except Exception as e:
+                st.session_state.status_html = (
+                    f'<div class="system-status">'
+                    f'<strong>System Status</strong><br>'
+                    f'<span style="color:#f87171;">● Health check unavailable</span>'
+                    f'</div>'
+                )
 
-        mcp_status = "Online ✓" if MCP_AVAILABLE else "⚠️ Unavailable"
+        st.markdown(
+            st.session_state.get("status_html", ""),
+            unsafe_allow_html=True
+        )
 
-        st.markdown(f"""
-        <div class="system-status">
-            <strong>System Status</strong><br>
-            <span style="color:#2E7D5E;">● MCP Server</span> &nbsp; {mcp_status}<br>
-            <span style="color:#2E7D5E;">● RAG Index</span> &nbsp; {rag_status}<br>
-            <span style="color:#2E7D5E;">● Chroma Docs</span> &nbsp; {chroma_count}<br>
-            <span style="color:#2E7D5E;">● LLM</span> &nbsp; OpenRouter / Gemma<br>
-            <span style="color:#2E7D5E;">● Embeddings</span> &nbsp; all-MiniLM-L6-v2
-        </div>
-        """, unsafe_allow_html=True)
+        # Refresh button
+        if st.button("↻ Refresh Status", use_container_width=True):
+            # Clear cached status to force re-check
+            for k in ["system_status", "status_html"]:
+                if k in st.session_state:
+                    del st.session_state[k]
+            st.rerun()
