@@ -173,7 +173,7 @@ async def run_agent(question: str, employee_id: str) -> dict:
 
     Args:
         question: The employee's HR question
-        employee_id: The logged-in employee's ID (e.g. EMP-001)
+        employee_id: The logged-in employee's ID (e.g. EMP-002)
 
     Returns:
         dict with answer, tool_trace, citations, error
@@ -516,7 +516,7 @@ if __name__ == "__main__":
 
     result = run_agent_sync(
         question="Can I expense a home office chair?",
-        employee_id="EMP-001",
+        employee_id="EMP-002",
     )
     print("Answer:", result["answer"][:400])
     print(f"\nTools called: {len(result['tool_trace'])}")

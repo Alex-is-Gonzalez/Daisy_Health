@@ -64,6 +64,45 @@
       "created_date": "2025-07-22",
       "resolved_date": "2025-07-23",
       "assigned_to": "Taylor Brooks"
+    },
+    {
+      "ticket_id": "TKT-0006",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "HR Case",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Workplace Concern Report",
+      "description": "Employee EMP-001 wants to report a workplace concern.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0007",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "Expense Reimbursement",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Expense Reimbursement Request: Office Chair",
+      "description": "Employee EMP-001 requests reimbursement for a new office chair. The expense is compliant with policy as it falls under the $500 home office stipend. Ticket will be routed to Finance for approval.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0008",
+      "employee_id": "EMP-002",
+      "employee_name": "Morgan Chen",
+      "ticket_type": "HR Case",
+      "status": "Open",
+      "priority": "High",
+      "subject": "HR Complaint Filing",
+      "description": "Employee Morgan Chen (EMP-002) would like to file an HR complaint regarding workplace conduct. Please create a ticket for HR to review and follow up.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Aisha Thompson"
     }
   ]
 }

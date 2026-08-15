@@ -312,7 +312,7 @@ async def demo_tasks():
                     "I want to report a harassment concern about a coworker. "
                     "What should I do and can you help me open a case?"
                 ),
-                "employee_id": "EMP-001"
+                "employee_id": "EMP-002"
             },
             "expected_tool_sequence": [
                 "lookup_employee_profile",
