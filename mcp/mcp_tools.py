@@ -19,6 +19,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent.parent  # Goes up from mcp/ to project root
 MOCK_DATA_DIR = BASE_DIR / "mock_data"
 
+import sys
+sys.path.insert(0, str(BASE_DIR))
+
 # ─────────────────────────────────────────────
 # DATA LOADERS
 # ─────────────────────────────────────────────
@@ -44,20 +47,6 @@ def load_hr_tickets():
 def save_hr_tickets(tickets):
     with open(MOCK_DATA_DIR / "hr_tickets.json", "w") as f:
         json.dump({"hr_tickets": tickets}, f, indent=2)
-
-def load_policy_docs():
-    for d in [BASE_DIR / "data" / "handbooks", BASE_DIR / "docs", BASE_DIR / "data"]:
-        if d.exists():
-            docs = []
-            for f in d.glob("*.md"):
-                docs.append({
-                    "title": f.stem.replace("_", " ").title(),
-                    "filename": f.name,
-                    "content": f.read_text(encoding="utf-8"),
-                })
-            if docs:
-                return docs
-    return []
 
 # ─────────────────────────────────────────────
 # CONSTANTS
@@ -138,36 +127,27 @@ def tool_lookup_benefits_status(employee_id: str) -> str:
 
 def tool_search_policy_documents(query: str, top_k: int = 3) -> str:
     top_k = max(1, min(top_k, 5))
-    docs = load_policy_docs()
+    try:
+        from rag_backend import retriever
+    except Exception as e:
+        return f"Policy search unavailable: RAG backend failed to load ({e})."
+
+    docs = retriever.invoke(query)[:top_k]
     if not docs:
-        return "Policy documents not found."
-    words = set(query.lower().split())
-    scored = []
-    for doc in docs:
-        for section in re.split(r'\n## ', doc["content"]):
-            if not section.strip():
-                continue
-            score = sum(1 for w in words if w in section.lower())
-            if score > 0:
-                lines = section.strip().split("\n")
-                scored.append({
-                    "score": score,
-                    "doc_title": doc["title"],
-                    "filename": doc["filename"],
-                    "section": lines[0].replace("#", "").strip(),
-                    "snippet": " ".join(lines[1:])[:300].strip(),
-                })
-    scored.sort(key=lambda x: x["score"], reverse=True)
-    results = scored[:top_k]
-    if not results:
         return f"No results for '{query}'. Contact people@daisyhealth.com"
+
     out = f"Policy search: '{query}'\n" + "=" * 40 + "\n\n"
-    for i, r in enumerate(results, 1):
+    for i, doc in enumerate(docs, 1):
+        meta = doc.metadata or {}
+        source = meta.get("source_file") or meta.get("source") or "HR Policy Document"
+        page = meta.get("page")
+        section = f"Page {page + 1}" if page is not None else meta.get("section", "")
+        snippet = doc.page_content.strip().replace("\n", " ")[:300]
         out += (
-            f"[{i}] {r['doc_title']}\n"
-            f"    Section: {r['section']}\n"
-            f"    Source: {r['filename']}\n"
-            f"    Excerpt: {r['snippet']}...\n\n"
+            f"[{i}] {Path(source).stem.replace('_', ' ').title()}\n"
+            f"    Section: {section}\n"
+            f"    Source: {source}\n"
+            f"    Excerpt: {snippet}...\n\n"
         )
     return out
 

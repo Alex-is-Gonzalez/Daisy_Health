@@ -48,7 +48,7 @@ if USE_ANTHROPIC:
 else:
     # OpenRouter uses the OpenAI SDK format
     from openai import OpenAI
-    LLM_MODEL = "google/gemma-3-27b-it:free"
+    LLM_MODEL = "openai/gpt-oss-20b:free"
     OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 # ─────────────────────────────────────────────
@@ -124,11 +124,32 @@ def format_tools_for_openrouter(mcp_tools):
             "function": {
                 "name": tool.name,
                 "description": tool.description,
-                "parameters": tool.inputSchema,
+                "parameters": tool.input_schema,
             }
         }
         for tool in mcp_tools
     ]
+
+
+def _create_with_retry(client, max_retries=5, **kwargs):
+    """
+    Call client.chat.completions.create with retry + exponential backoff.
+    Free-tier OpenRouter models share a rate-limited upstream pool and
+    frequently return 429s under any kind of burst traffic (e.g. the
+    evaluation harness running 25 questions back-to-back).
+    """
+    import time
+    from openai import RateLimitError
+
+    delay = 2
+    for attempt in range(max_retries):
+        try:
+            return client.chat.completions.create(**kwargs)
+        except RateLimitError:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(delay)
+            delay = min(delay * 2, 30)
 
 
 def format_tools_for_anthropic(mcp_tools):
@@ -137,7 +158,7 @@ def format_tools_for_anthropic(mcp_tools):
         {
             "name": tool.name,
             "description": tool.description,
-            "input_schema": tool.inputSchema,
+            "input_schema": tool.input_schema,
         }
         for tool in mcp_tools
     ]
@@ -244,7 +265,8 @@ async def _run_openrouter_agent(
 
     for _ in range(max_iterations):
 
-        response = client.chat.completions.create(
+        response = _create_with_retry(
+            client,
             model=LLM_MODEL,
             messages=messages,
             tools=tools,

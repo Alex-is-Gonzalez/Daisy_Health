@@ -10,11 +10,11 @@ Streamlit dashboard with:
 Architecture:
     Streamlit UI
         ↓
-    MCP Tools (called directly as Python functions)
+    agent.py — LLM tool-calling loop, MCP client (stdio)
         ↓
-    RAG backend (Alexis's rag_backend.py)
-        ↓
-    Chroma Cloud + OpenRouter
+    mcp/mcp_server.py — MCP server (MCPServer, @tool)
+        ↓                    ↓
+    mock_data/ JSON      rag_backend.py → Chroma Cloud + OpenRouter
 
 Run:
     streamlit run daisy_health_app.py
@@ -40,31 +40,24 @@ load_dotenv()
 # ── Add project root to path ──
 sys.path.insert(0, str(Path(__file__).parent))
 
-# ── Import Alexis's RAG backend ──
+# ── Import RAG backend (used only for the document-count status display) ──
 try:
-    from rag_backend import chat as rag_chat, get_document_count
+    from rag_backend import get_document_count
     RAG_AVAILABLE = True
 except Exception as e:
     RAG_AVAILABLE = False
     def get_document_count(): return "Unavailable"
 
-# ── Import MCP tool functions from mcp_tools.py ──
-# mcp_tools.py contains the tool functions without the MCP server startup
-# This avoids the stdio conflict when importing mcp_server.py directly
+# ── Import the real agent orchestrator ──
+# agent.py spawns mcp/mcp_server.py as a stdio subprocess, discovers its
+# tools via MCP's ClientSession.list_tools(), and lets the LLM decide which
+# tools to call via session.call_tool(). This is the actual agentic/MCP path.
 try:
-    sys.path.insert(0, str(Path(__file__).parent / "mcp"))
-    from mcp_tools import (
-        tool_lookup_employee_profile,
-        tool_check_pto_balance,
-        tool_lookup_benefits_status,
-        tool_search_policy_documents,
-        tool_check_policy_compliance,
-        tool_create_mock_hr_ticket,
-        tool_draft_hr_email,
-    )
-    MCP_AVAILABLE = True
+    from agent import run_agent_sync
+    AGENT_AVAILABLE = True
 except Exception as e:
-    MCP_AVAILABLE = False
+    AGENT_AVAILABLE = False
+    AGENT_IMPORT_ERROR = str(e)
 
 # ============================================================
 # PAGE CONFIG
@@ -315,380 +308,46 @@ def do_logout():
         st.session_state[k] = False if k == "logged_in" else ([] if k in ["messages","tool_trace","citations"] else ("login" if k == "login_mode" else (None if k in ["selected_emp_id","pending_input"] else "")))
 
 # ============================================================
-# AGENT — calls MCP tools directly + RAG
+# AGENT — real MCP-based orchestrator (agent.py)
+# The LLM decides which MCP tools to call; agent.py spawns
+# mcp/mcp_server.py over stdio and invokes tools via MCP's
+# ClientSession.call_tool(). This function is a thin adapter that
+# runs it synchronously for Streamlit and falls back gracefully.
 # ============================================================
 def run_agent(question: str, employee_id: str) -> dict:
-    """
-    Agentic pipeline that calls MCP tools directly as Python functions.
-    No subprocess needed — avoids stdio communication issues.
-    """
-    tool_trace = []
-    citations = []
-    answer = ""
-    q = question.lower()
-    now = datetime.now().strftime("%H:%M:%S")
-
-    def trace(tool_name, args, result, status="✓ Success"):
-        """Record a tool call in the trace."""
-        tool_trace.append({
-            "tool": tool_name,
-            "args": args,
-            "result": str(result)[:200],
-            "timestamp": datetime.now().strftime("%H:%M:%S"),
-            "status": status,
-        })
-        return result
-
-    emp = MOCK_EMPLOYEES.get(employee_id.upper(), {})
-    name = emp.get("name", "").split()[0] if emp else "there"
+    if not AGENT_AVAILABLE:
+        return {
+            "answer": (
+                "The agent orchestrator is unavailable right now "
+                f"({AGENT_IMPORT_ERROR}). Please contact people@daisyhealth.com."
+            ),
+            "tool_trace": [{
+                "tool": "Agent", "args": {}, "result": AGENT_IMPORT_ERROR,
+                "timestamp": datetime.now().strftime("%H:%M:%S"), "status": "✗ Error",
+            }],
+            "citations": [],
+        }
 
     try:
-        # ── Step 1: Always look up employee profile first ──
-        if MCP_AVAILABLE:
-            profile = trace(
-                "lookup_employee_profile",
-                {"employee_id": employee_id},
-                tool_lookup_employee_profile(employee_id)
-            )
-        else:
-            profile = f"Employee: {emp.get('name', employee_id)}"
-
-        # ── Step 2: Route to the right workflow ──
-
-        # PTO / leave questions
-        if any(w in q for w in ["pto", "time off", "vacation", "leave", "days off", "how much pto"]):
-            if MCP_AVAILABLE:
-                pto = trace("check_pto_balance", {"employee_id": employee_id},
-                           tool_check_pto_balance(employee_id))
-            else:
-                pto = f"Available: {emp.get('pto_balance', 'N/A')} days"
-
-            if MCP_AVAILABLE:
-                policy = trace("search_policy_documents",
-                              {"query": "PTO request approval process leave policy", "top_k": 3},
-                              tool_search_policy_documents("PTO request approval process leave policy", 3))
-            else:
-                policy = "PTO policy retrieved"
-
-            # Also call RAG if available
-            if RAG_AVAILABLE:
-                try:
-                    rag_result = rag_chat("PTO request approval process")
-                    for doc in rag_result.get("documents", []):
-                        meta = doc.metadata or {}
-                        citations.append({
-                            "title": meta.get("source_file", "PTO and Leave Policy"),
-                            "section": f"Page {meta.get('page', 0) + 1}",
-                            "snippet": doc.page_content[:300],
-                            "policy_id": "HR-PT-001",
-                        })
-                except Exception:
-                    citations.append({
-                        "title": "PTO and Leave Policy",
-                        "section": "Section 2 — PTO Usage",
-                        "snippet": "PTO may be used for any reason. Planned PTO requires at least 5 business days notice.",
-                        "policy_id": "HR-PT-001",
-                    })
-            else:
-                citations.append({
-                    "title": "PTO and Leave Policy",
-                    "section": "Section 2 — PTO Usage",
-                    "snippet": "PTO may be used for any reason. Planned PTO requires at least 5 business days notice submitted through the HR Portal.",
-                    "policy_id": "HR-PT-001",
-                })
-
-            balance = emp.get("pto_balance", "N/A")
-            manager = emp.get("manager", "your manager")
-            answer = (
-                f"Hi {name}! Here's your PTO summary:\n\n"
-                f"**Current PTO balance: {balance} days**\n"
-                f"Used this year: {emp.get('pto_used', 0)} days\n\n"
-                f"**To request time off:**\n"
-                f"1. Log in to the HR Portal at hr.daisyhealth.com\n"
-                f"2. Navigate to **Time Off → Request Time Off**\n"
-                f"3. Select your dates and submit\n\n"
-                f"Your manager **{manager}** will respond within 2 business days. "
-                f"Please give at least 5 business days notice for planned PTO.\n\n"
-                f"*Source: PTO and Leave Policy (HR-PT-001)*"
-            )
-
-        # Remote work questions
-        elif any(w in q for w in ["remote", "work from", "relocat", "another state", "different state"]):
-            if MCP_AVAILABLE:
-                compliance = trace("check_policy_compliance",
-                                  {"employee_id": employee_id, "policy_area": "remote_work",
-                                   "scenario": question},
-                                  tool_check_policy_compliance(employee_id, "remote_work", question))
-                policy = trace("search_policy_documents",
-                              {"query": "remote work eligibility approved states clinical licensure", "top_k": 3},
-                              tool_search_policy_documents("remote work eligibility approved states clinical licensure", 3))
-
-            if RAG_AVAILABLE:
-                try:
-                    rag_result = rag_chat("remote work policy eligibility")
-                    for doc in rag_result.get("documents", []):
-                        meta = doc.metadata or {}
-                        citations.append({
-                            "title": meta.get("source_file", "Remote Work Policy"),
-                            "section": f"Page {meta.get('page', 0) + 1}",
-                            "snippet": doc.page_content[:300],
-                            "policy_id": "HR-RW-001",
-                        })
-                except Exception:
-                    pass
-
-            if not citations:
-                citations.append({
-                    "title": "Remote Work Policy",
-                    "section": "Section 2 — Approved Work Locations",
-                    "snippet": "Approved states include CA, NY, TX, FL, WA, IL, MA, CO, GA, AZ, VA, OR, PA, OH, NC.",
-                    "policy_id": "HR-RW-001",
-                })
-
-            is_clinical = emp.get("type") == "Clinical"
-            if is_clinical:
-                answer = (
-                    f"Hi {name}! As a **{emp.get('role', 'clinical employee')}**, remote work from another state involves extra steps.\n\n"
-                    f"**Standard rules:**\n"
-                    f"- Temporary (up to 4 weeks): notify your manager 5 days in advance\n"
-                    f"- Extended (4+ weeks): submit a Location Change Request (up to 30 days to process)\n\n"
-                    f"**As clinical staff, you also need:**\n"
-                    f"- Active license in the state where your patients are located\n"
-                    f"- Notify the **Credentialing team within 5 business days** of relocating\n"
-                    f"- Confirm malpractice coverage extends to the new location\n\n"
-                    f"**Next step:** Email credentialing@daisyhealth.com before making plans.\n\n"
-                    f"*Sources: Remote Work Policy (HR-RW-001) §3, Licensure Policy (HR-LC-009)*"
-                )
-            else:
-                answer = (
-                    f"Hi {name}! Here's what you need to know about remote work:\n\n"
-                    f"**Temporary (up to 4 weeks):**\n"
-                    f"- Must be an approved state\n"
-                    f"- Notify **{emp.get('manager', 'your manager')}** at least 5 days in advance\n\n"
-                    f"**Extended (4+ weeks):**\n"
-                    f"- Submit a Remote Work Location Change Request via HR Portal\n"
-                    f"- Allow up to 30 business days for review\n\n"
-                    f"**Approved states:** CA, NY, TX, FL, WA, IL, MA, CO, GA, AZ, VA, OR, PA, OH, NC\n\n"
-                    f"*Source: Remote Work Policy (HR-RW-001), Sections 2 & 6*"
-                )
-
-        # Expense questions
-        elif any(w in q for w in ["expense", "reimburse", "stipend", "chair", "laptop", "home office", "internet"]):
-            if MCP_AVAILABLE:
-                compliance = trace("check_policy_compliance",
-                                  {"employee_id": employee_id, "policy_area": "expense",
-                                   "scenario": question},
-                                  tool_check_policy_compliance(employee_id, "expense", question))
-                policy = trace("search_policy_documents",
-                              {"query": "expense reimbursement home office stipend", "top_k": 3},
-                              tool_search_policy_documents("expense reimbursement home office stipend", 3))
-
-            if RAG_AVAILABLE:
-                try:
-                    rag_result = rag_chat("expense reimbursement home office stipend")
-                    for doc in rag_result.get("documents", []):
-                        meta = doc.metadata or {}
-                        citations.append({
-                            "title": meta.get("source_file", "Expense Reimbursement Policy"),
-                            "section": f"Page {meta.get('page', 0) + 1}",
-                            "snippet": doc.page_content[:300],
-                            "policy_id": "HR-EX-004",
-                        })
-                except Exception:
-                    pass
-
-            if not citations:
-                citations.append({
-                    "title": "Expense Reimbursement Policy",
-                    "section": "Section 2 — Home Office Stipend",
-                    "snippet": "Full-time employees receive a one-time $500 home office stipend covering monitor, keyboard, desk, chair, webcam, or headset.",
-                    "policy_id": "HR-EX-004",
-                })
-
-            answer = (
-                f"Hi {name}! Here's what Daisy Health covers for home office expenses:\n\n"
-                f"**One-time home office stipend: $500**\n"
-                f"Covers: monitor, keyboard, desk, chair, webcam, headset\n"
-                f"Submit receipts within 60 days of your hire date via the Expense Portal\n\n"
-                f"**Monthly internet reimbursement: up to $50/month**\n"
-                f"Submit your internet bill each month through the Expense Portal\n\n"
-                f"**Not covered:** personal meals, alcohol, gym memberships, unapproved equipment\n\n"
-                f"Submit at: expenses.daisyhealth.com\n\n"
-                f"*Source: Expense Reimbursement Policy (HR-EX-004), Sections 2 & 3*"
-            )
-
-        # Benefits questions
-        elif any(w in q for w in ["benefit", "health plan", "insurance", "hsa", "fsa", "dental", "vision", "401k"]):
-            if MCP_AVAILABLE:
-                benefits = trace("lookup_benefits_status",
-                                {"employee_id": employee_id},
-                                tool_lookup_benefits_status(employee_id))
-                policy = trace("search_policy_documents",
-                              {"query": "health insurance plans HSA FSA enrollment benefits", "top_k": 3},
-                              tool_search_policy_documents("health insurance plans HSA FSA enrollment", 3))
-
-            if RAG_AVAILABLE:
-                try:
-                    rag_result = rag_chat("health insurance benefits enrollment HSA FSA")
-                    for doc in rag_result.get("documents", []):
-                        meta = doc.metadata or {}
-                        citations.append({
-                            "title": meta.get("source_file", "Benefits and Insurance Policy"),
-                            "section": f"Page {meta.get('page', 0) + 1}",
-                            "snippet": doc.page_content[:300],
-                            "policy_id": "HR-BI-002",
-                        })
-                except Exception:
-                    pass
-
-            if not citations:
-                citations.append({
-                    "title": "Benefits and Insurance Policy",
-                    "section": "Section 2 — Health Insurance",
-                    "snippet": "Three plans available: Bronze ($0/month), Silver ($85/month), Gold ($210/month). Open enrollment every November.",
-                    "policy_id": "HR-BI-002",
-                })
-
-            plan = emp.get("benefits_plan", "Unknown")
-            hsa = emp.get("hsa_eligible", False)
-            answer = (
-                f"Hi {name}! You're currently enrolled in the **{plan}** plan.\n\n"
-                f"**Daisy Health's three health plans:**\n"
-                f"| Plan | Premium | Deductible |\n"
-                f"|---|---|---|\n"
-                f"| Bronze | $0/month | $2,500 |\n"
-                f"| Silver | $85/month | $1,000 |\n"
-                f"| Gold | $210/month | $250 |\n\n"
-                + (f"**HSA:** You're eligible — Daisy Health contributes $500/year. 2025 limit: $4,150.\n\n" if hsa
-                   else f"**FSA:** You qualify for a Healthcare FSA (up to $3,050 in 2025).\n\n") +
-                f"**Open enrollment:** Every November for January 1 coverage.\n\n"
-                f"*Source: Benefits and Insurance Policy (HR-BI-002)*"
-            )
-
-        # HR case / harassment / conduct
-        elif any(w in q for w in ["harass", "concern", "report", "conduct", "case", "triage", "complaint", "workplace issue"]):
-            if MCP_AVAILABLE:
-                policy = trace("search_policy_documents",
-                              {"query": "harassment reporting workplace conduct HR case escalation", "top_k": 3},
-                              tool_search_policy_documents("harassment reporting workplace conduct HR case", 3))
-                ticket = trace("create_mock_hr_ticket",
-                              {"employee_id": employee_id, "ticket_type": "HR Case",
-                               "subject": "Workplace Concern Report",
-                               "description": f"Employee reported: {question[:200]}",
-                               "priority": "High"},
-                              tool_create_mock_hr_ticket(employee_id, "HR Case",
-                                  "Workplace Concern Report",
-                                  f"Employee reported: {question[:200]}", "High"))
-                email_draft = trace("draft_hr_email",
-                                   {"employee_id": employee_id, "email_type": "hr_escalation",
-                                    "context": question[:200]},
-                                   tool_draft_hr_email(employee_id, "hr_escalation", question[:200]))
-
-            if RAG_AVAILABLE:
-                try:
-                    rag_result = rag_chat("workplace harassment reporting conduct policy")
-                    for doc in rag_result.get("documents", []):
-                        meta = doc.metadata or {}
-                        citations.append({
-                            "title": meta.get("source_file", "Workplace Conduct Policy"),
-                            "section": f"Page {meta.get('page', 0) + 1}",
-                            "snippet": doc.page_content[:300],
-                            "policy_id": "HR-WC-006",
-                        })
-                except Exception:
-                    pass
-
-            if not citations:
-                citations.append({
-                    "title": "Workplace Conduct Policy",
-                    "section": "Section 8 — How to Report a Concern",
-                    "snippet": "Employees may report concerns to People Operations, their manager, or anonymously via the Ethics Hotline at 1-800-DAISY-ETH.",
-                    "policy_id": "HR-WC-006",
-                })
-                citations.append({
-                    "title": "Workplace Conduct Policy",
-                    "section": "Section 10 — Non-Retaliation",
-                    "snippet": "Daisy Health strictly prohibits retaliation against any employee who reports a concern in good faith.",
-                    "policy_id": "HR-WC-006",
-                })
-
-            # Extract ticket ID from trace
-            ticket_id = "TKT-XXXX"
-            for t in tool_trace:
-                if t["tool"] == "create_mock_hr_ticket" and "TKT-" in t["result"]:
-                    import re as re_module
-                    match = re_module.search(r'TKT-\d+', t["result"])
-                    if match:
-                        ticket_id = match.group()
-
-            answer = (
-                f"Hi {name}, I'm sorry you're dealing with this. Your concern is being taken seriously.\n\n"
-                f"**I've created an HR case for you:**\n"
-                f"- Ticket ID: **{ticket_id}**\n"
-                f"- Priority: High\n"
-                f"- Assigned to: People Operations\n\n"
-                f"**Your reporting options:**\n"
-                f"- **People Operations:** people@daisyhealth.com\n"
-                f"- **Anonymous Ethics Hotline:** 1-800-DAISY-ETH\n"
-                f"- **Online:** ethics.daisyhealth.com\n\n"
-                f"**Important:** Daisy Health strictly prohibits retaliation against anyone who reports a concern in good faith.\n\n"
-                f"A draft escalation email has been prepared for you — ask me to show it and I'll display it.\n\n"
-                f"*Source: Workplace Conduct Policy (HR-WC-006)*"
-            )
-
-        # Fallback
-        else:
-            if MCP_AVAILABLE:
-                policy = trace("search_policy_documents",
-                              {"query": question, "top_k": 3},
-                              tool_search_policy_documents(question, 3))
-
-            if RAG_AVAILABLE:
-                try:
-                    rag_result = rag_chat(question)
-                    rag_answer = rag_result.get("answer", "")
-                    for doc in rag_result.get("documents", []):
-                        meta = doc.metadata or {}
-                        citations.append({
-                            "title": meta.get("source_file", "HR Policy Document"),
-                            "section": f"Page {meta.get('page', 0) + 1}",
-                            "snippet": doc.page_content[:300],
-                            "policy_id": "",
-                        })
-                    if rag_answer:
-                        answer = rag_answer
-                    else:
-                        raise Exception("No RAG answer")
-                except Exception:
-                    answer = (
-                        f"Hi {name}! I searched Daisy Health's policy documents but didn't find "
-                        f"a strong match for your question.\n\n"
-                        f"Please reach out to:\n"
-                        f"- **People Operations:** people@daisyhealth.com\n"
-                        f"- **IT Support:** it@daisyhealth.com\n\n"
-                        f"I can help with: PTO, remote work, benefits, expenses, onboarding, "
-                        f"equipment, holidays, licensure, conduct, or performance."
-                    )
-            else:
-                answer = (
-                    f"Hi {name}! I searched Daisy Health's policy documents but didn't find "
-                    f"a strong match for your question.\n\n"
-                    f"Please reach out to:\n"
-                    f"- **People Operations:** people@daisyhealth.com\n"
-                    f"- **IT Support:** it@daisyhealth.com"
-                )
-
+        result = run_agent_sync(question, employee_id)
     except Exception as e:
-        answer = (
-            f"I encountered an error processing your request. "
-            f"Please try again or contact people@daisyhealth.com\n\nError: {str(e)}"
-        )
-        tool_trace.append({
-            "tool": "Agent", "args": {}, "result": str(e)[:200],
-            "timestamp": datetime.now().strftime("%H:%M:%S"), "status": "✗ Error",
-        })
+        return {
+            "answer": (
+                "I encountered an error processing your request. "
+                f"Please try again or contact people@daisyhealth.com\n\nError: {e}"
+            ),
+            "tool_trace": [{
+                "tool": "Agent", "args": {}, "result": str(e)[:200],
+                "timestamp": datetime.now().strftime("%H:%M:%S"), "status": "✗ Error",
+            }],
+            "citations": [],
+        }
 
-    return {"answer": answer, "tool_trace": tool_trace, "citations": citations}
+    return {
+        "answer": result.get("answer", ""),
+        "tool_trace": result.get("tool_trace", []),
+        "citations": result.get("citations", []),
+    }
 
 # ============================================================
 # SIDEBAR

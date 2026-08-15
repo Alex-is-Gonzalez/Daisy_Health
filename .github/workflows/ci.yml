@@ -154,29 +154,24 @@ jobs:
           kill $SERVER_PID 2>/dev/null
           echo "API smoke test passed."
 
-      # ── Step 9: MCP server import test ──
-      # Verifies the MCP server file imports correctly
-      # and all 7 tool functions are defined
+      # ── Step 9: MCP tool discovery test ──
+      # Starts the real MCP server over stdio and calls list_tools()
+      # via the MCP ClientSession — verifies all 7 tools are actually
+      # registered and discoverable through the protocol, not just
+      # present as text in the source file.
       - name: MCP tool discovery test
         run: |
           python -c "
-          import ast
+          import asyncio
           import sys
+          from pathlib import Path
 
-          # Parse the MCP server file and check all 7 tools are defined
-          with open('mcp/mcp_server.py', 'r') as f:
-              source = f.read()
+          sys.path.insert(0, str(Path('.').resolve()))
 
-          # Check syntax is valid
-          try:
-              ast.parse(source)
-              print('✓ mcp_server.py syntax valid')
-          except SyntaxError as e:
-              print(f'✗ Syntax error: {e}')
-              sys.exit(1)
+          from mcp import ClientSession
+          from mcp.client.stdio import stdio_client, StdioServerParameters
 
-          # Check all 7 required tool functions are defined
-          required_tools = [
+          REQUIRED_TOOLS = [
               'lookup_employee_profile',
               'check_pto_balance',
               'lookup_benefits_status',
@@ -186,14 +181,30 @@ jobs:
               'draft_hr_email',
           ]
 
-          for tool in required_tools:
-              if tool in source:
-                  print(f'✓ Tool defined: {tool}')
-              else:
-                  print(f'✗ Tool MISSING: {tool}')
+          async def test_discovery():
+              params = StdioServerParameters(
+                  command=sys.executable,
+                  args=['mcp/mcp_server.py'],
+              )
+              async with stdio_client(params) as (read, write):
+                  async with ClientSession(read, write) as session:
+                      await session.initialize()
+                      resp = await session.list_tools()
+                      discovered = [t.name for t in resp.tools]
+
+              print(f'MCP server started — {len(discovered)} tools discovered: {discovered}')
+
+              missing = [t for t in REQUIRED_TOOLS if t not in discovered]
+              if missing:
+                  print(f'✗ Missing tools: {missing}')
                   sys.exit(1)
 
-          print(f'MCP tool discovery test passed — all 7 tools verified.')
+              for name in REQUIRED_TOOLS:
+                  print(f'✓ {name}')
+
+              print('MCP tool discovery test passed — all 7 tools verified via live protocol call.')
+
+          asyncio.run(test_discovery())
           "
 
       # ── Step 10: MCP tool logic test ──
