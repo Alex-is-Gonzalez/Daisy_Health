@@ -1,71 +1,63 @@
-# Daisy Health — Medical HR RAG Assistant
+# Daisy Health — Agentic HR RAG Assistant
 
-Daisy Health is a Retrieval-Augmented Generation (RAG) application designed to answer employee HR questions using a controlled collection of medical-organization HR documents.
+Daisy Health is an agentic AI system that helps employees at a hypothetical virtual-care company complete HR policy and operations tasks. It combines **Retrieval-Augmented Generation (RAG)** over a corpus of internal HR policy documents with an **agentic orchestration layer** that calls tools exposed by a **Model Context Protocol (MCP) server** to look up mock employee/PTO/benefits data, check policy compliance, and take mock actions (creating HR tickets, drafting emails).
 
-The system uses **LangChain**, **Chroma Cloud**, **Hugging Face embeddings**, and **OpenRouter** to retrieve relevant HR policy information and generate grounded responses.
-
-The project demonstrates how document ingestion, vector search, retrieval, and an LLM can be combined while restricting responses to an organization's internal documentation.
+The system uses **LangChain**, **Chroma Cloud**, **Hugging Face (Sentence Transformers) embeddings**, the official **MCP Python SDK**, and **OpenRouter** (swappable to Anthropic) to produce grounded, cited, tool-driven responses.
 
 ---
 
 ## Features
 
-Daisy Health acts as an HR assistant for a medical organization.
+Daisy is an HR assistant for **Daisy Health**, a hypothetical virtual primary-care company. It can:
 
-It can answer questions about:
-
-- PTO
-- Benefits
-- FMLA
-- HIPAA training
-- Employee handbooks
-- Compliance
-- Credentialing
-- Scheduling
-- Leave policies
-- Workplace policies
-- HR procedures
+- Answer HR policy questions grounded in retrieved documentation (PTO, benefits, remote work, expenses, HIPAA/data security, workplace conduct, onboarding, equipment, licensure/credentialing, holidays, performance & compensation)
+- Look up an employee's profile, PTO balance, and benefits status from mock structured data
+- Check whether a requested action (remote work, PTO, expense, benefits) is compliant with policy
+- Create mock HR tickets and draft (unsent) HR emails as part of multi-step workflows
+- Produce a visible tool-call trace and policy citations alongside every answer
 
 The assistant is instructed to:
 
-- Answer questions using only retrieved HR documentation
-- Avoid inventing company policies
-- Avoid using outside knowledge
-- Identify the source document when possible
-- Tell the employee when the available documentation is insufficient
-
-If the system cannot find enough information to answer a question, it responds:
-
-> "I don't know based on the available HR documentation. Please e-mail HR at people@daisyhealth.com"
+- Always look up the employee profile before answering personalized questions
+- Ground every policy statement in a `search_policy_documents` call and cite the source
+- Never invent policy or use outside knowledge
+- Require the two demo workflows (expense compliance, HR case triage) to complete multi-tool chains rather than a single lookup
+- Treat ticket creation / email drafting as **mock, reversible actions** — nothing is actually sent or submitted
+- Direct the employee to `people@daisyhealth.com` when documentation is insufficient
 
 ---
 
 # Tech Stack
 
-| Technology                               | Role                                                                         |
-| ---------------------------------------- | ---------------------------------------------------------------------------- |
-| **Python**                               | Application programming language                                             |
-| **LangChain**                            | Orchestrates document processing, retrieval, prompting, and the RAG workflow |
-| **Hugging Face / Sentence Transformers** | Generates embeddings locally for HR documents and employee questions         |
-| **Chroma Cloud**                         | Stores document embeddings and performs similarity search                    |
-| **OpenRouter**                           | Provides the LLM API endpoint                                                |
-| **Gemma**                                | Generates the final HR response from retrieved context                       |
-| **PyPDFLoader**                          | Extracts text from HR PDF documents                                          |
-| **RecursiveCharacterTextSplitter**       | Splits documents into smaller chunks for retrieval                           |
-| **python-dotenv**                        | Loads environment variables from `.env`                                      |
+| Technology                               | Role                                                                              |
+| ----------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Python**                                | Application language                                                              |
+| **Streamlit**                             | Chat UI (`daisy_health_app.py`)                                                   |
+| **FastAPI**                               | `/health`, `/chat`, `/demo` API endpoints for the grader (`api.py`)               |
+| **MCP Python SDK** (`mcp[cli]`)           | MCP server (`mcp/mcp_server.py`) exposing HR tools over stdio                     |
+| **agent.py**                              | Agent orchestrator — MCP client + tool-calling loop against the LLM               |
+| **LangChain**                             | Orchestrates document loading, chunking, retrieval, and the RAG chain             |
+| **Hugging Face / Sentence Transformers**  | Generates embeddings locally (`all-MiniLM-L6-v2`) for HR documents and questions  |
+| **Chroma Cloud**                          | Stores document embeddings and performs similarity search                        |
+| **OpenRouter** (default) / **Anthropic**  | LLM provider for the agent loop — toggled with `USE_ANTHROPIC` in `agent.py`      |
+| **Gemma** (`openai/gpt-oss-20b:free` / `google/gemma-3-27b-it:free`) | Default model used through OpenRouter for tool-calling and answers |
+| **PyPDFLoader**                           | Extracts text from HR PDF handbooks                                              |
+| **RecursiveCharacterTextSplitter**        | Splits documents into overlapping chunks for retrieval                           |
+| **python-dotenv**                         | Loads environment variables from `.env`                                          |
+| **mock_data/*.json**                      | Synthetic employee, PTO, benefits, and HR ticket records                         |
 
 ---
 
-# System Design
+# System Architecture
 
-Daisy Health is divided into two major pipelines:
+Daisy Health has four cooperating layers:
 
-1. **Document Ingestion Pipeline**
-2. **Query / RAG Pipeline**
+1. **Web layer** — Streamlit chat UI + FastAPI `/health`, `/chat`, `/demo` endpoints
+2. **Agent orchestrator** (`agent.py`) — an MCP client that runs a tool-calling loop against the LLM (OpenRouter by default, Anthropic optional)
+3. **MCP server** (`mcp/mcp_server.py`) — exposes 7 tools over stdio, backed by `mcp/mcp_tools.py`
+4. **Data layer** — the RAG index (Chroma Cloud, built by `ingest.py` from `data/handbooks/*.pdf`) and mock structured data (`mock_data/*.json`)
 
-The ingestion pipeline prepares company documents for retrieval.
-
-The query pipeline retrieves relevant information from Chroma Cloud and provides that information to the LLM as context.
+The agent never calls policy or employee logic directly — every tool invocation goes through the MCP client/server boundary using `session.call_tool(...)`. When the `search_policy_documents` tool is invoked, the agent also enriches the result with citation metadata (source file, page/section, snippet) pulled from the RAG retriever for display in the UI.
 
 ```mermaid
 ---
@@ -82,38 +74,64 @@ config:
     fontSize: "12px"
 ---
 flowchart TB
-    A["DAISY HEALTH<br/>MEDICAL HR RAG"] --> B["INGESTION PIPELINE"] & C["QUERY PIPELINE"]
+    U["Employee"] --> UI["Streamlit UI<br/>daisy_health_app.py"]
+    U -.-> API["FastAPI<br/>api.py<br/>/health /chat /demo"]
 
-    B --> B1["ingest.py"]
-    B1 --> B2["PDF Files"]
-    B2 --> B3["PyPDFLoader"]
-    B3 --> B4["Text Splitter"]
-    B4 --> B5["HuggingFace<br/>Embeddings"]
+    UI --> AG["Agent Orchestrator<br/>agent.py<br/>MCP client + tool-call loop"]
+    API --> AG
 
-    C --> C1["HR_IT.py"]
-    C1 --> C2["User Question"]
-    C2 --> C3["HuggingFace<br/>Embeddings"]
-    C3 --> C4["Chroma Cloud<br/>HR_IT DB"]
+    AG <--> LLM["LLM Provider<br/>OpenRouter (Gemma) or Anthropic"]
+    AG <-- "stdio (MCP protocol)" --> MCP["MCP Server<br/>mcp/mcp_server.py<br/>7 tools via @server.tool()"]
 
-    B5 --> D["Vector Database<br/>Chroma Cloud"]
-    C4 --> D
-    D --> E["Retrieved<br/>Context Chunks"]
-    E --> F["LangChain RAG<br/>Pipeline"]
-    F --> G["OpenRouter<br/>Gemma LLM"]
-    G --> H["HR Answer"]
+    MCP --> TOOLS["mcp/mcp_tools.py<br/>tool implementations"]
+    TOOLS --> MOCK[("mock_data/*.json<br/>employees, PTO,<br/>benefits, tickets")]
+    TOOLS --> RAG["rag_backend.py<br/>LangChain retrieval chain"]
 
-    class A title
-    class B,B1,B2,B3,B4,B5 ingestion
-    class C,C1,C2,C3,C4 query
-    class D,E,F,G processing
-    class H output
+    RAG --> VDB[("Chroma Cloud<br/>medical_hr_documents_hf")]
+    ING["ingest.py<br/>PyPDFLoader + splitter"] --> VDB
+    PDF[("data/handbooks/*.pdf<br/>12 HR policy documents")] --> ING
 
-    classDef title fill:#172554,stroke:#818cf8,color:#f8fafc,stroke-width:3px,font-weight:bold,font-size:18px
-    classDef ingestion fill:#1c1917,stroke:#fb923c,color:#fed7aa,stroke-width:3px,font-weight:bold
-    classDef query fill:#082f49,stroke:#38bdf8,color:#bae6fd,stroke-width:3px,font-weight:bold
-    classDef processing fill:#2e1065,stroke:#a78bfa,color:#ddd6fe,stroke-width:3px,font-weight:bold
+    AG --> OUT(["Answer + Citations<br/>+ Tool-call Trace"])
+
+    class U actor
+    class UI,API surface
+    class AG orchestrator
+    class LLM llm
+    class MCP,TOOLS mcp
+    class MOCK,VDB,PDF data
+    class ING,RAG pipeline
+    class OUT output
+
+    classDef actor fill:#172554,stroke:#818cf8,color:#f8fafc,stroke-width:3px,font-weight:bold
+    classDef surface fill:#082f49,stroke:#38bdf8,color:#bae6fd,stroke-width:3px,font-weight:bold
+    classDef orchestrator fill:#431407,stroke:#fb923c,color:#fed7aa,stroke-width:3px,font-weight:bold
+    classDef llm fill:#2e1065,stroke:#a78bfa,color:#ddd6fe,stroke-width:3px,font-weight:bold
+    classDef mcp fill:#1c1917,stroke:#fb923c,color:#fed7aa,stroke-width:3px,font-weight:bold
+    classDef data fill:#0c4a6e,stroke:#38bdf8,color:#bae6fd,stroke-width:3px,font-weight:bold
+    classDef pipeline fill:#1e293b,stroke:#64748b,color:#e2e8f0,stroke-width:3px,font-weight:bold
     classDef output fill:#052e16,stroke:#4ade80,color:#bbf7d0,stroke-width:3px,font-weight:bold
 ```
+
+## MCP Tools
+
+The MCP server (`mcp/mcp_server.py`) exposes these tools over stdio; the agent discovers them via `session.list_tools()` and calls them via `session.call_tool()`:
+
+| Tool | Uses |
+| --- | --- |
+| `lookup_employee_profile` | mock data (`mock_data/employees.json`) |
+| `check_pto_balance` | mock data (`mock_data/pto_balances.json`) |
+| `lookup_benefits_status` | mock data (`mock_data/benefits.json`) |
+| `search_policy_documents` | RAG index (Chroma Cloud via `rag_backend.py`) |
+| `check_policy_compliance` | mock data + rule logic (remote work, PTO, expense, benefits) |
+| `create_mock_hr_ticket` | mock action — writes to `mock_data/hr_tickets.json` |
+| `draft_hr_email` | mock action — returns an unsent draft email |
+
+## Demo Workflows
+
+1. **Expense compliance** — `lookup_employee_profile` → `search_policy_documents` → `check_policy_compliance`
+2. **HR case triage** — `lookup_employee_profile` → `search_policy_documents` → `create_mock_hr_ticket` → `draft_hr_email`
+
+Both are reproducible via `GET /demo` (returns sample requests) or `POST /chat`.
 
 ---
 
@@ -440,12 +458,30 @@ __pycache__/
 ```text
 Daisy_Health/
 │
-├── Daisy_Health.py
-├── ingest.py
+├── daisy_health_app.py     # Streamlit chat UI
+├── api.py                  # FastAPI /health, /chat, /demo endpoints
+├── agent.py                # Agent orchestrator (MCP client + tool-calling loop)
+├── rag_backend.py           # LangChain RAG chain (Chroma Cloud retriever)
+├── ingest.py                # Document ingestion pipeline
+├── health_check.py
 ├── requirements.txt
 ├── README.md
 ├── .env
 ├── .gitignore
+│
+├── mcp/
+│   ├── mcp_server.py        # MCP server — exposes 7 tools over stdio
+│   └── mcp_tools.py          # Tool implementations shared by server + Streamlit
+│
+├── mock_data/
+│   ├── employees.json
+│   ├── pto_balances.json
+│   ├── benefits.json
+│   └── hr_tickets.json
+│
+├── evaluation/
+│   ├── evaluation_questions.py
+│   └── run_eval.py
 │
 └── data/
     └── handbooks/
@@ -467,19 +503,13 @@ Daisy_Health/
 
 # Running the Application
 
-There are two separate processes:
+There are three processes. The MCP server is launched automatically by `agent.py` as a stdio subprocess — you do not start it separately.
 
 ```text
-ingest.py
-    ↓
-Build/update the Chroma knowledge base
-
-HR_IT.py
-    ↓
-Run the HR assistant
+ingest.py                          → build/update the Chroma knowledge base (run once, or after doc changes)
+streamlit run daisy_health_app.py  → chat UI (spawns the MCP server + agent per request)
+uvicorn api:app --port 8000        → /health, /chat, /demo for the grader (optional, separate terminal)
 ```
-
-They do not need to be run at the same time.
 
 ---
 
@@ -584,30 +614,28 @@ collection that may contain embeddings generated with the previous OpenAI embedd
 
 # Step 2 — Start the HR Assistant
 
-After the documents have been ingested, run:
+After the documents have been ingested, run the Streamlit UI:
 
 ```bash
-python3 HR_IT.py
+streamlit run daisy_health_app.py
 ```
 
-You should see:
+Select an employee (e.g. `EMP-001`) in the sidebar and ask a question in the chat input. Each question runs the full agentic pipeline in `agent.py`: it spawns the MCP server as a stdio subprocess, discovers its tools, and lets the LLM decide which tools to call before producing a final, cited answer.
 
-```text
-Daisy Health HR Assistant
---------------------
-Using OpenRouter + Chroma Cloud
-Embeddings: Hugging Face
+Optionally, in a second terminal, start the API for the grader:
 
-Chroma documents: XXX
+```bash
+uvicorn api:app --port 8000 --reload
 ```
 
-You can then ask questions:
-
-```text
-Question: How can I use my PTO?
+```bash
+curl http://localhost:8000/health
+curl -X POST http://localhost:8000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"question": "Can I expense a home office chair?", "employee_id": "EMP-002"}'
 ```
 
-The question is embedded, searched against Chroma Cloud, and the most relevant HR policy chunks are provided to Gemma.
+The question is passed to the agent orchestrator, which calls MCP tools (employee lookup, PTO/benefits data, policy search, compliance checks) as needed and returns an answer grounded in the retrieved HR policy chunks, along with a tool-call trace and citations.
 
 ---
 
