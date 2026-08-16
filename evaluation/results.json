@@ -1,7 +1,7 @@
 {
   "summary": {
     "total_questions": 25,
-    "groundedness_rate": 0.48,
+    "groundedness_rate": 0.96,
     "citation_accuracy": 0.94,
     "tool_selection_accuracy_avg": 0.95,
     "workflow_completion_rate": 1.0,
@@ -9,10 +9,10 @@
     "out_of_scope_decline_accuracy": 1.0,
     "action_safety_pass_rate": 1.0,
     "escalation_accuracy": 1.0,
-    "latency_p50_s": 4.9,
-    "latency_p95_s": 6.32,
+    "latency_p50_s": 5.11,
+    "latency_p95_s": 6.35,
     "latency_min_s": 0.0,
-    "latency_max_s": 6.99
+    "latency_max_s": 6.45
   },
   "ablation_k3_vs_k5": [
     {
@@ -46,7 +46,7 @@
       "question": "How many days of PTO do individual contributors receive in their first two years at Daisy Health?",
       "gold_answer": "15 days (120 hours) per year, accruing at 4.62 hours per pay period.",
       "employee_id": "EMP-002",
-      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 3:** PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 1:** PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 3:** PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 1:** PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -54,7 +54,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:35:30",
+          "timestamp": "14:00:32",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -64,7 +64,7 @@
             "employee_id": "EMP-002"
           },
           "result": "PTO Balance \u2014 Morgan Chen (EMP-002)\nAvailable: 18.0 days\nUsed this year: 2.0 days\nTotal accrued: 20.0 days\nCarryover: 0.0 days\nLast updated: 2025-08-01",
-          "timestamp": "13:35:30",
+          "timestamp": "14:00:32",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -74,38 +74,38 @@
             "query": "How many days of PTO do individual contributors receive in their first two years at Daisy Health?"
           },
           "result": "Policy search: 'How many days of PTO do individual contributors receive in their first two years at Daisy Health?'\n========================================\n\n[1] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 6\n    Source: pto_and_leave_policy.pdf\n    Excerpt: Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...\n\n[2] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 3\n    Source: pto_and_leave_policy.pdf\n    Excerpt: PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee...\n\n[3] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 1\n    Source: pto_and_leave_policy.pdf\n    Excerpt: PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,...",
-          "timestamp": "13:35:30",
+          "timestamp": "14:00:32",
           "status": "\u2713 Success",
-          "duration_seconds": 3.19
+          "duration_seconds": 3.36
         }
       ],
       "citations": [
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 6",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent..."
+          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 3",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee..."
+          "snippet": "PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 1",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,..."
+          "snippet": "PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,"
         }
       ],
       "scores": {
         "id": "Q01",
         "type": "simple_policy",
-        "elapsed_s": 5.52,
+        "elapsed_s": 5.65,
         "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
@@ -118,7 +118,7 @@
       "question": "What is the home office stipend amount for full-time Daisy Health employees?",
       "gold_answer": "$500 one-time stipend for full-time remote employees, to be claimed within 60 days of hire date.",
       "employee_id": "EMP-002",
-      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Equipment And Technology\n Policy ID: equipment_and_technology.pdf (equipment_and_technology.pdf) \u2014 Page 4:** 8. IT Support Daisy Health IT support is available Monday through Friday, 8 AM \u2013 8 PM ET. \u007f Help Portal: it.daisyhealth.com \u007f Email: it@daisyhealth.com \u007f Urgent issues (clinical downtime): 1-800-DAISY-IT (24/7 for clinical staff) Submit all non-urgent requests through the Help Portal to ensure prope...\n- **Expense Reimbursement\n Policy ID: expense_reimbursement.pdf (expense_reimbursement.pdf) \u2014 Page 2:** service \u007f Reimbursement is processed monthly with payroll 4. Equipment Daisy Health provides all employees with a company-issued laptop. If your role requires additional equipment beyond the standard laptop (e.g., a second monitor for clinical documentation), submit a request to IT through the IT He...\n- **Expense Reimbursement\n Policy ID: expense_reimbursement.pdf (expense_reimbursement.pdf) \u2014 Page 1:** \u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Equipment And Technology (equipment_and_technology.pdf) \u2014 Page 4:** 8. IT Support Daisy Health IT support is available Monday through Friday, 8 AM \u2013 8 PM ET. \u007f Help Portal: it.daisyhealth.com \u007f Email: it@daisyhealth.com \u007f Urgent issues (clinical downtime): 1-800-DAISY-IT (24/7 for clinical staff) Submit all non-urgent requests through the Help Portal to ensure prope\n- **Expense Reimbursement (HR-EX-004) \u2014 Page 2:** service \u007f Reimbursement is processed monthly with payroll 4. Equipment Daisy Health provides all employees with a company-issued laptop. If your role requires additional equipment beyond the standard laptop (e.g., a second monitor for clinical documentation), submit a request to IT through the IT He\n- **Expense Reimbursement (HR-EX-004) \u2014 Page 1:** \u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -126,7 +126,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:35:39",
+          "timestamp": "14:00:40",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -136,9 +136,9 @@
             "query": "What is the home office stipend amount for full-time Daisy Health employees?"
           },
           "result": "Policy search: 'What is the home office stipend amount for full-time Daisy Health employees?'\n========================================\n\n[1] Equipment And Technology\n    Policy ID: equipment_and_technology.pdf\n    Section: Page 4\n    Source: equipment_and_technology.pdf\n    Excerpt: 8. IT Support Daisy Health IT support is available Monday through Friday, 8 AM \u2013 8 PM ET. \u007f Help Portal: it.daisyhealth.com \u007f Email: it@daisyhealth.com \u007f Urgent issues (clinical downtime): 1-800-DAISY-IT (24/7 for clinical staff) Submit all non-urgent requests through the Help Portal to ensure prope...\n\n[2] Expense Reimbursement\n    Policy ID: expense_reimbursement.pdf\n    Section: Page 2\n    Source: expense_reimbursement.pdf\n    Excerpt: service \u007f Reimbursement is processed monthly with payroll 4. Equipment Daisy Health provides all employees with a company-issued laptop. If your role requires additional equipment beyond the standard laptop (e.g., a second monitor for clinical documentation), submit a request to IT through the IT He...\n\n[3] Expense Reimbursement\n    Policy ID: expense_reimbursement.pdf\n    Section: Page 1\n    Source: expense_reimbursement.pdf\n    Excerpt: \u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex...",
-          "timestamp": "13:35:39",
+          "timestamp": "14:00:40",
           "status": "\u2713 Success",
-          "duration_seconds": 2.68
+          "duration_seconds": 3.08
         },
         {
           "tool": "check_policy_compliance",
@@ -148,39 +148,39 @@
             "policy_area": "remote_work"
           },
           "result": "Remote Work Facts - Morgan Chen\nCurrent state: Washington\nEmployee type: Non-Clinical\nScenario: What is the home office stipend amount for full-time Daisy Health employees?\n\nUse search_policy_documents for the applicable policy decision.",
-          "timestamp": "13:35:42",
+          "timestamp": "14:00:43",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         }
       ],
       "citations": [
         {
-          "title": "Equipment And Technology\n Policy ID: equipment_and_technology.pdf",
+          "title": "Equipment And Technology",
           "section": "Page 4",
           "policy_id": "equipment_and_technology.pdf",
           "source": "equipment_and_technology.pdf",
-          "snippet": "8. IT Support Daisy Health IT support is available Monday through Friday, 8 AM \u2013 8 PM ET. \u007f Help Portal: it.daisyhealth.com \u007f Email: it@daisyhealth.com \u007f Urgent issues (clinical downtime): 1-800-DAISY-IT (24/7 for clinical staff) Submit all non-urgent requests through the Help Portal to ensure prope..."
+          "snippet": "8. IT Support Daisy Health IT support is available Monday through Friday, 8 AM \u2013 8 PM ET. \u007f Help Portal: it.daisyhealth.com \u007f Email: it@daisyhealth.com \u007f Urgent issues (clinical downtime): 1-800-DAISY-IT (24/7 for clinical staff) Submit all non-urgent requests through the Help Portal to ensure prope"
         },
         {
-          "title": "Expense Reimbursement\n Policy ID: expense_reimbursement.pdf",
+          "title": "Expense Reimbursement",
           "section": "Page 2",
-          "policy_id": "expense_reimbursement.pdf",
+          "policy_id": "HR-EX-004",
           "source": "expense_reimbursement.pdf",
-          "snippet": "service \u007f Reimbursement is processed monthly with payroll 4. Equipment Daisy Health provides all employees with a company-issued laptop. If your role requires additional equipment beyond the standard laptop (e.g., a second monitor for clinical documentation), submit a request to IT through the IT He..."
+          "snippet": "service \u007f Reimbursement is processed monthly with payroll 4. Equipment Daisy Health provides all employees with a company-issued laptop. If your role requires additional equipment beyond the standard laptop (e.g., a second monitor for clinical documentation), submit a request to IT through the IT He"
         },
         {
-          "title": "Expense Reimbursement\n Policy ID: expense_reimbursement.pdf",
+          "title": "Expense Reimbursement",
           "section": "Page 1",
-          "policy_id": "expense_reimbursement.pdf",
+          "policy_id": "HR-EX-004",
           "source": "expense_reimbursement.pdf",
-          "snippet": "\u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex..."
+          "snippet": "\u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex"
         }
       ],
       "scores": {
         "id": "Q02",
         "type": "simple_policy",
-        "elapsed_s": 4.53,
-        "grounded": false,
+        "elapsed_s": 5.27,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -192,7 +192,7 @@
       "question": "When is Daisy Health's open enrollment period for benefits?",
       "gold_answer": "Open enrollment occurs every November for coverage beginning January 1 of the following year.",
       "employee_id": "EMP-002",
-      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 1:** Benefits and Health Insurance Policy Daisy Health Policy ID: HR-BI-002 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health is committed to supporting the health and financial wellbeing of our employees and their families. This policy outlines the...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 2:** Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health ...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 1:** Benefits and Health Insurance Policy Daisy Health Policy ID: HR-BI-002 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health is committed to supporting the health and financial wellbeing of our employees and their families. This policy outlines the\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 2:** Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -200,7 +200,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:35:46",
+          "timestamp": "14:00:49",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -210,7 +210,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Benefits \u2014 Morgan Chen (EMP-002)\nHealth Plan: Daisy Gold\nHSA: Not eligible (not on Bronze plan)\nFSA: Not enrolled\nDental: Yes | Vision: Yes | Life: Yes\nSTD: Eligible | LTD: Eligible\n401k: Yes (4.0% match)\nEAP: Yes",
-          "timestamp": "13:35:46",
+          "timestamp": "14:00:49",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -220,38 +220,38 @@
             "query": "When is Daisy Health's open enrollment period for benefits?"
           },
           "result": "Policy search: 'When is Daisy Health's open enrollment period for benefits?'\n========================================\n\n[1] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 1\n    Source: benefits_and_insurance.pdf\n    Excerpt: Benefits and Health Insurance Policy Daisy Health Policy ID: HR-BI-002 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health is committed to supporting the health and financial wellbeing of our employees and their families. This policy outlines the...\n\n[2] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 2\n    Source: benefits_and_insurance.pdf\n    Excerpt: Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health ...\n\n[3] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 4\n    Source: benefits_and_insurance.pdf\n    Excerpt: Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...",
-          "timestamp": "13:35:46",
+          "timestamp": "14:00:49",
           "status": "\u2713 Success",
-          "duration_seconds": 2.81
+          "duration_seconds": 2.67
         }
       ],
       "citations": [
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 1",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Benefits and Health Insurance Policy Daisy Health Policy ID: HR-BI-002 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health is committed to supporting the health and financial wellbeing of our employees and their families. This policy outlines the..."
+          "snippet": "Benefits and Health Insurance Policy Daisy Health Policy ID: HR-BI-002 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health is committed to supporting the health and financial wellbeing of our employees and their families. This policy outlines the"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 2",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health ..."
+          "snippet": "Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 4",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ..."
+          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f"
         }
       ],
       "scores": {
         "id": "Q03",
         "type": "simple_policy",
-        "elapsed_s": 4.48,
+        "elapsed_s": 5.0,
         "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
@@ -264,7 +264,7 @@
       "question": "How much does Daisy Health match for employee 401k contributions?",
       "gold_answer": "Daisy Health matches 100% of contributions up to 4% of the employee's salary, with a 3-year graded vesting schedule.",
       "employee_id": "EMP-002",
-      "agent_answer": "Daisy Health matches employee 401(k) contributions at a rate of 4.0%.\n\n### Relevant policy\n\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 6:** \u007f What mental health benefits are available to me? \u007f How much does Daisy Health match for my 401(k)?...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 5:** Long-Term Disability (LTD) \u007f Covers 60% of your base salary after STD ends \u007f Maximum benefit period: to age 65 \u007f Fully employer-paid 9. Retirement \u2014 401(k) Plan \u007f Daisy Health offers a 401(k) plan through our retirement provider \u007f Employees are eligible to contribute starting on their first day of e...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 6:** \u007f What mental health benefits are available to me? \u007f How much does Daisy Health match for my 401(k)?\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 5:** Long-Term Disability (LTD) \u007f Covers 60% of your base salary after STD ends \u007f Maximum benefit period: to age 65 \u007f Fully employer-paid 9. Retirement \u2014 401(k) Plan \u007f Daisy Health offers a 401(k) plan through our retirement provider \u007f Employees are eligible to contribute starting on their first day of e",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -272,7 +272,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:35:54",
+          "timestamp": "14:00:57",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -282,7 +282,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Benefits \u2014 Morgan Chen (EMP-002)\nHealth Plan: Daisy Gold\nHSA: Not eligible (not on Bronze plan)\nFSA: Not enrolled\nDental: Yes | Vision: Yes | Life: Yes\nSTD: Eligible | LTD: Eligible\n401k: Yes (4.0% match)\nEAP: Yes",
-          "timestamp": "13:35:54",
+          "timestamp": "14:00:57",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -292,39 +292,39 @@
             "query": "How much does Daisy Health match for employee 401k contributions?"
           },
           "result": "Policy search: 'How much does Daisy Health match for employee 401k contributions?'\n========================================\n\n[1] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 6\n    Source: benefits_and_insurance.pdf\n    Excerpt: \u007f What mental health benefits are available to me? \u007f How much does Daisy Health match for my 401(k)?...\n\n[2] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 4\n    Source: benefits_and_insurance.pdf\n    Excerpt: Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...\n\n[3] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 5\n    Source: benefits_and_insurance.pdf\n    Excerpt: Long-Term Disability (LTD) \u007f Covers 60% of your base salary after STD ends \u007f Maximum benefit period: to age 65 \u007f Fully employer-paid 9. Retirement \u2014 401(k) Plan \u007f Daisy Health offers a 401(k) plan through our retirement provider \u007f Employees are eligible to contribute starting on their first day of e...",
-          "timestamp": "13:35:54",
+          "timestamp": "14:00:57",
           "status": "\u2713 Success",
-          "duration_seconds": 2.51
+          "duration_seconds": 2.95
         }
       ],
       "citations": [
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 6",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "\u007f What mental health benefits are available to me? \u007f How much does Daisy Health match for my 401(k)?..."
+          "snippet": "\u007f What mental health benefits are available to me? \u007f How much does Daisy Health match for my 401(k)?"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 4",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ..."
+          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 5",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Long-Term Disability (LTD) \u007f Covers 60% of your base salary after STD ends \u007f Maximum benefit period: to age 65 \u007f Fully employer-paid 9. Retirement \u2014 401(k) Plan \u007f Daisy Health offers a 401(k) plan through our retirement provider \u007f Employees are eligible to contribute starting on their first day of e..."
+          "snippet": "Long-Term Disability (LTD) \u007f Covers 60% of your base salary after STD ends \u007f Maximum benefit period: to age 65 \u007f Fully employer-paid 9. Retirement \u2014 401(k) Plan \u007f Daisy Health offers a 401(k) plan through our retirement provider \u007f Employees are eligible to contribute starting on their first day of e"
         }
       ],
       "scores": {
         "id": "Q04",
         "type": "simple_policy",
-        "elapsed_s": 4.91,
-        "grounded": false,
+        "elapsed_s": 5.0,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -336,7 +336,7 @@
       "question": "What is the minimum notice required for planned PTO at Daisy Health?",
       "gold_answer": "At least 5 business days notice for planned PTO, submitted through the HR Portal.",
       "employee_id": "EMP-002",
-      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 3:** PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 1:** PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 3:** PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 1:** PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -344,9 +344,9 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:02",
+          "timestamp": "14:01:05",
           "status": "\u2713 Success",
-          "duration_seconds": 0.0
+          "duration_seconds": 0.01
         },
         {
           "tool": "check_pto_balance",
@@ -354,9 +354,9 @@
             "employee_id": "EMP-002"
           },
           "result": "PTO Balance \u2014 Morgan Chen (EMP-002)\nAvailable: 18.0 days\nUsed this year: 2.0 days\nTotal accrued: 20.0 days\nCarryover: 0.0 days\nLast updated: 2025-08-01",
-          "timestamp": "13:36:02",
+          "timestamp": "14:01:05",
           "status": "\u2713 Success",
-          "duration_seconds": 0.0
+          "duration_seconds": 0.01
         },
         {
           "tool": "search_policy_documents",
@@ -364,38 +364,38 @@
             "query": "What is the minimum notice required for planned PTO at Daisy Health?"
           },
           "result": "Policy search: 'What is the minimum notice required for planned PTO at Daisy Health?'\n========================================\n\n[1] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 3\n    Source: pto_and_leave_policy.pdf\n    Excerpt: PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee...\n\n[2] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 1\n    Source: pto_and_leave_policy.pdf\n    Excerpt: PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,...\n\n[3] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 6\n    Source: pto_and_leave_policy.pdf\n    Excerpt: Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...",
-          "timestamp": "13:36:02",
+          "timestamp": "14:01:05",
           "status": "\u2713 Success",
-          "duration_seconds": 2.97
+          "duration_seconds": 2.79
         }
       ],
       "citations": [
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 3",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee..."
+          "snippet": "PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 1",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,..."
+          "snippet": "PTO and Leave Policy Daisy Health Policy ID: HR-PT-001 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: People Operations Purpose Daisy Health believes rest and recovery are essential to doing great work and delivering great care. This policy outlines how paid time off (PTO) works,"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 6",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent..."
+          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent"
         }
       ],
       "scores": {
         "id": "Q05",
         "type": "simple_policy",
-        "elapsed_s": 4.87,
+        "elapsed_s": 5.13,
         "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
@@ -408,7 +408,7 @@
       "question": "How long is Daisy Health's parental leave for primary caregivers?",
       "gold_answer": "16 weeks fully paid leave for primary caregivers. Secondary caregivers receive 6 weeks fully paid.",
       "employee_id": "EMP-002",
-      "agent_answer": "Daisy Health offers 16 weeks of fully paid parental leave for primary caregivers.\n\n### Relevant policy\n\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 4:** \u007f Secondary caregiver: 6 weeks fully paid leave \u007f Parental leave runs concurrently with any applicable FMLA entitlement \u007f Must be taken within 12 months of the child's birth, adoption, or placement \u007f Submit parental leave requests to People Operations at least 30 days before the anticipated start da...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 5:** \u007f Professional Development Stipend: $1,000/year for courses, certifications, or conferences \u007f Parental Leave: 16 weeks fully paid for primary caregivers; 6 weeks for secondary caregivers (see Leave Policy HR-LV-006) \u007f Fertility Benefits: Up to $5,000 lifetime benefit for fertility treatments \u007f Stude...",
+      "agent_answer": "Daisy Health offers 16 weeks of fully paid parental leave for primary caregivers.\n\n### Relevant policy\n\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 4:** \u007f Secondary caregiver: 6 weeks fully paid leave \u007f Parental leave runs concurrently with any applicable FMLA entitlement \u007f Must be taken within 12 months of the child's birth, adoption, or placement \u007f Submit parental leave requests to People Operations at least 30 days before the anticipated start da\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 5:** \u007f Professional Development Stipend: $1,000/year for courses, certifications, or conferences \u007f Parental Leave: 16 weeks fully paid for primary caregivers; 6 weeks for secondary caregivers (see Leave Policy HR-LV-006) \u007f Fertility Benefits: Up to $5,000 lifetime benefit for fertility treatments \u007f Stude",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -416,7 +416,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:10",
+          "timestamp": "14:01:13",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -426,39 +426,39 @@
             "query": "How long is Daisy Health's parental leave for primary caregivers?"
           },
           "result": "Policy search: 'How long is Daisy Health's parental leave for primary caregivers?'\n========================================\n\n[1] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 4\n    Source: pto_and_leave_policy.pdf\n    Excerpt: \u007f Secondary caregiver: 6 weeks fully paid leave \u007f Parental leave runs concurrently with any applicable FMLA entitlement \u007f Must be taken within 12 months of the child's birth, adoption, or placement \u007f Submit parental leave requests to People Operations at least 30 days before the anticipated start da...\n\n[2] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 5\n    Source: benefits_and_insurance.pdf\n    Excerpt: \u007f Professional Development Stipend: $1,000/year for courses, certifications, or conferences \u007f Parental Leave: 16 weeks fully paid for primary caregivers; 6 weeks for secondary caregivers (see Leave Policy HR-LV-006) \u007f Fertility Benefits: Up to $5,000 lifetime benefit for fertility treatments \u007f Stude...\n\n[3] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 4\n    Source: pto_and_leave_policy.pdf\n    Excerpt: maintained. \u007f Clinical staff must arrange shift coverage for approved PTO before the absence \u007f The Clinical Operations team maintains a coverage pool and can help coordinate swaps \u007f PTO requests during high-volume periods (flu season, open enrollment periods) may be limited to maintain coverage leve...",
-          "timestamp": "13:36:10",
+          "timestamp": "14:01:13",
           "status": "\u2713 Success",
-          "duration_seconds": 2.61
+          "duration_seconds": 2.72
         }
       ],
       "citations": [
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 4",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "\u007f Secondary caregiver: 6 weeks fully paid leave \u007f Parental leave runs concurrently with any applicable FMLA entitlement \u007f Must be taken within 12 months of the child's birth, adoption, or placement \u007f Submit parental leave requests to People Operations at least 30 days before the anticipated start da..."
+          "snippet": "\u007f Secondary caregiver: 6 weeks fully paid leave \u007f Parental leave runs concurrently with any applicable FMLA entitlement \u007f Must be taken within 12 months of the child's birth, adoption, or placement \u007f Submit parental leave requests to People Operations at least 30 days before the anticipated start da"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 5",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "\u007f Professional Development Stipend: $1,000/year for courses, certifications, or conferences \u007f Parental Leave: 16 weeks fully paid for primary caregivers; 6 weeks for secondary caregivers (see Leave Policy HR-LV-006) \u007f Fertility Benefits: Up to $5,000 lifetime benefit for fertility treatments \u007f Stude..."
+          "snippet": "\u007f Professional Development Stipend: $1,000/year for courses, certifications, or conferences \u007f Parental Leave: 16 weeks fully paid for primary caregivers; 6 weeks for secondary caregivers (see Leave Policy HR-LV-006) \u007f Fertility Benefits: Up to $5,000 lifetime benefit for fertility treatments \u007f Stude"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 4",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "maintained. \u007f Clinical staff must arrange shift coverage for approved PTO before the absence \u007f The Clinical Operations team maintains a coverage pool and can help coordinate swaps \u007f PTO requests during high-volume periods (flu season, open enrollment periods) may be limited to maintain coverage leve..."
+          "snippet": "maintained. \u007f Clinical staff must arrange shift coverage for approved PTO before the absence \u007f The Clinical Operations team maintains a coverage pool and can help coordinate swaps \u007f PTO requests during high-volume periods (flu season, open enrollment periods) may be limited to maintain coverage leve"
         }
       ],
       "scores": {
         "id": "Q06",
         "type": "simple_policy",
-        "elapsed_s": 4.9,
-        "grounded": false,
+        "elapsed_s": 5.11,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -470,7 +470,7 @@
       "question": "What HIPAA training is required for new Daisy Health employees?",
       "gold_answer": "All new employees must complete HIPAA Fundamentals training within 7 days of their start date through the Daisy Health Learning Management System (LMS).",
       "employee_id": "EMP-002",
-      "agent_answer": "New Daisy Health employees must complete HIPAA training within 7 days of their start date.\n\n### Relevant policy\n\n- **Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf (hipaa_and_data_security.pdf) \u2014 Page 2:** Employees must access only the PHI they need to do their job. Do not look up patient records out of curiosity, even for patients you know personally. 2. Required HIPAA Training All employees must complete HIPAA training: \u007f New hire training: Within 7 days of start date, through the Daisy Health Lear...\n- **Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf (hipaa_and_data_security.pdf) \u2014 Page 1:** HIPAA and Data Security Policy Daisy Health Policy ID: HR-DS-003 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: Compliance and Information Security Purpose Daisy Health handles protected health information (PHI) and sensitive personal data every day. This policy outlines how all ...\n- **Onboarding Policy\n Policy ID: onboarding_policy.pdf (onboarding_policy.pdf) \u2014 Page 2:** \u007f Meet with your key cross-functional partners and stakeholders \u007f Understand your team's workflows, tools, and communication norms \u007f Review Daisy Health's mission, values, and strategic priorities Your manager will hold a 30-day check-in meeting to discuss early impressions, clarify role expectation...",
+      "agent_answer": "New employees at Daisy Health must complete HIPAA training within 7 days of their start date, through the Daisy Health Learning platform.\n\n### Relevant policy\n\n- **Hipaa And Data Security (HR-DS-003) \u2014 Page 2:** Employees must access only the PHI they need to do their job. Do not look up patient records out of curiosity, even for patients you know personally. 2. Required HIPAA Training All employees must complete HIPAA training: \u007f New hire training: Within 7 days of start date, through the Daisy Health Lear\n- **Hipaa And Data Security (HR-DS-003) \u2014 Page 1:** HIPAA and Data Security Policy Daisy Health Policy ID: HR-DS-003 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: Compliance and Information Security Purpose Daisy Health handles protected health information (PHI) and sensitive personal data every day. This policy outlines how all\n- **Onboarding Policy (HR-OB-005) \u2014 Page 2:** \u007f Meet with your key cross-functional partners and stakeholders \u007f Understand your team's workflows, tools, and communication norms \u007f Review Daisy Health's mission, values, and strategic priorities Your manager will hold a 30-day check-in meeting to discuss early impressions, clarify role expectation",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -478,7 +478,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:18",
+          "timestamp": "14:01:21",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -488,38 +488,38 @@
             "query": "What HIPAA training is required for new Daisy Health employees?"
           },
           "result": "Policy search: 'What HIPAA training is required for new Daisy Health employees?'\n========================================\n\n[1] Hipaa And Data Security\n    Policy ID: hipaa_and_data_security.pdf\n    Section: Page 2\n    Source: hipaa_and_data_security.pdf\n    Excerpt: Employees must access only the PHI they need to do their job. Do not look up patient records out of curiosity, even for patients you know personally. 2. Required HIPAA Training All employees must complete HIPAA training: \u007f New hire training: Within 7 days of start date, through the Daisy Health Lear...\n\n[2] Hipaa And Data Security\n    Policy ID: hipaa_and_data_security.pdf\n    Section: Page 1\n    Source: hipaa_and_data_security.pdf\n    Excerpt: HIPAA and Data Security Policy Daisy Health Policy ID: HR-DS-003 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: Compliance and Information Security Purpose Daisy Health handles protected health information (PHI) and sensitive personal data every day. This policy outlines how all ...\n\n[3] Onboarding Policy\n    Policy ID: onboarding_policy.pdf\n    Section: Page 2\n    Source: onboarding_policy.pdf\n    Excerpt: \u007f Meet with your key cross-functional partners and stakeholders \u007f Understand your team's workflows, tools, and communication norms \u007f Review Daisy Health's mission, values, and strategic priorities Your manager will hold a 30-day check-in meeting to discuss early impressions, clarify role expectation...",
-          "timestamp": "13:36:18",
+          "timestamp": "14:01:21",
           "status": "\u2713 Success",
-          "duration_seconds": 2.76
+          "duration_seconds": 2.93
         }
       ],
       "citations": [
         {
-          "title": "Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf",
+          "title": "Hipaa And Data Security",
           "section": "Page 2",
-          "policy_id": "hipaa_and_data_security.pdf",
+          "policy_id": "HR-DS-003",
           "source": "hipaa_and_data_security.pdf",
-          "snippet": "Employees must access only the PHI they need to do their job. Do not look up patient records out of curiosity, even for patients you know personally. 2. Required HIPAA Training All employees must complete HIPAA training: \u007f New hire training: Within 7 days of start date, through the Daisy Health Lear..."
+          "snippet": "Employees must access only the PHI they need to do their job. Do not look up patient records out of curiosity, even for patients you know personally. 2. Required HIPAA Training All employees must complete HIPAA training: \u007f New hire training: Within 7 days of start date, through the Daisy Health Lear"
         },
         {
-          "title": "Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf",
+          "title": "Hipaa And Data Security",
           "section": "Page 1",
-          "policy_id": "hipaa_and_data_security.pdf",
+          "policy_id": "HR-DS-003",
           "source": "hipaa_and_data_security.pdf",
-          "snippet": "HIPAA and Data Security Policy Daisy Health Policy ID: HR-DS-003 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: Compliance and Information Security Purpose Daisy Health handles protected health information (PHI) and sensitive personal data every day. This policy outlines how all ..."
+          "snippet": "HIPAA and Data Security Policy Daisy Health Policy ID: HR-DS-003 Effective Date: January 1, 2025 Last Reviewed: June 1, 2025 Owner: Compliance and Information Security Purpose Daisy Health handles protected health information (PHI) and sensitive personal data every day. This policy outlines how all"
         },
         {
-          "title": "Onboarding Policy\n Policy ID: onboarding_policy.pdf",
+          "title": "Onboarding Policy",
           "section": "Page 2",
-          "policy_id": "onboarding_policy.pdf",
+          "policy_id": "HR-OB-005",
           "source": "onboarding_policy.pdf",
-          "snippet": "\u007f Meet with your key cross-functional partners and stakeholders \u007f Understand your team's workflows, tools, and communication norms \u007f Review Daisy Health's mission, values, and strategic priorities Your manager will hold a 30-day check-in meeting to discuss early impressions, clarify role expectation..."
+          "snippet": "\u007f Meet with your key cross-functional partners and stakeholders \u007f Understand your team's workflows, tools, and communication norms \u007f Review Daisy Health's mission, values, and strategic priorities Your manager will hold a 30-day check-in meeting to discuss early impressions, clarify role expectation"
         }
       ],
       "scores": {
         "id": "Q07",
         "type": "simple_policy",
-        "elapsed_s": 5.17,
+        "elapsed_s": 5.61,
         "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
@@ -532,7 +532,7 @@
       "question": "Can a clinical pharmacist at Daisy Health work remotely from a state where they are not licensed?",
       "gold_answer": "It depends. Clinical staff must hold an active license in the state where their patients are located. If working from a different state, they may also need a license in their physical work state. They must notify the Credentialing team within 5 business days of any relocation. Compact licensure (IMLC/NLC) may apply. Sources: Remote Work Policy HR-RW-001 Section 3 and Licensure and Credentialing Policy HR-LC-009 Section 1.",
       "employee_id": "EMP-002",
-      "agent_answer": "Daisy Health employees must be registered to operate in the location they wish to work remotely from. Since the question pertains to a clinical pharmacist working from a state where they are not licensed, it is important to note that remote work eligibility depends on the state or country of work, and Daisy Health must be registered to operate in that location.\n\n### Relevant policy\n\n- **Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf (licensure_and_credentialing.pdf) \u2014 Page 2:** \u007f Compact licensure programs (IMLC for physicians, NLC for nurses, APRN Compact where available) are the preferred path to multi-state practice. Daisy Health will cover compact licensure fees. \u007f For states not covered by compact licensure, Daisy Health will reimburse the cost of obtaining an additio...\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 2:** Daisy Health is currently registered to employ workers in the following states: \u007f California, New York, Texas, Florida, Washington, Illinois, Massachusetts, Colorado, Georgia, Arizona, Virginia, Oregon, Pennsylvania, Ohio, North Carolina Employees wishing to work from a state not on this list must s...\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 1:** 1. General Remote Work Eligibility All Daisy Health employees are considered remote-first by default. However, remote work eligibility depends on: \u007f Role type \u2014 clinical vs. non-clinical (see Section 3) \u007f State or country of work \u2014 Daisy Health must be registered to operate in that location \u007f Employ...",
+      "agent_answer": "A clinical pharmacist at Daisy Health cannot work remotely from a state where they are not licensed, as Daisy Health must be registered to operate in that location.\n\n### Relevant policy\n\n- **Licensure And Credentialing (HR-LC-009) \u2014 Page 2:** \u007f Compact licensure programs (IMLC for physicians, NLC for nurses, APRN Compact where available) are the preferred path to multi-state practice. Daisy Health will cover compact licensure fees. \u007f For states not covered by compact licensure, Daisy Health will reimburse the cost of obtaining an additio\n- **Remote Work Policy (HR-RW-001) \u2014 Page 2:** Daisy Health is currently registered to employ workers in the following states: \u007f California, New York, Texas, Florida, Washington, Illinois, Massachusetts, Colorado, Georgia, Arizona, Virginia, Oregon, Pennsylvania, Ohio, North Carolina Employees wishing to work from a state not on this list must s\n- **Remote Work Policy (HR-RW-001) \u2014 Page 1:** 1. General Remote Work Eligibility All Daisy Health employees are considered remote-first by default. However, remote work eligibility depends on: \u007f Role type \u2014 clinical vs. non-clinical (see Section 3) \u007f State or country of work \u2014 Daisy Health must be registered to operate in that location \u007f Employ",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -540,7 +540,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:26",
+          "timestamp": "14:01:30",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -550,9 +550,9 @@
             "query": "Can a clinical pharmacist at Daisy Health work remotely from a state where they are not licensed?"
           },
           "result": "Policy search: 'Can a clinical pharmacist at Daisy Health work remotely from a state where they are not licensed?'\n========================================\n\n[1] Licensure And Credentialing\n    Policy ID: licensure_and_credentialing.pdf\n    Section: Page 2\n    Source: licensure_and_credentialing.pdf\n    Excerpt: \u007f Compact licensure programs (IMLC for physicians, NLC for nurses, APRN Compact where available) are the preferred path to multi-state practice. Daisy Health will cover compact licensure fees. \u007f For states not covered by compact licensure, Daisy Health will reimburse the cost of obtaining an additio...\n\n[2] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 2\n    Source: remote_work_policy.pdf\n    Excerpt: Daisy Health is currently registered to employ workers in the following states: \u007f California, New York, Texas, Florida, Washington, Illinois, Massachusetts, Colorado, Georgia, Arizona, Virginia, Oregon, Pennsylvania, Ohio, North Carolina Employees wishing to work from a state not on this list must s...\n\n[3] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 1\n    Source: remote_work_policy.pdf\n    Excerpt: 1. General Remote Work Eligibility All Daisy Health employees are considered remote-first by default. However, remote work eligibility depends on: \u007f Role type \u2014 clinical vs. non-clinical (see Section 3) \u007f State or country of work \u2014 Daisy Health must be registered to operate in that location \u007f Employ...",
-          "timestamp": "13:36:26",
+          "timestamp": "14:01:30",
           "status": "\u2713 Success",
-          "duration_seconds": 2.64
+          "duration_seconds": 2.85
         },
         {
           "tool": "check_policy_compliance",
@@ -562,39 +562,39 @@
             "policy_area": "remote_work"
           },
           "result": "Remote Work Facts - Morgan Chen\nCurrent state: Washington\nEmployee type: Non-Clinical\nScenario: Can a clinical pharmacist at Daisy Health work remotely from a state where they are not licensed?\n\nUse search_policy_documents for the applicable policy decision.",
-          "timestamp": "13:36:28",
+          "timestamp": "14:01:32",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         }
       ],
       "citations": [
         {
-          "title": "Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf",
+          "title": "Licensure And Credentialing",
           "section": "Page 2",
-          "policy_id": "licensure_and_credentialing.pdf",
+          "policy_id": "HR-LC-009",
           "source": "licensure_and_credentialing.pdf",
-          "snippet": "\u007f Compact licensure programs (IMLC for physicians, NLC for nurses, APRN Compact where available) are the preferred path to multi-state practice. Daisy Health will cover compact licensure fees. \u007f For states not covered by compact licensure, Daisy Health will reimburse the cost of obtaining an additio..."
+          "snippet": "\u007f Compact licensure programs (IMLC for physicians, NLC for nurses, APRN Compact where available) are the preferred path to multi-state practice. Daisy Health will cover compact licensure fees. \u007f For states not covered by compact licensure, Daisy Health will reimburse the cost of obtaining an additio"
         },
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 2",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "Daisy Health is currently registered to employ workers in the following states: \u007f California, New York, Texas, Florida, Washington, Illinois, Massachusetts, Colorado, Georgia, Arizona, Virginia, Oregon, Pennsylvania, Ohio, North Carolina Employees wishing to work from a state not on this list must s..."
+          "snippet": "Daisy Health is currently registered to employ workers in the following states: \u007f California, New York, Texas, Florida, Washington, Illinois, Massachusetts, Colorado, Georgia, Arizona, Virginia, Oregon, Pennsylvania, Ohio, North Carolina Employees wishing to work from a state not on this list must s"
         },
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 1",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "1. General Remote Work Eligibility All Daisy Health employees are considered remote-first by default. However, remote work eligibility depends on: \u007f Role type \u2014 clinical vs. non-clinical (see Section 3) \u007f State or country of work \u2014 Daisy Health must be registered to operate in that location \u007f Employ..."
+          "snippet": "1. General Remote Work Eligibility All Daisy Health employees are considered remote-first by default. However, remote work eligibility depends on: \u007f Role type \u2014 clinical vs. non-clinical (see Section 3) \u007f State or country of work \u2014 Daisy Health must be registered to operate in that location \u007f Employ"
         }
       ],
       "scores": {
         "id": "Q08",
         "type": "multi_document",
-        "elapsed_s": 5.28,
-        "grounded": false,
+        "elapsed_s": 5.62,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -606,7 +606,7 @@
       "question": "If a full-time employee at Daisy Health is on the Bronze health plan, what savings account options are available to them and how much does Daisy Health contribute?",
       "gold_answer": "Employees on the Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). Daisy Health contributes $500/year for individual coverage and $1,000/year for employee plus dependents. The 2025 IRS limit is $4,150 for individuals and $8,300 for families. Sources: Benefits and Insurance Policy HR-BI-002 Sections 2 and 6.",
       "employee_id": "EMP-002",
-      "agent_answer": "As a full-time employee enrolled in the Daisy Bronze plan, you are eligible for a Health Savings Account (HSA). Daisy Health contributes $500 per year for employee-only coverage and $1,000 per year for employee + dependents.\n\n### Relevant policy\n\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 2:** Gold pay the difference shown above. Dependent Coverage Employees may add dependents to their plan. Dependent premium contributions vary by plan and number of dependents. Details are available in the Benefits Portal. Virtual Care As a Daisy Health employee, you have complimentary access to Daisy Hea...",
+      "agent_answer": "As a full-time employee enrolled in the Daisy Bronze plan, you are eligible for a Health Savings Account (HSA). Daisy Health contributes $500 per year for employee-only coverage and $1,000 per year for employee plus dependents.\n\n### Relevant policy\n\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 2:** Gold pay the difference shown above. Dependent Coverage Employees may add dependents to their plan. Dependent premium contributions vary by plan and number of dependents. Details are available in the Benefits Portal. Virtual Care As a Daisy Health employee, you have complimentary access to Daisy Hea",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -614,7 +614,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:34",
+          "timestamp": "14:01:38",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -624,39 +624,39 @@
             "query": "If a full-time employee at Daisy Health is on the Bronze health plan, what savings account options are available to them and how much does Daisy Health contribute?"
           },
           "result": "Policy search: 'If a full-time employee at Daisy Health is on the Bronze health plan, what savings account options are available to them and how much does Daisy Health contribute?'\n========================================\n\n[1] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 4\n    Source: benefits_and_insurance.pdf\n    Excerpt: Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...\n\n[2] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 2\n    Source: benefits_and_insurance.pdf\n    Excerpt: Gold pay the difference shown above. Dependent Coverage Employees may add dependents to their plan. Dependent premium contributions vary by plan and number of dependents. Details are available in the Benefits Portal. Virtual Care As a Daisy Health employee, you have complimentary access to Daisy Hea...\n\n[3] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 2\n    Source: benefits_and_insurance.pdf\n    Excerpt: Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health ...",
-          "timestamp": "13:36:34",
+          "timestamp": "14:01:38",
           "status": "\u2713 Success",
-          "duration_seconds": 2.56
+          "duration_seconds": 2.51
         }
       ],
       "citations": [
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 4",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ..."
+          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 2",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Gold pay the difference shown above. Dependent Coverage Employees may add dependents to their plan. Dependent premium contributions vary by plan and number of dependents. Details are available in the Benefits Portal. Virtual Care As a Daisy Health employee, you have complimentary access to Daisy Hea..."
+          "snippet": "Gold pay the difference shown above. Dependent Coverage Employees may add dependents to their plan. Dependent premium contributions vary by plan and number of dependents. Details are available in the Benefits Portal. Virtual Care As a Daisy Health employee, you have complimentary access to Daisy Hea"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 2",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health ..."
+          "snippet": "Outside of Open Enrollment, you may update your benefits within 30 days of a qualifying life event, including: \u007f Marriage or domestic partnership \u007f Birth or adoption of a child \u007f Divorce or legal separation \u007f Loss of coverage from another plan \u007f Death of a dependent 2. Health Insurance Daisy Health"
         }
       ],
       "scores": {
         "id": "Q09",
         "type": "multi_document",
-        "elapsed_s": 6.08,
-        "grounded": false,
+        "elapsed_s": 5.87,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -668,7 +668,7 @@
       "question": "What happens to a clinical employee's patient care privileges if their license expires?",
       "gold_answer": "An expired license results in immediate suspension of patient care privileges until the license is renewed and verified by the Credentialing team. The Credentialing team sends renewal reminders 90 days before expiration. Sources: Licensure and Credentialing Policy HR-LC-009 Section 3 and Clinical Staff Policy HR-CS-010.",
       "employee_id": "EMP-002",
-      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf (licensure_and_credentialing.pdf) \u2014 Page 3:** for renewal \u007f Notifying the Credentialing team of any license renewal, new license, or change in license status within 5 business days \u007f Immediately notifying the Credentialing team if a license is placed under investigation, suspended, or restricted in any way Renewal Reminders The Credentialing te...\n- **Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf (licensure_and_credentialing.pdf) \u2014 Page 5:** Clinical employees must immediately notify the Credentialing team if any of the following occur: \u007f License suspension, restriction, probation, or revocation in any state \u007f DEA registration suspended or revoked \u007f Malpractice claim filed or settled \u007f Criminal charge or conviction of any kind \u007f Sanctio...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Licensure And Credentialing (HR-LC-009) \u2014 Page 3:** for renewal \u007f Notifying the Credentialing team of any license renewal, new license, or change in license status within 5 business days \u007f Immediately notifying the Credentialing team if a license is placed under investigation, suspended, or restricted in any way Renewal Reminders The Credentialing te\n- **Licensure And Credentialing (HR-LC-009) \u2014 Page 5:** Clinical employees must immediately notify the Credentialing team if any of the following occur: \u007f License suspension, restriction, probation, or revocation in any state \u007f DEA registration suspended or revoked \u007f Malpractice claim filed or settled \u007f Criminal charge or conviction of any kind \u007f Sanctio",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -676,7 +676,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:43",
+          "timestamp": "14:01:47",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -686,39 +686,39 @@
             "query": "What happens to a clinical employee's patient care privileges if their license expires?"
           },
           "result": "Policy search: 'What happens to a clinical employee's patient care privileges if their license expires?'\n========================================\n\n[1] Licensure And Credentialing\n    Policy ID: licensure_and_credentialing.pdf\n    Section: Page 3\n    Source: licensure_and_credentialing.pdf\n    Excerpt: for renewal \u007f Notifying the Credentialing team of any license renewal, new license, or change in license status within 5 business days \u007f Immediately notifying the Credentialing team if a license is placed under investigation, suspended, or restricted in any way Renewal Reminders The Credentialing te...\n\n[2] Licensure And Credentialing\n    Policy ID: licensure_and_credentialing.pdf\n    Section: Page 3\n    Source: licensure_and_credentialing.pdf\n    Excerpt: \u007f You will be notified by the Credentialing team when health plan credentialing is finalized for each payer Recredentialing Daisy Health conducts recredentialing every 3 years for all clinical staff, or more frequently if required by a health plan or regulatory body. Recredentialing involves updated...\n\n[3] Licensure And Credentialing\n    Policy ID: licensure_and_credentialing.pdf\n    Section: Page 5\n    Source: licensure_and_credentialing.pdf\n    Excerpt: Clinical employees must immediately notify the Credentialing team if any of the following occur: \u007f License suspension, restriction, probation, or revocation in any state \u007f DEA registration suspended or revoked \u007f Malpractice claim filed or settled \u007f Criminal charge or conviction of any kind \u007f Sanctio...",
-          "timestamp": "13:36:43",
+          "timestamp": "14:01:47",
           "status": "\u2713 Success",
-          "duration_seconds": 2.71
+          "duration_seconds": 3.02
         }
       ],
       "citations": [
         {
-          "title": "Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf",
+          "title": "Licensure And Credentialing",
           "section": "Page 3",
-          "policy_id": "licensure_and_credentialing.pdf",
+          "policy_id": "HR-LC-009",
           "source": "licensure_and_credentialing.pdf",
-          "snippet": "for renewal \u007f Notifying the Credentialing team of any license renewal, new license, or change in license status within 5 business days \u007f Immediately notifying the Credentialing team if a license is placed under investigation, suspended, or restricted in any way Renewal Reminders The Credentialing te..."
+          "snippet": "for renewal \u007f Notifying the Credentialing team of any license renewal, new license, or change in license status within 5 business days \u007f Immediately notifying the Credentialing team if a license is placed under investigation, suspended, or restricted in any way Renewal Reminders The Credentialing te"
         },
         {
-          "title": "Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf",
+          "title": "Licensure And Credentialing",
           "section": "Page 3",
-          "policy_id": "licensure_and_credentialing.pdf",
+          "policy_id": "HR-LC-009",
           "source": "licensure_and_credentialing.pdf",
-          "snippet": "\u007f You will be notified by the Credentialing team when health plan credentialing is finalized for each payer Recredentialing Daisy Health conducts recredentialing every 3 years for all clinical staff, or more frequently if required by a health plan or regulatory body. Recredentialing involves updated..."
+          "snippet": "\u007f You will be notified by the Credentialing team when health plan credentialing is finalized for each payer Recredentialing Daisy Health conducts recredentialing every 3 years for all clinical staff, or more frequently if required by a health plan or regulatory body. Recredentialing involves updated"
         },
         {
-          "title": "Licensure And Credentialing\n Policy ID: licensure_and_credentialing.pdf",
+          "title": "Licensure And Credentialing",
           "section": "Page 5",
-          "policy_id": "licensure_and_credentialing.pdf",
+          "policy_id": "HR-LC-009",
           "source": "licensure_and_credentialing.pdf",
-          "snippet": "Clinical employees must immediately notify the Credentialing team if any of the following occur: \u007f License suspension, restriction, probation, or revocation in any state \u007f DEA registration suspended or revoked \u007f Malpractice claim filed or settled \u007f Criminal charge or conviction of any kind \u007f Sanctio..."
+          "snippet": "Clinical employees must immediately notify the Credentialing team if any of the following occur: \u007f License suspension, restriction, probation, or revocation in any state \u007f DEA registration suspended or revoked \u007f Malpractice claim filed or settled \u007f Criminal charge or conviction of any kind \u007f Sanctio"
         }
       ],
       "scores": {
         "id": "Q10",
         "type": "multi_document",
-        "elapsed_s": 4.86,
-        "grounded": false,
+        "elapsed_s": 4.98,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -730,7 +730,7 @@
       "question": "Can a new employee at Daisy Health take PTO during their first 30 days, and what other restrictions apply during the probationary period?",
       "gold_answer": "New employees may not take PTO during their first 30 days without manager approval. During the 90-day probationary period, employees are also not eligible for internal transfers. PTO accrues from day one but is restricted in use during the first 30 days. Sources: PTO and Leave Policy HR-PT-001 Section 2 and Onboarding Policy HR-OB-005 Section 9.",
       "employee_id": "EMP-002",
-      "agent_answer": "A new employee at Daisy Health cannot take PTO during their first 30 days without manager approval. Additionally, all new employees are subject to a 90-day introductory period during which employment may be ended by either party with no notice requirement.\n\n### Relevant policy\n\n- **Onboarding Policy\n Policy ID: onboarding_policy.pdf (onboarding_policy.pdf) \u2014 Page 5:** All new employees are subject to a 90-day introductory period. During this time: \u007f Employment may be ended by either party with no notice requirement (at-will employment) \u007f PTO accrues but may not be taken during the first 30 days without manager approval \u007f Employees are not eligible for internal tr...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 3:** PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee...",
+      "agent_answer": "A new employee at Daisy Health cannot take PTO during their first 30 days without manager approval. Additionally, all new employees are subject to a 90-day introductory period during which employment may be ended by either party with no notice requirement.\n\n### Relevant policy\n\n- **Onboarding Policy (HR-OB-005) \u2014 Page 5:** All new employees are subject to a 90-day introductory period. During this time: \u007f Employment may be ended by either party with no notice requirement (at-will employment) \u007f PTO accrues but may not be taken during the first 30 days without manager approval \u007f Employees are not eligible for internal tr\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 3:** PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -738,7 +738,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:36:51",
+          "timestamp": "14:01:55",
           "status": "\u2713 Success",
           "duration_seconds": 0.01
         },
@@ -748,7 +748,7 @@
             "employee_id": "EMP-002"
           },
           "result": "PTO Balance \u2014 Morgan Chen (EMP-002)\nAvailable: 18.0 days\nUsed this year: 2.0 days\nTotal accrued: 20.0 days\nCarryover: 0.0 days\nLast updated: 2025-08-01",
-          "timestamp": "13:36:51",
+          "timestamp": "14:01:55",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -758,39 +758,39 @@
             "query": "Can a new employee at Daisy Health take PTO during their first 30 days, and what other restrictions apply during the probationary period?"
           },
           "result": "Policy search: 'Can a new employee at Daisy Health take PTO during their first 30 days, and what other restrictions apply during the probationary period?'\n========================================\n\n[1] Onboarding Policy\n    Policy ID: onboarding_policy.pdf\n    Section: Page 5\n    Source: onboarding_policy.pdf\n    Excerpt: All new employees are subject to a 90-day introductory period. During this time: \u007f Employment may be ended by either party with no notice requirement (at-will employment) \u007f PTO accrues but may not be taken during the first 30 days without manager approval \u007f Employees are not eligible for internal tr...\n\n[2] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 6\n    Source: pto_and_leave_policy.pdf\n    Excerpt: Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...\n\n[3] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 3\n    Source: pto_and_leave_policy.pdf\n    Excerpt: PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee...",
-          "timestamp": "13:36:51",
+          "timestamp": "14:01:55",
           "status": "\u2713 Success",
-          "duration_seconds": 2.71
+          "duration_seconds": 2.56
         }
       ],
       "citations": [
         {
-          "title": "Onboarding Policy\n Policy ID: onboarding_policy.pdf",
+          "title": "Onboarding Policy",
           "section": "Page 5",
-          "policy_id": "onboarding_policy.pdf",
+          "policy_id": "HR-OB-005",
           "source": "onboarding_policy.pdf",
-          "snippet": "All new employees are subject to a 90-day introductory period. During this time: \u007f Employment may be ended by either party with no notice requirement (at-will employment) \u007f PTO accrues but may not be taken during the first 30 days without manager approval \u007f Employees are not eligible for internal tr..."
+          "snippet": "All new employees are subject to a 90-day introductory period. During this time: \u007f Employment may be ended by either party with no notice requirement (at-will employment) \u007f PTO accrues but may not be taken during the first 30 days without manager approval \u007f Employees are not eligible for internal tr"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 6",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent..."
+          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 3",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee..."
+          "snippet": "PTO Payout at Separation Upon separation from Daisy Health, employees will be paid out for unused accrued PTO up to the carryover maximum of 40 hours, in accordance with applicable state law. 4. Sick Leave Sick leave is included within your PTO balance. There is no separate sick leave bank. Employee"
         }
       ],
       "scores": {
         "id": "Q11",
         "type": "multi_document",
-        "elapsed_s": 6.21,
-        "grounded": false,
+        "elapsed_s": 5.71,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
         "workflow_completed": true,
@@ -802,7 +802,7 @@
       "question": "What security requirements must a Daisy Health employee follow when working remotely with patient data?",
       "gold_answer": "Remote employees must use a Daisy Health-issued or IT-approved device, connect through the Daisy Health VPN when accessing internal systems or patient records, never use public Wi-Fi without VPN, ensure their workspace is private with no patient conversations where others can overhear, and lock their screen when stepping away. Clinical staff must use headphones for telehealth encounters. Sources: Remote Work Policy HR-RW-001 Section 4 and HIPAA and Data Security Policy HR-DS-003 Sections 3, 4, and 7.",
       "employee_id": "EMP-002",
-      "agent_answer": "As a Daisy Health employee working remotely, you must follow specific security requirements when handling patient data. You should use a privacy screen filter if working in a semi-public location, never leave patient information visible on screen in shared living spaces, and use headphones for all telehealth encounters to prevent audio from being overheard.\n\n### Relevant policy\n\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 3:** Telehealth Platform Requirements All clinical encounters must be conducted through Daisy Health's approved telehealth platform. Clinical staff may not use personal video conferencing tools (e.g., Zoom personal accounts, FaceTime) for patient care, regardless of work location. 4. Data Security Requir...\n- **Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf (hipaa_and_data_security.pdf) \u2014 Page 4:** \u007f Use a privacy screen filter if working in a semi-public location (not recommended for clinical staff) \u007f Never leave patient information visible on screen in shared living spaces \u007f Use headphones for all telehealth encounters to prevent audio from being overheard Clinical staff conducting patient v...\n- **Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf (hipaa_and_data_security.pdf) \u2014 Page 5:** Daisy Health will cooperate fully with any regulatory investigation and will not shield employees who willfully violate HIPAA. Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This ...",
+      "agent_answer": "As a non-clinical employee at Daisy Health, you should follow the general data security requirements when working remotely. This includes using a privacy screen filter if working in a semi-public location, ensuring that patient information is never visible on screen in shared living spaces, and using headphones for all telehealth encounters to prevent audio from being overheard.\n\n### Relevant policy\n\n- **Remote Work Policy (HR-RW-001) \u2014 Page 3:** Telehealth Platform Requirements All clinical encounters must be conducted through Daisy Health's approved telehealth platform. Clinical staff may not use personal video conferencing tools (e.g., Zoom personal accounts, FaceTime) for patient care, regardless of work location. 4. Data Security Requir\n- **Hipaa And Data Security (HR-DS-003) \u2014 Page 4:** \u007f Use a privacy screen filter if working in a semi-public location (not recommended for clinical staff) \u007f Never leave patient information visible on screen in shared living spaces \u007f Use headphones for all telehealth encounters to prevent audio from being overheard Clinical staff conducting patient v\n- **Hipaa And Data Security (HR-DS-003) \u2014 Page 5:** Daisy Health will cooperate fully with any regulatory investigation and will not shield employees who willfully violate HIPAA. Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -810,7 +810,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:37:00",
+          "timestamp": "14:02:04",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -820,9 +820,9 @@
             "query": "What security requirements must a Daisy Health employee follow when working remotely with patient data?"
           },
           "result": "Policy search: 'What security requirements must a Daisy Health employee follow when working remotely with patient data?'\n========================================\n\n[1] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 3\n    Source: remote_work_policy.pdf\n    Excerpt: Telehealth Platform Requirements All clinical encounters must be conducted through Daisy Health's approved telehealth platform. Clinical staff may not use personal video conferencing tools (e.g., Zoom personal accounts, FaceTime) for patient care, regardless of work location. 4. Data Security Requir...\n\n[2] Hipaa And Data Security\n    Policy ID: hipaa_and_data_security.pdf\n    Section: Page 4\n    Source: hipaa_and_data_security.pdf\n    Excerpt: \u007f Use a privacy screen filter if working in a semi-public location (not recommended for clinical staff) \u007f Never leave patient information visible on screen in shared living spaces \u007f Use headphones for all telehealth encounters to prevent audio from being overheard Clinical staff conducting patient v...\n\n[3] Hipaa And Data Security\n    Policy ID: hipaa_and_data_security.pdf\n    Section: Page 5\n    Source: hipaa_and_data_security.pdf\n    Excerpt: Daisy Health will cooperate fully with any regulatory investigation and will not shield employees who willfully violate HIPAA. Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This ...",
-          "timestamp": "13:37:00",
+          "timestamp": "14:02:04",
           "status": "\u2713 Success",
-          "duration_seconds": 3.13
+          "duration_seconds": 2.66
         },
         {
           "tool": "check_policy_compliance",
@@ -832,38 +832,38 @@
             "policy_area": "remote_work"
           },
           "result": "Remote Work Facts - Morgan Chen\nCurrent state: Washington\nEmployee type: Non-Clinical\nScenario: What security requirements must a Daisy Health employee follow when working remotely with patient data?\n\nUse search_policy_documents for the applicable policy decision.",
-          "timestamp": "13:37:03",
+          "timestamp": "14:02:06",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         }
       ],
       "citations": [
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 3",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "Telehealth Platform Requirements All clinical encounters must be conducted through Daisy Health's approved telehealth platform. Clinical staff may not use personal video conferencing tools (e.g., Zoom personal accounts, FaceTime) for patient care, regardless of work location. 4. Data Security Requir..."
+          "snippet": "Telehealth Platform Requirements All clinical encounters must be conducted through Daisy Health's approved telehealth platform. Clinical staff may not use personal video conferencing tools (e.g., Zoom personal accounts, FaceTime) for patient care, regardless of work location. 4. Data Security Requir"
         },
         {
-          "title": "Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf",
+          "title": "Hipaa And Data Security",
           "section": "Page 4",
-          "policy_id": "hipaa_and_data_security.pdf",
+          "policy_id": "HR-DS-003",
           "source": "hipaa_and_data_security.pdf",
-          "snippet": "\u007f Use a privacy screen filter if working in a semi-public location (not recommended for clinical staff) \u007f Never leave patient information visible on screen in shared living spaces \u007f Use headphones for all telehealth encounters to prevent audio from being overheard Clinical staff conducting patient v..."
+          "snippet": "\u007f Use a privacy screen filter if working in a semi-public location (not recommended for clinical staff) \u007f Never leave patient information visible on screen in shared living spaces \u007f Use headphones for all telehealth encounters to prevent audio from being overheard Clinical staff conducting patient v"
         },
         {
-          "title": "Hipaa And Data Security\n Policy ID: hipaa_and_data_security.pdf",
+          "title": "Hipaa And Data Security",
           "section": "Page 5",
-          "policy_id": "hipaa_and_data_security.pdf",
+          "policy_id": "HR-DS-003",
           "source": "hipaa_and_data_security.pdf",
-          "snippet": "Daisy Health will cooperate fully with any regulatory investigation and will not shield employees who willfully violate HIPAA. Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This ..."
+          "snippet": "Daisy Health will cooperate fully with any regulatory investigation and will not shield employees who willfully violate HIPAA. Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This"
         }
       ],
       "scores": {
         "id": "Q12",
         "type": "multi_document",
-        "elapsed_s": 6.99,
+        "elapsed_s": 6.45,
         "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": null,
@@ -884,7 +884,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Clarification or out-of-scope response returned before tool execution.",
-          "timestamp": "13:37:10",
+          "timestamp": "14:02:13",
           "status": "\u2713 Completed",
           "duration_seconds": 0
         }
@@ -906,7 +906,7 @@
       "question": "How many PTO days does Alex Nguyen have available?",
       "gold_answer": "Alex Nguyen (EMP-004) has 9.0 PTO days available. He has used 11.0 days this year.",
       "employee_id": "EMP-004",
-      "agent_answer": "[information unavailable \u2014 please contact people@daisyhealth.com]\n\n### Relevant policy\n\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 2:** 2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 1:** Level Annual PTO Accrual per Pay Period Individual Contributor (0\u20132 years) 15 days (120 hours) 4.62 hours Individual Contributor (3+ years) 18 days (144 hours) 5.54 hours Senior / Clinical Lead (any tenure) 20 days (160 hours) 6.15 hours Manager and above 22 days (176 hours) 6.77 hours PTO begins ac...",
+      "agent_answer": "[information unavailable \u2014 please contact people@daisyhealth.com]\n\n### Relevant policy\n\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 2:** 2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 1:** Level Annual PTO Accrual per Pay Period Individual Contributor (0\u20132 years) 15 days (120 hours) 4.62 hours Individual Contributor (3+ years) 18 days (144 hours) 5.54 hours Senior / Clinical Lead (any tenure) 20 days (160 hours) 6.15 hours Manager and above 22 days (176 hours) 6.77 hours PTO begins ac",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -914,7 +914,7 @@
             "employee_id": "EMP-004"
           },
           "result": "Employee Profile \u2014 Alex Nguyen\nID: EMP-004\nRole: Clinical Pharmacist\nDepartment: Pharmacy\nType: Clinical (Full-Time)\nState: Texas\nHire Date: 2021-11-01\nManager: Dr. Priya Anand (EMP-010)\nEmail: a.nguyen@daisyhealth.com\nLocation: Remote - Texas",
-          "timestamp": "13:37:13",
+          "timestamp": "14:02:16",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -924,7 +924,7 @@
             "employee_id": "EMP-004"
           },
           "result": "PTO Balance \u2014 Alex Nguyen (EMP-004)\nAvailable: 9.0 days\nUsed this year: 11.0 days\nTotal accrued: 20.0 days\nCarryover: 0.0 days\nLast updated: 2025-08-01",
-          "timestamp": "13:37:13",
+          "timestamp": "14:02:16",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -934,38 +934,38 @@
             "query": "How many PTO days does Alex Nguyen have available?"
           },
           "result": "Policy search: 'How many PTO days does Alex Nguyen have available?'\n========================================\n\n[1] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 2\n    Source: pto_and_leave_policy.pdf\n    Excerpt: 2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu...\n\n[2] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 1\n    Source: pto_and_leave_policy.pdf\n    Excerpt: Level Annual PTO Accrual per Pay Period Individual Contributor (0\u20132 years) 15 days (120 hours) 4.62 hours Individual Contributor (3+ years) 18 days (144 hours) 5.54 hours Senior / Clinical Lead (any tenure) 20 days (160 hours) 6.15 hours Manager and above 22 days (176 hours) 6.77 hours PTO begins ac...\n\n[3] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 2\n    Source: pto_and_leave_policy.pdf\n    Excerpt: portal \u007f Unplanned PTO (illness, emergency): Notify your manager as soon as possible, ideally before your shift begins \u007f Extended PTO (5 or more consecutive days): Submit at least 2 weeks in advance For clinical staff, last-minute PTO may require you to arrange shift coverage. See Section 7. 3. PTO ...",
-          "timestamp": "13:37:13",
+          "timestamp": "14:02:16",
           "status": "\u2713 Success",
-          "duration_seconds": 2.64
+          "duration_seconds": 2.61
         }
       ],
       "citations": [
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 2",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu..."
+          "snippet": "2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 1",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "Level Annual PTO Accrual per Pay Period Individual Contributor (0\u20132 years) 15 days (120 hours) 4.62 hours Individual Contributor (3+ years) 18 days (144 hours) 5.54 hours Senior / Clinical Lead (any tenure) 20 days (160 hours) 6.15 hours Manager and above 22 days (176 hours) 6.77 hours PTO begins ac..."
+          "snippet": "Level Annual PTO Accrual per Pay Period Individual Contributor (0\u20132 years) 15 days (120 hours) 4.62 hours Individual Contributor (3+ years) 18 days (144 hours) 5.54 hours Senior / Clinical Lead (any tenure) 20 days (160 hours) 6.15 hours Manager and above 22 days (176 hours) 6.77 hours PTO begins ac"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 2",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "portal \u007f Unplanned PTO (illness, emergency): Notify your manager as soon as possible, ideally before your shift begins \u007f Extended PTO (5 or more consecutive days): Submit at least 2 weeks in advance For clinical staff, last-minute PTO may require you to arrange shift coverage. See Section 7. 3. PTO ..."
+          "snippet": "portal \u007f Unplanned PTO (illness, emergency): Notify your manager as soon as possible, ideally before your shift begins \u007f Extended PTO (5 or more consecutive days): Submit at least 2 weeks in advance For clinical staff, last-minute PTO may require you to arrange shift coverage. See Section 7. 3. PTO"
         }
       ],
       "scores": {
         "id": "Q14",
         "type": "tool_required",
-        "elapsed_s": 4.58,
+        "elapsed_s": 4.93,
         "grounded": true,
         "citation_present": null,
         "tool_selection_accuracy": 1.0,
@@ -987,7 +987,7 @@
       "question": "I am Jordan Rivera and I want to take 3 days off next week. Do I have enough PTO and what do I need to do?",
       "gold_answer": "Jordan Rivera (EMP-001) has 14.5 PTO days available, so 3 days is within their balance. To request PTO, Jordan should log in to the HR Portal at hr.daisyhealth.com, navigate to Time Off, select the dates, and submit. Manager Dr. Priya Anand must approve within 2 business days. Jordan should submit at least 5 business days in advance for planned PTO. Source: PTO and Leave Policy HR-PT-001.",
       "employee_id": "EMP-001",
-      "agent_answer": "You have enough PTO to take 3 days off next week, as you have 14.5 days available. To request your time off, please notify your manager, Dr. Priya Anand, as soon as possible, ideally before your shift begins.\n\n### Relevant policy\n\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 2:** 2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu...\n- **Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf (pto_and_leave_policy.pdf) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...",
+      "agent_answer": "You have enough PTO to take 3 days off next week, as you have 14.5 days available. To request your time off, please notify your manager, Dr. Priya Anand, as soon as possible, ideally before your shift begins.\n\n### Relevant policy\n\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 2:** 2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu\n- **Pto And Leave Policy (HR-PT-001) \u2014 Page 6:** Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -995,7 +995,7 @@
             "employee_id": "EMP-001"
           },
           "result": "Employee Profile \u2014 Jordan Rivera\nID: EMP-001\nRole: Care Coordinator\nDepartment: Care Operations\nType: Clinical (Full-Time)\nState: California\nHire Date: 2023-03-15\nManager: Dr. Priya Anand (EMP-010)\nEmail: j.rivera@daisyhealth.com\nLocation: Remote - California",
-          "timestamp": "13:37:21",
+          "timestamp": "14:02:24",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1005,7 +1005,7 @@
             "employee_id": "EMP-001"
           },
           "result": "PTO Balance \u2014 Jordan Rivera (EMP-001)\nAvailable: 14.5 days\nUsed this year: 5.5 days\nTotal accrued: 20.0 days\nCarryover: 0.0 days\nLast updated: 2025-08-01",
-          "timestamp": "13:37:21",
+          "timestamp": "14:02:24",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1015,39 +1015,39 @@
             "query": "I am Jordan Rivera and I want to take 3 days off next week. Do I have enough PTO and what do I need to do?"
           },
           "result": "Policy search: 'I am Jordan Rivera and I want to take 3 days off next week. Do I have enough PTO and what do I need to do?'\n========================================\n\n[1] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 2\n    Source: pto_and_leave_policy.pdf\n    Excerpt: 2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu...\n\n[2] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 2\n    Source: pto_and_leave_policy.pdf\n    Excerpt: portal \u007f Unplanned PTO (illness, emergency): Notify your manager as soon as possible, ideally before your shift begins \u007f Extended PTO (5 or more consecutive days): Submit at least 2 weeks in advance For clinical staff, last-minute PTO may require you to arrange shift coverage. See Section 7. 3. PTO ...\n\n[3] Pto And Leave Policy\n    Policy ID: pto_and_leave_policy.pdf\n    Section: Page 6\n    Source: pto_and_leave_policy.pdf\n    Excerpt: Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent...",
-          "timestamp": "13:37:21",
+          "timestamp": "14:02:24",
           "status": "\u2713 Success",
-          "duration_seconds": 2.55
+          "duration_seconds": 2.53
         }
       ],
       "citations": [
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 2",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu..."
+          "snippet": "2. PTO Usage PTO may be used for any reason, including: \u007f Vacation and personal travel \u007f Illness or medical appointments (your own or a family member's) \u007f Mental health days \u007f Personal errands or obligations \u007f Any other personal need Minimum Increment PTO may be taken in increments of 4 hours minimu"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 2",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "portal \u007f Unplanned PTO (illness, emergency): Notify your manager as soon as possible, ideally before your shift begins \u007f Extended PTO (5 or more consecutive days): Submit at least 2 weeks in advance For clinical staff, last-minute PTO may require you to arrange shift coverage. See Section 7. 3. PTO ..."
+          "snippet": "portal \u007f Unplanned PTO (illness, emergency): Notify your manager as soon as possible, ideally before your shift begins \u007f Extended PTO (5 or more consecutive days): Submit at least 2 weeks in advance For clinical staff, last-minute PTO may require you to arrange shift coverage. See Section 7. 3. PTO"
         },
         {
-          "title": "Pto And Leave Policy\n Policy ID: pto_and_leave_policy.pdf",
+          "title": "Pto And Leave Policy",
           "section": "Page 6",
-          "policy_id": "pto_and_leave_policy.pdf",
+          "policy_id": "HR-PT-001",
           "source": "pto_and_leave_policy.pdf",
-          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent..."
+          "snippet": "Sample Employee Questions This Document Answers \u007f How many PTO days do I get and when do they start accruing? \u007f Can I take PTO during my first month at Daisy Health? \u007f How do I request time off and how long does approval take? \u007f What happens to my unused PTO at the end of the year? \u007f How much parent"
         }
       ],
       "scores": {
         "id": "Q15",
         "type": "tool_required",
-        "elapsed_s": 6.07,
-        "grounded": false,
+        "elapsed_s": 5.43,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": 1.0,
         "tools_expected": [
@@ -1069,7 +1069,7 @@
       "question": "Can Morgan Chen expense a home office chair?",
       "gold_answer": "Yes. Morgan Chen (EMP-002) is a full-time employee and is eligible for the $500 one-time home office stipend, which covers items like chairs, monitors, keyboards, and desks. Morgan should submit the receipt through the Expense Portal within 60 days of hire date. Source: Expense Reimbursement Policy HR-EX-004 Section 2.",
       "employee_id": "EMP-002",
-      "agent_answer": "Yes, Morgan Chen can expense a home office chair as it is considered a reasonable expense for remote work. However, the purchase must be made within the first 90 days of employment and must be pre-approved by the manager when required.\n\n### Relevant policy\n\n- **Expense Reimbursement\n Policy ID: expense_reimbursement.pdf (expense_reimbursement.pdf) \u2014 Page 2:** \u007f Keyboard and mouse \u007f Desk or ergonomic chair \u007f Webcam or headset \u007f Desk lamp or other workspace accessories How to Claim Submit receipts through the Expense Portal within 60 days of your hire date. Purchases must be made within your first 90 days of employment. The stipend does not roll over or ca...\n- **Expense Reimbursement\n Policy ID: expense_reimbursement.pdf (expense_reimbursement.pdf) \u2014 Page 5:** \u007f Formal disciplinary action \u007f Termination \u007f Referral to legal authorities in cases of fraud Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This Document Answers \u007f Can I expense a...\n- **Expense Reimbursement\n Policy ID: expense_reimbursement.pdf (expense_reimbursement.pdf) \u2014 Page 1:** \u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex...",
+      "agent_answer": "Yes, Morgan Chen can expense a home office chair as long as the purchase is made within the first 90 days of employment and the receipt is submitted through the Expense Portal within 60 days of the hire date.\n\n### Relevant policy\n\n- **Expense Reimbursement (HR-EX-004) \u2014 Page 2:** \u007f Keyboard and mouse \u007f Desk or ergonomic chair \u007f Webcam or headset \u007f Desk lamp or other workspace accessories How to Claim Submit receipts through the Expense Portal within 60 days of your hire date. Purchases must be made within your first 90 days of employment. The stipend does not roll over or ca\n- **Expense Reimbursement (HR-EX-004) \u2014 Page 5:** \u007f Formal disciplinary action \u007f Termination \u007f Referral to legal authorities in cases of fraud Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This Document Answers \u007f Can I expense a\n- **Expense Reimbursement (HR-EX-004) \u2014 Page 1:** \u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -1077,7 +1077,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:37:30",
+          "timestamp": "14:02:33",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1087,9 +1087,9 @@
             "query": "Can Morgan Chen expense a home office chair?"
           },
           "result": "Policy search: 'Can Morgan Chen expense a home office chair?'\n========================================\n\n[1] Expense Reimbursement\n    Policy ID: expense_reimbursement.pdf\n    Section: Page 2\n    Source: expense_reimbursement.pdf\n    Excerpt: \u007f Keyboard and mouse \u007f Desk or ergonomic chair \u007f Webcam or headset \u007f Desk lamp or other workspace accessories How to Claim Submit receipts through the Expense Portal within 60 days of your hire date. Purchases must be made within your first 90 days of employment. The stipend does not roll over or ca...\n\n[2] Expense Reimbursement\n    Policy ID: expense_reimbursement.pdf\n    Section: Page 5\n    Source: expense_reimbursement.pdf\n    Excerpt: \u007f Formal disciplinary action \u007f Termination \u007f Referral to legal authorities in cases of fraud Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This Document Answers \u007f Can I expense a...\n\n[3] Expense Reimbursement\n    Policy ID: expense_reimbursement.pdf\n    Section: Page 1\n    Source: expense_reimbursement.pdf\n    Excerpt: \u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex...",
-          "timestamp": "13:37:30",
+          "timestamp": "14:02:33",
           "status": "\u2713 Success",
-          "duration_seconds": 2.53
+          "duration_seconds": 2.74
         },
         {
           "tool": "check_policy_compliance",
@@ -1099,39 +1099,39 @@
             "policy_area": "remote_work"
           },
           "result": "Remote Work Facts - Morgan Chen\nCurrent state: Washington\nEmployee type: Non-Clinical\nScenario: Can Morgan Chen expense a home office chair?\n\nUse search_policy_documents for the applicable policy decision.",
-          "timestamp": "13:37:32",
+          "timestamp": "14:02:35",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         }
       ],
       "citations": [
         {
-          "title": "Expense Reimbursement\n Policy ID: expense_reimbursement.pdf",
+          "title": "Expense Reimbursement",
           "section": "Page 2",
-          "policy_id": "expense_reimbursement.pdf",
+          "policy_id": "HR-EX-004",
           "source": "expense_reimbursement.pdf",
-          "snippet": "\u007f Keyboard and mouse \u007f Desk or ergonomic chair \u007f Webcam or headset \u007f Desk lamp or other workspace accessories How to Claim Submit receipts through the Expense Portal within 60 days of your hire date. Purchases must be made within your first 90 days of employment. The stipend does not roll over or ca..."
+          "snippet": "\u007f Keyboard and mouse \u007f Desk or ergonomic chair \u007f Webcam or headset \u007f Desk lamp or other workspace accessories How to Claim Submit receipts through the Expense Portal within 60 days of your hire date. Purchases must be made within your first 90 days of employment. The stipend does not roll over or ca"
         },
         {
-          "title": "Expense Reimbursement\n Policy ID: expense_reimbursement.pdf",
+          "title": "Expense Reimbursement",
           "section": "Page 5",
-          "policy_id": "expense_reimbursement.pdf",
+          "policy_id": "HR-EX-004",
           "source": "expense_reimbursement.pdf",
-          "snippet": "\u007f Formal disciplinary action \u007f Termination \u007f Referral to legal authorities in cases of fraud Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This Document Answers \u007f Can I expense a..."
+          "snippet": "\u007f Formal disciplinary action \u007f Termination \u007f Referral to legal authorities in cases of fraud Related Policies \u007f HR-RW-001: Remote Work Policy \u007f HR-LC-004: Licensure and Credentialing Policy \u007f HR-ET-008: Equipment and Technology Policy Sample Employee Questions This Document Answers \u007f Can I expense a"
         },
         {
-          "title": "Expense Reimbursement\n Policy ID: expense_reimbursement.pdf",
+          "title": "Expense Reimbursement",
           "section": "Page 1",
-          "policy_id": "expense_reimbursement.pdf",
+          "policy_id": "HR-EX-004",
           "source": "expense_reimbursement.pdf",
-          "snippet": "\u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex..."
+          "snippet": "\u007f Reasonable \u2014 consistent with standard business practice and not excessive \u007f Approved \u2014 pre-approved by your manager when required \u007f Documented \u2014 supported by a receipt or invoice Employees should spend Daisy Health funds as carefully as they would their own money. When in doubt about whether an ex"
         }
       ],
       "scores": {
         "id": "Q16",
         "type": "tool_required",
-        "elapsed_s": 6.32,
-        "grounded": false,
+        "elapsed_s": 6.35,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": 1.0,
         "tools_expected": [
@@ -1153,7 +1153,7 @@
       "question": "What health plan is Dr. Simone Okafor enrolled in and is she eligible for an HSA?",
       "gold_answer": "Dr. Simone Okafor (EMP-003) is enrolled in the Daisy Bronze plan and is HSA-eligible. Daisy Health contributes $500/year to her HSA. The 2025 individual contribution limit is $4,150.",
       "employee_id": "EMP-003",
-      "agent_answer": "Dr. Simone Okafor is enrolled in the Daisy Bronze plan, which is a high-deductible health plan, and she is eligible for a Health Savings Account (HSA).\n\n### Relevant policy\n\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 3:** Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral ...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 4:** Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 3:** Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -1161,9 +1161,9 @@
             "employee_id": "EMP-003"
           },
           "result": "Employee Profile \u2014 Dr. Simone Okafor\nID: EMP-003\nRole: Primary Care Physician\nDepartment: Clinical Operations\nType: Clinical (Full-Time)\nState: New York\nHire Date: 2024-01-08\nManager: Dr. Priya Anand (EMP-010)\nEmail: s.okafor@daisyhealth.com\nLocation: Remote - New York",
-          "timestamp": "13:37:39",
+          "timestamp": "14:02:42",
           "status": "\u2713 Success",
-          "duration_seconds": 0.0
+          "duration_seconds": 0.01
         },
         {
           "tool": "search_policy_documents",
@@ -1171,39 +1171,39 @@
             "query": "What health plan is Dr. Simone Okafor enrolled in and is she eligible for an HSA?"
           },
           "result": "Policy search: 'What health plan is Dr. Simone Okafor enrolled in and is she eligible for an HSA?'\n========================================\n\n[1] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 4\n    Source: benefits_and_insurance.pdf\n    Excerpt: Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ...\n\n[2] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 4\n    Source: benefits_and_insurance.pdf\n    Excerpt: \u007f 2025 contribution limit: $3,050 \u007f Funds are available on day one of the plan year \u007f Use it or lose it \u2014 unused funds do not roll over (except up to $610 may roll over per IRS rules) \u007f Eligible expenses include copays, prescriptions, dental and vision costs A Dependent Care FSA is also available fo...\n\n[3] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 3\n    Source: benefits_and_insurance.pdf\n    Excerpt: Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral ...",
-          "timestamp": "13:37:39",
+          "timestamp": "14:02:42",
           "status": "\u2713 Success",
-          "duration_seconds": 2.78
+          "duration_seconds": 2.67
         }
       ],
       "citations": [
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 4",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f ..."
+          "snippet": "Employees enrolled in the Daisy Bronze plan (a high-deductible health plan) are eligible for a Health Savings Account (HSA). \u007f Daisy Health contributes: $500/year for employee-only coverage; $1,000/year for employee + dependents \u007f 2025 IRS contribution limits: $4,150 (individual); $8,300 (family) \u007f"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 4",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "\u007f 2025 contribution limit: $3,050 \u007f Funds are available on day one of the plan year \u007f Use it or lose it \u2014 unused funds do not roll over (except up to $610 may roll over per IRS rules) \u007f Eligible expenses include copays, prescriptions, dental and vision costs A Dependent Care FSA is also available fo..."
+          "snippet": "\u007f 2025 contribution limit: $3,050 \u007f Funds are available on day one of the plan year \u007f Use it or lose it \u2014 unused funds do not roll over (except up to $610 may roll over per IRS rules) \u007f Eligible expenses include copays, prescriptions, dental and vision costs A Dependent Care FSA is also available fo"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 3",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral ..."
+          "snippet": "Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral"
         }
       ],
       "scores": {
         "id": "Q17",
         "type": "tool_required",
-        "elapsed_s": 5.7,
-        "grounded": false,
+        "elapsed_s": 4.61,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": 0.67,
         "tools_expected": [
@@ -1224,7 +1224,7 @@
       "question": "I am a colleague reporting a workplace harassment concern. What should happen next?",
       "gold_answer": "The agent should retrieve the Workplace Conduct Policy, determine this is an HR case requiring escalation, create a mock HR ticket, and draft a confidential escalation email to People Operations. The employee can also report anonymously via the Ethics Hotline at 1-800-DAISY-ETH. Source: Workplace Conduct Policy HR-WC-006.",
       "employee_id": "EMP-002",
-      "agent_answer": "Thanks, Morgan \u2014 I can help you report this.\n\n### What I did for you right now\n\n- Looked up your employee profile (Morgan Chen, EMP-002).\n- Created an HR case for People Operations: TKT-0022 (Workplace Concern, Normal priority, Status: Open).\n- Drafted an escalation email to People Operations for you to review (not sent).\n\n### Relevant policy\n\n- **Workplace Conduct\n Policy ID: workplace_conduct.pdf (workplace_conduct.pdf) \u2014 Page 4:** \u007f Interviews with the reporting employee, respondent, and any witnesses \u007f Review of relevant communications and records \u007f A written finding and recommended action \u007f Communication of the outcome to the reporting employee (subject to privacy limitations)...\n- **Workplace Conduct\n Policy ID: workplace_conduct.pdf (workplace_conduct.pdf) \u2014 Page 6:** \u007f Can I report something anonymously? \u007f What happens after I file a complaint? \u007f Can I be fired for reporting a coworker? \u007f What are the rules around posting about Daisy Health on social media?...\n- **Workplace Conduct\n Policy ID: workplace_conduct.pdf (workplace_conduct.pdf) \u2014 Page 5:** \u007f Demotion \u007f Termination The severity of the response depends on the nature and seriousness of the violation, prior history, and other relevant factors. Daisy Health reserves the right to skip progressive discipline steps for serious violations. Related Policies \u007f HR-DS-003: HIPAA and Data Security ...",
+      "agent_answer": "Thanks, Morgan \u2014 I can help you report this.\n\n### What I did for you right now\n\n- Looked up your employee profile (Morgan Chen, EMP-002).\n- Created an HR case for People Operations: TKT-0024 (Workplace Concern, Normal priority, Status: Open).\n- Drafted an escalation email to People Operations for you to review (not sent).\n\n### Relevant policy\n\n- **Workplace Conduct (HR-WC-006) \u2014 Page 4:** \u007f Interviews with the reporting employee, respondent, and any witnesses \u007f Review of relevant communications and records \u007f A written finding and recommended action \u007f Communication of the outcome to the reporting employee (subject to privacy limitations)\n- **Workplace Conduct (HR-WC-006) \u2014 Page 6:** \u007f Can I report something anonymously? \u007f What happens after I file a complaint? \u007f Can I be fired for reporting a coworker? \u007f What are the rules around posting about Daisy Health on social media?\n- **Workplace Conduct (HR-WC-006) \u2014 Page 5:** \u007f Demotion \u007f Termination The severity of the response depends on the nature and seriousness of the violation, prior history, and other relevant factors. Daisy Health reserves the right to skip progressive discipline steps for serious violations. Related Policies \u007f HR-DS-003: HIPAA and Data Security",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -1232,7 +1232,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:37:48",
+          "timestamp": "14:02:50",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1242,9 +1242,9 @@
             "query": "I am a colleague reporting a workplace harassment concern. What should happen next?"
           },
           "result": "Policy search: 'I am a colleague reporting a workplace harassment concern. What should happen next?'\n========================================\n\n[1] Workplace Conduct\n    Policy ID: workplace_conduct.pdf\n    Section: Page 4\n    Source: workplace_conduct.pdf\n    Excerpt: \u007f Interviews with the reporting employee, respondent, and any witnesses \u007f Review of relevant communications and records \u007f A written finding and recommended action \u007f Communication of the outcome to the reporting employee (subject to privacy limitations)...\n\n[2] Workplace Conduct\n    Policy ID: workplace_conduct.pdf\n    Section: Page 6\n    Source: workplace_conduct.pdf\n    Excerpt: \u007f Can I report something anonymously? \u007f What happens after I file a complaint? \u007f Can I be fired for reporting a coworker? \u007f What are the rules around posting about Daisy Health on social media?...\n\n[3] Workplace Conduct\n    Policy ID: workplace_conduct.pdf\n    Section: Page 5\n    Source: workplace_conduct.pdf\n    Excerpt: \u007f Demotion \u007f Termination The severity of the response depends on the nature and seriousness of the violation, prior history, and other relevant factors. Daisy Health reserves the right to skip progressive discipline steps for serious violations. Related Policies \u007f HR-DS-003: HIPAA and Data Security ...",
-          "timestamp": "13:37:48",
+          "timestamp": "14:02:50",
           "status": "\u2713 Success",
-          "duration_seconds": 2.65
+          "duration_seconds": 2.48
         },
         {
           "tool": "create_mock_hr_ticket",
@@ -1254,8 +1254,8 @@
             "ticket_type": "workplace_concern",
             "subject": "Workplace concern"
           },
-          "result": "HR Ticket Created (MOCK)\nID: TKT-0022 | Type: workplace_concern | Priority: Normal\nEmployee: Morgan Chen | Assigned: Aisha Thompson\nSubject: Workplace concern\nStatus: Open\nNote: Mock ticket for demonstration purposes.",
-          "timestamp": "13:37:50",
+          "result": "HR Ticket Created (MOCK)\nID: TKT-0024 | Type: workplace_concern | Priority: Normal\nEmployee: Morgan Chen | Assigned: Aisha Thompson\nSubject: Workplace concern\nStatus: Open\nNote: Mock ticket for demonstration purposes.",
+          "timestamp": "14:02:52",
           "status": "\u2713 Success",
           "duration_seconds": 0.01
         },
@@ -1266,39 +1266,39 @@
             "email_type": "hr_escalation"
           },
           "result": "DRAFT EMAIL (not sent - employee must review and send)\n==================================================\nTo: people@daisyhealth.com\nFrom: Morgan Chen <m.chen@daisyhealth.com>\nDate: August 16, 2026\nSubject: HR Concern - Confidential - Morgan Chen\n==================================================\n\nHi People Operations,\n\nI am reaching out regarding a concern.\n\nI would like to discuss this confidentially.\n\nSincerely,\nMorgan Chen\nSenior Software Engineer\nm.chen@daisyhealth.com\n\n==================================================\nReview before sending.",
-          "timestamp": "13:37:50",
+          "timestamp": "14:02:52",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         }
       ],
       "citations": [
         {
-          "title": "Workplace Conduct\n Policy ID: workplace_conduct.pdf",
+          "title": "Workplace Conduct",
           "section": "Page 4",
-          "policy_id": "workplace_conduct.pdf",
+          "policy_id": "HR-WC-006",
           "source": "workplace_conduct.pdf",
-          "snippet": "\u007f Interviews with the reporting employee, respondent, and any witnesses \u007f Review of relevant communications and records \u007f A written finding and recommended action \u007f Communication of the outcome to the reporting employee (subject to privacy limitations)..."
+          "snippet": "\u007f Interviews with the reporting employee, respondent, and any witnesses \u007f Review of relevant communications and records \u007f A written finding and recommended action \u007f Communication of the outcome to the reporting employee (subject to privacy limitations)"
         },
         {
-          "title": "Workplace Conduct\n Policy ID: workplace_conduct.pdf",
+          "title": "Workplace Conduct",
           "section": "Page 6",
-          "policy_id": "workplace_conduct.pdf",
+          "policy_id": "HR-WC-006",
           "source": "workplace_conduct.pdf",
-          "snippet": "\u007f Can I report something anonymously? \u007f What happens after I file a complaint? \u007f Can I be fired for reporting a coworker? \u007f What are the rules around posting about Daisy Health on social media?..."
+          "snippet": "\u007f Can I report something anonymously? \u007f What happens after I file a complaint? \u007f Can I be fired for reporting a coworker? \u007f What are the rules around posting about Daisy Health on social media?"
         },
         {
-          "title": "Workplace Conduct\n Policy ID: workplace_conduct.pdf",
+          "title": "Workplace Conduct",
           "section": "Page 5",
-          "policy_id": "workplace_conduct.pdf",
+          "policy_id": "HR-WC-006",
           "source": "workplace_conduct.pdf",
-          "snippet": "\u007f Demotion \u007f Termination The severity of the response depends on the nature and seriousness of the violation, prior history, and other relevant factors. Daisy Health reserves the right to skip progressive discipline steps for serious violations. Related Policies \u007f HR-DS-003: HIPAA and Data Security ..."
+          "snippet": "\u007f Demotion \u007f Termination The severity of the response depends on the nature and seriousness of the violation, prior history, and other relevant factors. Daisy Health reserves the right to skip progressive discipline steps for serious violations. Related Policies \u007f HR-DS-003: HIPAA and Data Security"
         }
       ],
       "scores": {
         "id": "Q18",
         "type": "tool_required",
-        "elapsed_s": 3.45,
-        "grounded": false,
+        "elapsed_s": 3.29,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": 1.0,
         "tools_expected": [
@@ -1324,7 +1324,7 @@
       "question": "Can Taylor Brooks work remotely from Minnesota for 6 weeks?",
       "gold_answer": "Taylor Brooks (EMP-005) is a full-time non-clinical HR Business Partner based in Colorado. Minnesota is on Daisy Health's approved state list. However, 6 weeks exceeds the 4-week temporary relocation limit, so Taylor must submit a Remote Work Location Change Request through the HR Portal. Allow up to 30 business days for processing and do not relocate before receiving written approval. Source: Remote Work Policy HR-RW-001.",
       "employee_id": "EMP-005",
-      "agent_answer": "Taylor Brooks cannot work remotely from Minnesota for 6 weeks as the policy states that the duration of temporary relocation does not exceed 4 consecutive weeks without additional approval.\n\n### Relevant policy\n\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 4:** \u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo...\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 3:** how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who ...\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 5:** Employees who believe their situation warrants an exception to this policy should submit a written request to People Operations at people@daisyhealth.com. Exceptions are reviewed on a case-by-case basis and are not guaranteed. Related Policies \u007f HR-DS-002: HIPAA and Data Security Policy \u007f HR-EX-003:...",
+      "agent_answer": "Taylor Brooks cannot work remotely from Minnesota for 6 weeks, as the policy states that temporary relocation does not exceed 4 consecutive weeks without additional approval.\n\n### Relevant policy\n\n- **Remote Work Policy (HR-RW-001) \u2014 Page 4:** \u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo\n- **Remote Work Policy (HR-RW-001) \u2014 Page 3:** how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who\n- **Remote Work Policy (HR-RW-001) \u2014 Page 5:** Employees who believe their situation warrants an exception to this policy should submit a written request to People Operations at people@daisyhealth.com. Exceptions are reviewed on a case-by-case basis and are not guaranteed. Related Policies \u007f HR-DS-002: HIPAA and Data Security Policy \u007f HR-EX-003:",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -1332,7 +1332,7 @@
             "employee_id": "EMP-005"
           },
           "result": "Employee Profile \u2014 Taylor Brooks\nID: EMP-005\nRole: HR Business Partner\nDepartment: People Operations\nType: Non-Clinical (Full-Time)\nState: Colorado\nHire Date: 2020-05-18\nManager: Aisha Thompson (EMP-011)\nEmail: t.brooks@daisyhealth.com\nLocation: Remote - Colorado",
-          "timestamp": "13:37:54",
+          "timestamp": "14:02:56",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1342,9 +1342,9 @@
             "query": "Can Taylor Brooks work remotely from Minnesota for 6 weeks?"
           },
           "result": "Policy search: 'Can Taylor Brooks work remotely from Minnesota for 6 weeks?'\n========================================\n\n[1] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 4\n    Source: remote_work_policy.pdf\n    Excerpt: \u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo...\n\n[2] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 3\n    Source: remote_work_policy.pdf\n    Excerpt: how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who ...\n\n[3] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 5\n    Source: remote_work_policy.pdf\n    Excerpt: Employees who believe their situation warrants an exception to this policy should submit a written request to People Operations at people@daisyhealth.com. Exceptions are reviewed on a case-by-case basis and are not guaranteed. Related Policies \u007f HR-DS-002: HIPAA and Data Security Policy \u007f HR-EX-003:...",
-          "timestamp": "13:37:54",
+          "timestamp": "14:02:56",
           "status": "\u2713 Success",
-          "duration_seconds": 2.65
+          "duration_seconds": 2.73
         },
         {
           "tool": "check_policy_compliance",
@@ -1354,39 +1354,39 @@
             "policy_area": "remote_work"
           },
           "result": "Remote Work Facts - Taylor Brooks\nCurrent state: Colorado\nEmployee type: Non-Clinical\nScenario: Can Taylor Brooks work remotely from Minnesota for 6 weeks?\n\nUse search_policy_documents for the applicable policy decision.",
-          "timestamp": "13:37:57",
+          "timestamp": "14:02:59",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         }
       ],
       "citations": [
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 4",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "\u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo..."
+          "snippet": "\u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo"
         },
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 3",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who ..."
+          "snippet": "how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who"
         },
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 5",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "Employees who believe their situation warrants an exception to this policy should submit a written request to People Operations at people@daisyhealth.com. Exceptions are reviewed on a case-by-case basis and are not guaranteed. Related Policies \u007f HR-DS-002: HIPAA and Data Security Policy \u007f HR-EX-003:..."
+          "snippet": "Employees who believe their situation warrants an exception to this policy should submit a written request to People Operations at people@daisyhealth.com. Exceptions are reviewed on a case-by-case basis and are not guaranteed. Related Policies \u007f HR-DS-002: HIPAA and Data Security Policy \u007f HR-EX-003:"
         }
       ],
       "scores": {
         "id": "Q19",
         "type": "tool_required",
-        "elapsed_s": 5.19,
-        "grounded": false,
+        "elapsed_s": 4.96,
+        "grounded": true,
         "citation_present": true,
         "tool_selection_accuracy": 1.0,
         "tools_expected": [
@@ -1416,7 +1416,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Clarification or out-of-scope response returned before tool execution.",
-          "timestamp": "13:38:02",
+          "timestamp": "14:03:03",
           "status": "\u2713 Completed",
           "duration_seconds": 0
         }
@@ -1439,7 +1439,7 @@
       "question": "I want to work from somewhere else for a while.",
       "gold_answer": "The agent should ask for clarification \u2014 specifically the employee's ID, the destination state or country, and the duration of the proposed remote work. The answer differs significantly for temporary vs extended relocation and for clinical vs non-clinical staff.",
       "employee_id": "EMP-002",
-      "agent_answer": "You can temporarily relocate for up to 4 weeks without changing your official work location. However, you must ensure that you have a reliable high-speed internet connection, a dedicated workspace, and that your workspace meets basic ergonomic safety standards.\n\n### Relevant policy\n\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 3:** how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who ...\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 4:** \u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo...\n- **Remote Work Policy\n Policy ID: remote_work_policy.pdf (remote_work_policy.pdf) \u2014 Page 5:** \u007f What is the home office stipend and how do I claim it? \u007f Can I work internationally for a month while visiting family? \u007f What happens if I move to a state that Daisy Health is not registered in? \u007f Do I need to tell anyone if I am temporarily working from a different city?...",
+      "agent_answer": "You can temporarily relocate for up to 4 weeks without changing your official work location. However, you must have a reliable high-speed internet connection, a dedicated workspace, and ensure your workspace meets ergonomic safety standards.\n\n### Relevant policy\n\n- **Remote Work Policy (HR-RW-001) \u2014 Page 3:** how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who\n- **Remote Work Policy (HR-RW-001) \u2014 Page 4:** \u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo\n- **Remote Work Policy (HR-RW-001) \u2014 Page 5:** \u007f What is the home office stipend and how do I claim it? \u007f Can I work internationally for a month while visiting family? \u007f What happens if I move to a state that Daisy Health is not registered in? \u007f Do I need to tell anyone if I am temporarily working from a different city?",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -1447,7 +1447,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:38:05",
+          "timestamp": "14:03:07",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1457,38 +1457,38 @@
             "query": "I want to work from somewhere else for a while."
           },
           "result": "Policy search: 'I want to work from somewhere else for a while.'\n========================================\n\n[1] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 3\n    Source: remote_work_policy.pdf\n    Excerpt: how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who ...\n\n[2] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 4\n    Source: remote_work_policy.pdf\n    Excerpt: \u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo...\n\n[3] Remote Work Policy\n    Policy ID: remote_work_policy.pdf\n    Section: Page 5\n    Source: remote_work_policy.pdf\n    Excerpt: \u007f What is the home office stipend and how do I claim it? \u007f Can I work internationally for a month while visiting family? \u007f What happens if I move to a state that Daisy Health is not registered in? \u007f Do I need to tell anyone if I am temporarily working from a different city?...",
-          "timestamp": "13:38:05",
+          "timestamp": "14:03:07",
           "status": "\u2713 Success",
-          "duration_seconds": 2.63
+          "duration_seconds": 2.54
         }
       ],
       "citations": [
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 3",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who ..."
+          "snippet": "how to submit. Employees must: \u007f Have a reliable high-speed internet connection (minimum 25 Mbps download) \u007f Have a dedicated, reasonably quiet workspace during scheduled work hours \u007f Ensure their workspace meets basic ergonomic safety standards 6. Temporary Relocation (Up to 4 Weeks) Employees who"
         },
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 4",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "\u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo..."
+          "snippet": "\u007f For clinical staff, licensure and credentialing requirements in Section 3 are met \u007f Duration does not exceed 4 consecutive weeks without additional approval Temporary relocation does not change the employee's official work location on record. 7. Extended Remote Relocation (More Than 4 Weeks) Emplo"
         },
         {
-          "title": "Remote Work Policy\n Policy ID: remote_work_policy.pdf",
+          "title": "Remote Work Policy",
           "section": "Page 5",
-          "policy_id": "remote_work_policy.pdf",
+          "policy_id": "HR-RW-001",
           "source": "remote_work_policy.pdf",
-          "snippet": "\u007f What is the home office stipend and how do I claim it? \u007f Can I work internationally for a month while visiting family? \u007f What happens if I move to a state that Daisy Health is not registered in? \u007f Do I need to tell anyone if I am temporarily working from a different city?..."
+          "snippet": "\u007f What is the home office stipend and how do I claim it? \u007f Can I work internationally for a month while visiting family? \u007f What happens if I move to a state that Daisy Health is not registered in? \u007f Do I need to tell anyone if I am temporarily working from a different city?"
         }
       ],
       "scores": {
         "id": "Q21",
         "type": "ambiguous",
-        "elapsed_s": 5.62,
+        "elapsed_s": 5.83,
         "grounded": true,
         "citation_present": null,
         "tool_selection_accuracy": null,
@@ -1510,7 +1510,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Clarification or out-of-scope response returned before tool execution.",
-          "timestamp": "13:38:14",
+          "timestamp": "14:03:15",
           "status": "\u2713 Completed",
           "duration_seconds": 0
         }
@@ -1533,7 +1533,7 @@
       "question": "What is the stock price of Daisy Health today?",
       "gold_answer": "This question is outside the scope of the Daisy Health HR Assistant. The assistant can only answer questions grounded in Daisy Health's internal HR policy documents and employee data. For financial information, please contact Finance or visit appropriate financial resources.",
       "employee_id": "EMP-002",
-      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Performance And Compensation\n Policy ID: performance_and_compensation.pdf (performance_and_compensation.pdf) \u2014 Page 3:** Base Salary Daisy Health sets base salaries based on: \u007f Role, level, and scope of responsibilities \u007f Geographic market data for the employee's work location \u007f Internal equity across comparable roles \u007f Individual experience and qualifications Daisy Health conducts an annual compensation benchmarking ...\n- **Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf (benefits_and_insurance.pdf) \u2014 Page 3:** Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral ...\n- **Workplace Conduct\n Policy ID: workplace_conduct.pdf (workplace_conduct.pdf) \u2014 Page 4:** Daisy Health has zero tolerance for threats, intimidation, or acts of violence \u2014 including threats made in writing, verbally, or through electronic means. Any employee who makes a credible threat of harm to a colleague, patient, or any other person will be subject to immediate termination and referr...",
+      "agent_answer": "I don't have enough information in the available HR documentation to answer this accurately. Please contact People Operations at people@daisyhealth.com for assistance.\n\n### Relevant policy\n\n- **Performance And Compensation (performance_and_compensation.pdf) \u2014 Page 3:** Base Salary Daisy Health sets base salaries based on: \u007f Role, level, and scope of responsibilities \u007f Geographic market data for the employee's work location \u007f Internal equity across comparable roles \u007f Individual experience and qualifications Daisy Health conducts an annual compensation benchmarking\n- **Benefits And Insurance (HR-BI-002) \u2014 Page 3:** Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral\n- **Workplace Conduct (HR-WC-006) \u2014 Page 4:** Daisy Health has zero tolerance for threats, intimidation, or acts of violence \u2014 including threats made in writing, verbally, or through electronic means. Any employee who makes a credible threat of harm to a colleague, patient, or any other person will be subject to immediate termination and referr",
       "tool_trace": [
         {
           "tool": "lookup_employee_profile",
@@ -1541,7 +1541,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Employee Profile \u2014 Morgan Chen\nID: EMP-002\nRole: Senior Software Engineer\nDepartment: Engineering\nType: Non-Clinical (Full-Time)\nState: Washington\nHire Date: 2022-07-01\nManager: Aisha Thompson (EMP-011)\nEmail: m.chen@daisyhealth.com\nLocation: Remote - Washington",
-          "timestamp": "13:38:17",
+          "timestamp": "14:03:19",
           "status": "\u2713 Success",
           "duration_seconds": 0.0
         },
@@ -1551,38 +1551,38 @@
             "query": "What is the stock price of Daisy Health today?"
           },
           "result": "Policy search: 'What is the stock price of Daisy Health today?'\n========================================\n\n[1] Performance And Compensation\n    Policy ID: performance_and_compensation.pdf\n    Section: Page 3\n    Source: performance_and_compensation.pdf\n    Excerpt: Base Salary Daisy Health sets base salaries based on: \u007f Role, level, and scope of responsibilities \u007f Geographic market data for the employee's work location \u007f Internal equity across comparable roles \u007f Individual experience and qualifications Daisy Health conducts an annual compensation benchmarking ...\n\n[2] Benefits And Insurance\n    Policy ID: benefits_and_insurance.pdf\n    Section: Page 3\n    Source: benefits_and_insurance.pdf\n    Excerpt: Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral ...\n\n[3] Workplace Conduct\n    Policy ID: workplace_conduct.pdf\n    Section: Page 4\n    Source: workplace_conduct.pdf\n    Excerpt: Daisy Health has zero tolerance for threats, intimidation, or acts of violence \u2014 including threats made in writing, verbally, or through electronic means. Any employee who makes a credible threat of harm to a colleague, patient, or any other person will be subject to immediate termination and referr...",
-          "timestamp": "13:38:17",
+          "timestamp": "14:03:19",
           "status": "\u2713 Success",
-          "duration_seconds": 2.9
+          "duration_seconds": 3.19
         }
       ],
       "citations": [
         {
-          "title": "Performance And Compensation\n Policy ID: performance_and_compensation.pdf",
+          "title": "Performance And Compensation",
           "section": "Page 3",
           "policy_id": "performance_and_compensation.pdf",
           "source": "performance_and_compensation.pdf",
-          "snippet": "Base Salary Daisy Health sets base salaries based on: \u007f Role, level, and scope of responsibilities \u007f Geographic market data for the employee's work location \u007f Internal equity across comparable roles \u007f Individual experience and qualifications Daisy Health conducts an annual compensation benchmarking ..."
+          "snippet": "Base Salary Daisy Health sets base salaries based on: \u007f Role, level, and scope of responsibilities \u007f Geographic market data for the employee's work location \u007f Internal equity across comparable roles \u007f Individual experience and qualifications Daisy Health conducts an annual compensation benchmarking"
         },
         {
-          "title": "Benefits And Insurance\n Policy ID: benefits_and_insurance.pdf",
+          "title": "Benefits And Insurance",
           "section": "Page 3",
-          "policy_id": "benefits_and_insurance.pdf",
+          "policy_id": "HR-BI-002",
           "source": "benefits_and_insurance.pdf",
-          "snippet": "Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral ..."
+          "snippet": "Daisy Health takes mental health seriously. All employees have access to: Employee Assistance Program (EAP) \u007f 6 free therapy or counseling sessions per year through our EAP provider \u007f Available to employees and household members \u007f Confidential \u2014 no information is shared with Daisy Health Behavioral"
         },
         {
-          "title": "Workplace Conduct\n Policy ID: workplace_conduct.pdf",
+          "title": "Workplace Conduct",
           "section": "Page 4",
-          "policy_id": "workplace_conduct.pdf",
+          "policy_id": "HR-WC-006",
           "source": "workplace_conduct.pdf",
-          "snippet": "Daisy Health has zero tolerance for threats, intimidation, or acts of violence \u2014 including threats made in writing, verbally, or through electronic means. Any employee who makes a credible threat of harm to a colleague, patient, or any other person will be subject to immediate termination and referr..."
+          "snippet": "Daisy Health has zero tolerance for threats, intimidation, or acts of violence \u2014 including threats made in writing, verbally, or through electronic means. Any employee who makes a credible threat of harm to a colleague, patient, or any other person will be subject to immediate termination and referr"
         }
       ],
       "scores": {
         "id": "Q23",
         "type": "out_of_scope",
-        "elapsed_s": 4.67,
+        "elapsed_s": 5.36,
         "grounded": true,
         "citation_present": null,
         "tool_selection_accuracy": null,
@@ -1604,7 +1604,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Clarification or out-of-scope response returned before tool execution.",
-          "timestamp": "13:38:24",
+          "timestamp": "14:03:27",
           "status": "\u2713 Completed",
           "duration_seconds": 0
         }
@@ -1635,7 +1635,7 @@
             "employee_id": "EMP-002"
           },
           "result": "Clarification or out-of-scope response returned before tool execution.",
-          "timestamp": "13:38:27",
+          "timestamp": "14:03:30",
           "status": "\u2713 Completed",
           "duration_seconds": 0
         }
