@@ -45,7 +45,7 @@ load_dotenv()
 
 # ── Try importing the agent orchestrator ──
 try:
-    from agent import run_agent_sync
+    from agent import run_agent
     AGENT_AVAILABLE = True
 except ImportError:
     AGENT_AVAILABLE = False
@@ -264,7 +264,7 @@ async def chat(request: ChatRequest):
     start_time = datetime.now()
 
     try:
-        result = run_agent_sync(
+        result = await run_agent(
             question=request.question,
             employee_id=emp_id,
         )
