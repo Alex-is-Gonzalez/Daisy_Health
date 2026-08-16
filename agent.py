@@ -175,6 +175,7 @@ def is_tool_error(text):
             "error executing",
             "cannot execute",
             "tool error",
+            "policy search unavailable",
         )
     )
 
@@ -303,6 +304,45 @@ def detect_workflow(question):
     return "general"
 
 
+def early_response(question, employee_id):
+    """Handle requests that should not start a workflow or an MCP session."""
+    normalized = question.lower().strip()
+
+    if any(term in normalized for term in (
+        "stock price", "weather", "python script", "scrape job", "scrape postings",
+    )):
+        return (
+            "I can help with Daisy Health HR policies and HR support workflows. "
+            "For this request, please use the appropriate external service or contact it@daisyhealth.com."
+        )
+
+    workflow = detect_workflow(question)
+    pto_balance_intent = any(
+        phrase in normalized
+        for phrase in ("how many", "balance", "available", "remaining", "used", "accrued")
+    )
+    if (
+        workflow == "pto"
+        and not pto_balance_intent
+        and not re.search(r"\b\d+(?:\.\d+)?\s*(?:day|days|week|weeks)\b|\b(?:next|on|from)\b", normalized)
+    ):
+        return (
+            "I can help with that. Please share the dates or number of days you want to take off "
+            "so I can explain the applicable PTO requirements."
+        )
+    if workflow == "remote_work" and not re.search(r"\b(?:in|from|to)\s+[a-z]+|\b\d+\s*(?:day|days|week|weeks|month|months)\b", normalized):
+        return (
+            "I can help assess that. Please share the destination state or country and how long "
+            "you plan to work there."
+        )
+    if workflow == "expense" and not re.search(r"\b(?:chair|desk|monitor|laptop|webcam|headset|receipt|travel|flight|hotel)\b", normalized):
+        return (
+            "I can help with reimbursement. Please share the item, its cost, and whether you have a receipt."
+        )
+
+    return None
+
+
 # ============================================================
 # REQUIRED TOOLS
 # ============================================================
@@ -325,7 +365,7 @@ def get_workflow_tools(workflow, available_names):
 
     elif workflow == "benefits":
         for name in (
-            "lookup_benefits",
+            "lookup_benefits_status",
             "search_policy_documents",
         ):
             if name in available:
@@ -370,7 +410,13 @@ def get_workflow_tools(workflow, available_names):
 def get_tool_schema(available_tools, tool_name):
     for tool in available_tools:
         if tool.name == tool_name:
-            return getattr(tool, "input_schema", None) or {}
+            # The MCP Python SDK serializes this field as `inputSchema`.
+            # Some older clients expose the Pythonic `input_schema` instead.
+            return (
+                getattr(tool, "input_schema", None)
+                or getattr(tool, "inputSchema", None)
+                or {}
+            )
 
     return {}
 
@@ -450,7 +496,7 @@ def build_tool_arguments(
     # BENEFITS
     # --------------------------------------------------------
 
-    if tool_name == "lookup_benefits":
+    if tool_name == "lookup_benefits_status":
 
         if "employee_id" in properties:
             args["employee_id"] = employee_id
@@ -590,6 +636,16 @@ async def execute_tool(
 
         duration = time.perf_counter() - start
         result_text = extract_mcp_text(result)
+
+        # MCP tool validation failures arrive as a normal protocol response
+        # with `isError=True`, not necessarily as a Python exception.
+        if getattr(result, "isError", False):
+            raise RuntimeError(result_text or "MCP tool returned an error")
+
+        # A tool may intentionally return a user-safe dependency error as
+        # text. Keep it out of citations and mark it as a failed operation.
+        if is_tool_error(result_text):
+            raise RuntimeError(result_text)
 
         print(
             f"[TIMING] MCP tool '{tool_name}': "
@@ -1427,6 +1483,23 @@ async def run_agent(
         }
 
     question = question.strip()
+
+    response = early_response(question, employee_id)
+    if response:
+        return {
+            "answer": response,
+            "tool_trace": [{
+                "tool": "request_validation",
+                "args": {"employee_id": employee_id},
+                "result": "Clarification or out-of-scope response returned before tool execution.",
+                "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "status": "✓ Completed",
+                "duration_seconds": 0,
+            }],
+            "citations": [],
+            "error": None,
+            "runtime_seconds": 0,
+        }
 
     try:
         client = get_openai_client()

@@ -1,8 +1,9 @@
 """
 Daisy Health — MCP Server
-Compatible with mcp 2.0.0
 
-Uses MCPServer from mcp.server.mcpserver.server with @tool decorator.
+Uses the public FastMCP API from the official MCP Python SDK.  Keeping to
+the public API makes the stdio server compatible with the pinned SDK version
+and avoids relying on an internal module path.
 
 IMPORTANT: Do NOT print to stdout — it breaks MCP stdio communication.
 
@@ -16,8 +17,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-# ── Correct import for mcp 2.0 ──
-from mcp.server.mcpserver.server import MCPServer
+from mcp.server.fastmcp import FastMCP
 
 # ─────────────────────────────────────────────
 # PATHS
@@ -29,7 +29,7 @@ sys.path.insert(0, str(BASE_DIR))
 # ─────────────────────────────────────────────
 # CREATE SERVER INSTANCE
 # ─────────────────────────────────────────────
-server = MCPServer("daisy-health-hr")
+server = FastMCP("daisy-health-hr")
 
 # ─────────────────────────────────────────────
 # DATA LOADERS
@@ -178,11 +178,14 @@ async def search_policy_documents(query: str, top_k: int = 3) -> str:
     for i, doc in enumerate(docs, 1):
         meta = doc.metadata or {}
         source = meta.get("source_file") or meta.get("source") or "HR Policy Document"
+        title = meta.get("document_title") or Path(source).stem.replace("_", " ").title()
+        policy_id = meta.get("policy_id") or source
         page = meta.get("page")
         section = f"Page {page + 1}" if page is not None else meta.get("section", "")
         snippet = doc.page_content.strip().replace("\n", " ")[:300]
         out += (
-            f"[{i}] {Path(source).stem.replace('_', ' ').title()}\n"
+            f"[{i}] {title}\n"
+            f"    Policy ID: {policy_id}\n"
             f"    Section: {section}\n"
             f"    Source: {source}\n"
             f"    Excerpt: {snippet}...\n\n"
@@ -197,7 +200,9 @@ async def check_policy_compliance(
     scenario: str = ""
 ) -> str:
     """
-    Check whether an employee action is compliant with Daisy Health policy.
+    Check structured employee facts relevant to a policy decision.
+    The final policy decision must be grounded in evidence returned by
+    search_policy_documents; this tool does not encode policy rules.
     policy_area options: remote_work, pto_request, expense, benefits_eligibility
     Example: employee_id='EMP-001', policy_area='expense', scenario='home office chair'
     """
@@ -209,65 +214,43 @@ async def check_policy_compliance(
     area = policy_area.lower()
 
     if "remote" in area:
-        approved = e["state"] in APPROVED_STATES
         clinical = e["employee_type"] == "Clinical"
         result = (
-            f"Remote Work Compliance - {e['name']}\n"
-            f"State: {e['state']} - {'Approved' if approved else 'Not approved'}\n"
+            f"Remote Work Facts - {e['name']}\n"
+            f"Current state: {e['state']}\n"
+            f"Employee type: {e['employee_type']}\n"
         )
         if scenario:
             result += f"Scenario: {scenario}\n"
-        result += "\nApproved for remote work.\n" if approved else "\nLocation Change Request required.\n"
         if clinical:
-            result += (
-                "\nCLINICAL STAFF - Additional requirements:\n"
-                "- Active license in patient's state\n"
-                "- Notify Credentialing within 5 business days\n"
-                "- Confirm malpractice coverage\n"
-                "Source: HR-RW-001 Section 3, HR-LC-009"
-            )
-        else:
-            result += "\nSource: HR-RW-001 - Temporary under 4 weeks: notify manager 5 days ahead."
+            result += "\nClinical role: retrieve licensure and remote-work policy evidence."
+        result += "\nUse search_policy_documents for the applicable policy decision."
         return result
 
     elif "pto" in area:
         pto = load_pto_balances()
         available = pto.get(emp_id, {}).get("available_days", 0)
-        result = f"PTO Compliance - {e['name']}\nAvailable: {available} days\n\n"
+        result = f"PTO Facts - {e['name']}\nAvailable: {available} days\n\n"
         if scenario:
             nums = re.findall(r'\d+\.?\d*', scenario)
             if nums:
                 requested = float(nums[0])
-                result += (
-                    f"COMPLIANT: {requested} days requested, {available} available. Submit via HR Portal."
-                    if requested <= available else
-                    f"INSUFFICIENT: {requested} requested but only {available} available."
-                )
+                result += f"Requested: {requested} days; available: {available} days.\n"
+        result += "Use search_policy_documents for notice and approval requirements."
         return result
 
     elif "expense" in area:
-        result = f"Expense Compliance - {e['name']} ({e['employment_type']})\n\n"
+        result = f"Expense Facts - {e['name']} ({e['employment_type']})\n"
         if scenario:
-            s = scenario.lower()
-            if any(x in s for x in ["chair", "desk", "monitor", "keyboard", "webcam"]):
-                result += "COMPLIANT: $500 home office stipend covers this.\nSource: HR-EX-004 Section 2"
-            elif "laptop" in s:
-                result += "REQUIRES APPROVAL: Manager and Finance must approve first.\nSource: HR-EX-004 Section 4"
-            elif any(x in s for x in ["travel", "flight", "hotel"]):
-                result += "COMPLIANT IF PRE-APPROVED: Economy class, $75/day meals.\nSource: HR-EX-004 Section 7"
-            else:
-                result += "Must be work-related with receipt. Over $500 needs pre-approval.\nSource: HR-EX-004"
+            result += f"Scenario: {scenario}\n"
+        result += "Use search_policy_documents for reimbursement eligibility and limits."
         return result
 
     elif "benefit" in area:
         benefits = load_benefits()
         b = benefits.get(emp_id, {})
-        result = f"Benefits Compliance - {e['name']}\nType: {e['employment_type']} | Plan: {b.get('health_plan','Unknown')}\n\n"
-        result += (
-            "Part-time: limited benefits. 30+ hrs/week needed.\nSource: HR-BI-002"
-            if e["employment_type"] == "Part-Time" else
-            "Full-time: all benefits eligible. Open enrollment: November.\nSource: HR-BI-002"
-        )
+        result = f"Benefits Facts - {e['name']}\nType: {e['employment_type']} | Plan: {b.get('health_plan','Unknown')}\n"
+        result += "Use search_policy_documents for eligibility and enrollment rules."
         return result
 
     return f"Unknown policy area '{policy_area}'. Options: remote_work, pto_request, expense, benefits_eligibility."
@@ -374,7 +357,7 @@ async def draft_hr_email(
 def main():
     sys.stderr.write("Daisy Health MCP Server ready\n")
     sys.stderr.flush()
-    # MCPServer.run("stdio") handles everything internally
+    # FastMCP owns the stdio protocol; all diagnostics stay on stderr.
     server.run("stdio")
 
 if __name__ == "__main__":

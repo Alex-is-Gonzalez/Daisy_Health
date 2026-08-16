@@ -220,6 +220,32 @@
       "created_date": "2026-08-15",
       "resolved_date": null,
       "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0018",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "workplace_concern",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Workplace concern",
+      "description": "I want to report a workplace concern.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0019",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "workplace_concern",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Workplace concern",
+      "description": "I want to report a workplace concern.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import os
+import re
 import chromadb
 
 from dotenv import load_dotenv
@@ -22,7 +23,7 @@ load_dotenv()
 CHROMADB_API_KEY = os.getenv("CHROMADB_API_KEY")
 CHROMADB_TENANT = os.getenv("CHROMADB_TENANT")
 CHROMADB_DB = os.getenv("CHROMADB_DB")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not CHROMADB_API_KEY:
     raise RuntimeError("CHROMADB_API_KEY is missing.")
@@ -33,15 +34,17 @@ if not CHROMADB_TENANT:
 if not CHROMADB_DB:
     raise RuntimeError("CHROMADB_DB is missing.")
 
+if not OPENAI_API_KEY:
+    raise RuntimeError("OPENAI_API_KEY is missing.")
+
 
 # ============================================================
-# Hugging Face Embeddings
+# OpenAI Embeddings
 # ============================================================
 
 embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small",
-    api_key=OPENROUTER_API_KEY,
-    base_url="https://openrouter.ai/api/v1",
+    api_key=OPENAI_API_KEY,
 )
 
 
@@ -70,7 +73,7 @@ vectorstore = Chroma(
 def ingest_documents():
     """
     Load HR PDFs, split them into chunks,
-    create Hugging Face embeddings,
+    create OpenAI embeddings,
     and store them in Chroma Cloud.
     """
 
@@ -115,8 +118,15 @@ def ingest_documents():
 
         chunk.metadata["document_type"] = "medical_hr"
 
-        chunk.metadata["source_file"] = os.path.basename(
-            source
+        source_file = os.path.basename(source)
+        stem = Path(source_file).stem
+        title = stem.replace("_", " ").title()
+        policy_id_match = re.search(r"HR-[A-Z]{2}-\d{3}", chunk.page_content)
+
+        chunk.metadata["source_file"] = source_file
+        chunk.metadata["document_title"] = title
+        chunk.metadata["policy_id"] = (
+            policy_id_match.group(0) if policy_id_match else source_file
         )
 
     # ========================================================
@@ -125,7 +135,13 @@ def ingest_documents():
 
     print("Adding documents to Chroma Cloud...")
 
-    vectorstore.add_documents(chunks)
+    # Stable ids make ingestion repeatable instead of silently duplicating
+    # chunks each time the corpus is rebuilt.
+    ids = [
+        f"{chunk.metadata['source_file']}:p{chunk.metadata.get('page', 0)}:c{i}"
+        for i, chunk in enumerate(chunks)
+    ]
+    vectorstore.add_documents(chunks, ids=ids)
 
     print("Documents successfully added to Chroma Cloud.")
 
@@ -144,7 +160,7 @@ if __name__ == "__main__":
     print("Daisy Health - HR Document Ingestion")
     print("-------------------------------------")
     print(f"Chroma database: {CHROMADB_DB}")
-    print("Collection: medical_hr_documents_hf")
-    print("Embedding model: all-MiniLM-L6-v2")
+    print("Collection: medical_hr_documents_openai")
+    print("Embedding model: text-embedding-3-small")
 
     ingest_documents()

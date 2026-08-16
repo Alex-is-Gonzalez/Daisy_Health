@@ -12,16 +12,16 @@ Architecture:
         ↓
     agent.py — LLM tool-calling loop, MCP client (stdio)
         ↓
-    mcp/mcp_server.py — MCP server (MCPServer, @tool)
+    mcp/mcp_server.py — MCP server (FastMCP, @tool)
         ↓                    ↓
-    mock_data/ JSON      rag_backend.py → Chroma Cloud + OpenRouter
+    mock_data/ JSON      rag_backend.py → Chroma Cloud + OpenAI
 
 Run:
     streamlit run daisy_health_app.py
 
 Requires:
     pip install streamlit python-dotenv
-    .env with OPENROUTER_API_KEY, CHROMADB_API_KEY,
+    .env with OPENAI_API_KEY, CHROMADB_API_KEY,
               CHROMADB_TENANT, CHROMADB_DB
 """
 

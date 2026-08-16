@@ -6,14 +6,14 @@
 
 ## Deployed Application URL
 
-**Streamlit UI:**
+**Deployed API and chat UI:**
 ```
-[To be added after deployment]
+Deploy the included `render.yaml`; paste the generated Render URL here before submission.
 ```
 
 **Health Endpoint:**
 ```
-[To be added after deployment]/health
+<your-render-url>/health
 ```
 
 ---
@@ -34,8 +34,8 @@ Once deployed, the `/health` endpoint returns:
     "mock_data": "online (30 employees)",
     "agent": "online"
   },
-  "llm_provider": "OpenRouter (google/gemma-3-27b-it:free)",
-  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "llm_provider": "OpenAI (gpt-5-mini)",
+  "embedding_model": "OpenAI text-embedding-3-small",
   "vector_db": "Chroma Cloud",
   "mcp_tools": [
     "lookup_employee_profile",
@@ -80,9 +80,9 @@ Once deployed, the `/health` endpoint returns:
 ```
 pip install -r requirements.txt
 ```
-- Start command:
+- Start command (already defined in `render.yaml`):
 ```
-streamlit run daisy_health_app.py --server.port $PORT --server.address 0.0.0.0
+uvicorn api:app --host 0.0.0.0 --port $PORT
 ```
 
 **3. Add environment variables**
@@ -91,11 +91,10 @@ Add these in the Render dashboard under Environment:
 
 | Key | Value |
 |---|---|
-| `OPENROUTER_API_KEY` | Your OpenRouter key |
+| `OPENAI_API_KEY` | Your OpenAI key |
 | `CHROMADB_API_KEY` | Your Chroma Cloud key |
 | `CHROMADB_TENANT` | Your Chroma tenant ID |
 | `CHROMADB_DB` | `HR_IT` |
-| `ANTHROPIC_API_KEY` | Your Anthropic key (optional) |
 
 **4. Deploy**
 - Click **Create Web Service**
@@ -155,7 +154,7 @@ GitHub Actions workflow runs automatically on every push to `main`:
 - Verifies all 7 MCP tools are defined
 - Tests mock data tool logic directly
 
-Deployment to Render is triggered automatically after all tests pass via Render's GitHub integration.
+Deployment is defined by `render.yaml` and should be enabled through Render's GitHub integration after CI passes.
 
 View workflow runs at:
 ```

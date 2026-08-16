@@ -41,20 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install 'mcp[cli]' fastapi uvicorn pydantic python-dotenv openai
-          # Install sentence transformers for RAG embeddings
-          pip install sentence-transformers langchain langchain-community
-          # Install chromadb for vector store
-          pip install chromadb
-          # Install PDF processing
-          pip install pypdf
-          # Install remaining requirements if file exists
-          if [ -f requirements-current.txt ]; then
-            pip install -r requirements-current.txt || true
-          fi
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt || true
-          fi
+          pip install -r requirements.txt
 
       # ── Step 5: Verify critical files exist ──
       - name: Verify project structure
@@ -119,7 +106,7 @@ jobs:
       - name: Run API smoke test
         run: |
           # Create a minimal .env for testing (no real keys needed for /health)
-          echo "OPENROUTER_API_KEY=test" > .env
+          echo "OPENAI_API_KEY=test" > .env
           echo "CHROMADB_API_KEY=test" >> .env
           echo "CHROMADB_TENANT=test" >> .env
           echo "CHROMADB_DB=HR_IT" >> .env
@@ -206,6 +193,9 @@ jobs:
 
           asyncio.run(test_discovery())
           "
+
+      - name: Run integration and routing tests
+        run: python -m unittest discover -s tests -v
 
       # ── Step 10: MCP tool logic test ──
       # Directly tests tool functions without starting the server

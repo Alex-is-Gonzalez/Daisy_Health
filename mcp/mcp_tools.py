@@ -128,7 +128,8 @@ def tool_lookup_benefits_status(employee_id: str) -> str:
 def tool_search_policy_documents(query: str, top_k: int = 3) -> str:
     top_k = max(1, min(top_k, 5))
     try:
-        from rag_backend import retriever
+        from rag_backend import get_rag_components
+        retriever = get_rag_components()["retriever"]
     except Exception as e:
         return f"Policy search unavailable: RAG backend failed to load ({e})."
 
@@ -152,68 +153,30 @@ def tool_search_policy_documents(query: str, top_k: int = 3) -> str:
     return out
 
 def tool_check_policy_compliance(employee_id: str, policy_area: str, scenario: str = "") -> str:
+    """Return employee facts; policy conclusions must come from RAG retrieval."""
     emp_id = employee_id.upper().strip()
     employees = load_employees()
     if emp_id not in employees:
         return f"Employee ID '{emp_id}' not found."
     e = employees[emp_id]
-    area = policy_area.lower()
-    if "remote" in area:
-        approved = e["state"] in APPROVED_STATES
-        clinical = e["employee_type"] == "Clinical"
-        result = (
-            f"Remote Work Compliance — {e['name']}\n"
-            f"State: {e['state']} — {'✓ Approved' if approved else '✗ Not approved'}\n"
-        )
-        if scenario:
-            result += f"Scenario: {scenario}\n"
-        result += "\n✓ Approved.\n" if approved else "\n⚠️ Location Change Request required.\n"
-        if clinical:
-            result += (
-                "\n🏥 CLINICAL: Active license in patient state required. "
-                "Notify Credentialing within 5 days. Source: HR-RW-001 §3, HR-LC-009"
-            )
-        else:
-            result += "\nSource: HR-RW-001 — Temporary (<4 weeks): notify manager 5 days ahead."
-        return result
-    elif "pto" in area:
+    if "pto" in policy_area.lower():
         pto = load_pto_balances()
         available = pto.get(emp_id, {}).get("available_days", 0)
-        result = f"PTO Compliance — {e['name']}\nAvailable: {available} days\n\n"
+        result = f"PTO facts — {e['name']}\nAvailable: {available} days\n"
         if scenario:
             nums = re.findall(r'\d+\.?\d*', scenario)
             if nums:
                 requested = float(nums[0])
-                result += (
-                    f"✓ COMPLIANT: {requested} days requested, {available} available."
-                    if requested <= available else
-                    f"⚠️ INSUFFICIENT: {requested} requested but only {available} available."
-                )
-        return result
-    elif "expense" in area:
-        result = f"Expense Compliance — {e['name']} ({e['employment_type']})\n\n"
-        if scenario:
-            s = scenario.lower()
-            if any(x in s for x in ["chair", "desk", "monitor", "keyboard", "webcam"]):
-                result += "✓ COMPLIANT: $500 home office stipend covers this. Source: HR-EX-004 §2"
-            elif "laptop" in s:
-                result += "⚠️ REQUIRES APPROVAL: Manager + Finance must approve first. Source: HR-EX-004 §4"
-            elif any(x in s for x in ["travel", "flight", "hotel"]):
-                result += "✓ IF PRE-APPROVED: Economy class, $75/day meals. Source: HR-EX-004 §7"
-            else:
-                result += "Must be work-related with receipt. Over $500 needs pre-approval. Source: HR-EX-004"
-        return result
-    elif "benefit" in area:
-        benefits = load_benefits()
-        b = benefits.get(emp_id, {})
-        result = f"Benefits Compliance — {e['name']}\nType: {e['employment_type']} | Plan: {b.get('health_plan','Unknown')}\n\n"
-        result += (
-            "ℹ️ Part-time: limited benefits. 30+ hrs/week needed. Source: HR-BI-002"
-            if e["employment_type"] == "Part-Time" else
-            "✓ Full-time: all benefits eligible. Open enrollment: November. Source: HR-BI-002"
-        )
-        return result
-    return f"Unknown policy area '{policy_area}'. Options: remote_work, pto_request, expense, benefits_eligibility."
+                result += f"Requested: {requested} days\n"
+        return result + "Use search_policy_documents for policy requirements."
+
+    return (
+        f"Employee facts — {e['name']}\n"
+        f"State: {e['state']}\n"
+        f"Type: {e['employee_type']} ({e['employment_type']})\n"
+        f"Scenario: {scenario}\n"
+        "Use search_policy_documents for policy requirements."
+    )
 
 def tool_create_mock_hr_ticket(employee_id, ticket_type, subject, description, priority="Normal"):
     emp_id = employee_id.upper().strip()

@@ -41,7 +41,7 @@ Daisy Health is a virtual primary care company. The HR Assistant is a full-stack
 │              agent.py                                    │
 │   - Interprets employee intent                           │
 │   - Decides which MCP tools to call                      │
-│   - Runs agentic loop via OpenRouter / Anthropic         │
+│   - Runs deterministic MCP workflow + OpenAI synthesis   │
 │   - Synthesizes final grounded answer                    │
 └──────────────┬──────────────────────┬───────────────────┘
                │                      │
@@ -50,9 +50,9 @@ Daisy Health is a virtual primary care company. The HR Assistant is a full-stack
 │    MCP Server         │  │       RAG Backend              │
 │    mcp/mcp_server.py  │  │       rag_backend.py           │
 │    (stdio transport)  │  │                               │
-│                      │  │  - Embedding: all-MiniLM-L6-v2 │
+│                      │  │  - Embedding: text-embedding-3-small │
 │  7 Tools:            │  │  - Vector DB: Chroma Cloud     │
-│  - lookup_employee_  │  │  - LLM: OpenRouter + Gemma     │
+│  - lookup_employee_  │  │  - LLM: OpenAI gpt-5-mini      │
 │    profile           │  │  - top_k retrieval: 4 chunks   │
 │  - check_pto_balance │  │  - Citation metadata stored    │
 │  - lookup_benefits_  │  └───────────────────────────────┘
@@ -98,7 +98,7 @@ We chose **manual orchestration** over a framework like LangGraph for the agent 
 
 The agent uses a **perceive → decide → act** loop:
 1. **Perceive:** Receive the employee's question and ID
-2. **Decide:** Claude/Gemma decides which MCP tools to call based on the system prompt
+2. **Decide:** deterministic routing selects the workflow and required MCP tools from the discovered tool names
 3. **Act:** Call MCP tools via stdio transport, collect results, synthesize answer
 
 ### Why Manual Orchestration
@@ -107,8 +107,8 @@ The agent uses a **perceive → decide → act** loop:
 - Simpler to debug and explain during the demo
 
 ### LLM Provider
-- **Primary:** OpenRouter (google/gemma-3-27b-it:free) — zero cost
-- **Fallback:** Anthropic claude-sonnet-4-6 — switch by setting `USE_ANTHROPIC = True` in `agent.py`
+- **Primary:** OpenAI `gpt-5-mini` for final grounded response synthesis.
+- Tool routing is intentionally deterministic so the demo workflows are reproducible and visible in the operational trace.
 
 ---
 
@@ -132,10 +132,9 @@ We use **stdio transport** — the MCP server runs as a local subprocess launche
 ### How the Agent Discovers and Calls Tools
 1. Agent starts MCP server as subprocess via `StdioServerParameters`
 2. Agent calls `session.list_tools()` to discover all 7 tools
-3. Tools are converted to LLM function-calling format and passed to OpenRouter/Anthropic
-4. LLM decides which tools to call and with what arguments
-5. Agent calls `session.call_tool(name, args)` for each tool
-6. Results are returned to the LLM for synthesis
+3. The agent selects supported tools from the discovered schemas and builds schema-valid arguments.
+4. Agent calls `session.call_tool(name, args)` for each tool.
+5. Retrieved snippets and structured results are supplied to the final LLM synthesis step.
 
 ---
 
@@ -143,21 +142,20 @@ We use **stdio transport** — the MCP server runs as a local subprocess launche
 
 ### Policy Corpus
 - **12 documents** covering all required HR topics
-- **Two formats:** Markdown (`.md`) and PDF (`.pdf`) — satisfies two-format requirement
-- **Total size:** ~60 pages
+- **Format:** PDF
+- **Total size:** 62 pages
 
 ### Chunking Strategy
-Heading-aware chunking using LangChain's `RecursiveCharacterTextSplitter`:
-- Chunk size: 500 tokens
-- Chunk overlap: 50 tokens
-- Split boundaries: `##` headings, then paragraphs, then sentences
+Deterministic token-window chunking using LangChain's `RecursiveCharacterTextSplitter`:
+- Chunk size: 800 characters
+- Chunk overlap: 150 characters
 
 **Justification:** Heading-aware chunking preserves section context, which improves citation accuracy — the agent can cite the specific section (e.g. "Section 3 — Clinical Staff Requirements") rather than just the document.
 
 ### Embedding Model
-`sentence-transformers/all-MiniLM-L6-v2` (HuggingFace, free, local)
+OpenAI `text-embedding-3-small`
 
-**Justification:** Free, fast, runs locally, no API key required, strong performance on short to medium text. Well suited for policy document chunks.
+**Justification:** It is used consistently for both ingestion and query retrieval, preventing embedding-space incompatibility.
 
 ### Vector Store
 **Chroma Cloud** — hosted free tier
@@ -192,7 +190,7 @@ All components run within one deployed service:
 
 ### Environment Variables
 All secrets stored as Render environment variables, never committed to GitHub:
-- `OPENROUTER_API_KEY`
+- `OPENAI_API_KEY`
 - `CHROMADB_API_KEY`
 - `CHROMADB_TENANT`
 - `CHROMADB_DB`
@@ -303,9 +301,9 @@ Render free tier spins down after 15 minutes of inactivity. Cold start takes app
 |---|---|---|
 | Agent framework | Manual orchestration | Full control, clear MCP traces |
 | MCP transport | stdio | Simple, single-service deployment |
-| LLM provider | OpenRouter / Gemma | Free tier, no cost |
-| Embedding model | all-MiniLM-L6-v2 | Free, local, strong performance |
-| Chunking | Heading-aware, 500 tokens | Preserves section context for citations |
+| LLM provider | OpenAI `gpt-5-mini` | Grounded final-response synthesis |
+| Embedding model | `text-embedding-3-small` | Same model for ingestion and retrieval |
+| Chunking | 800 characters with 150 overlap | Deterministic context-preserving windows |
 | Vector store | Chroma Cloud | Free hosted, persistent, metadata support |
 | Retrieval k | 4 | Balance between coverage and noise |
 | Web framework | Streamlit + FastAPI | Fast to build, clean UI, API endpoints |
