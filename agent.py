@@ -101,13 +101,14 @@ RULES:
 4. For remote work: look up profile AND search remote work policy AND check compliance
 5. For expense questions: search expense policy AND check compliance
 6. For benefits questions: look up benefits status AND search benefits policy
-7. For HR cases/workplace concerns: search conduct policy AND create an HR ticket
+7. For HR cases/workplace concerns: search conduct policy, create an HR ticket with create_mock_hr_ticket, AND draft an escalation email to People Operations with draft_hr_email — both tools are required for every HR case, not just one
 8. Always cite the source policy document in your answer
 9. Never make up policy — only use what tools return
 10. If you cannot find information, direct to people@daisyhealth.com
 
 Your answers should be warm, professional, grounded in policy, and personalized.
 """
+
 
 
 # ─────────────────────────────────────────────
@@ -117,7 +118,7 @@ def format_tools_for_openrouter(mcp_tools):
     """
     Convert MCP tool definitions to OpenAI/OpenRouter format.
     OpenRouter expects tools in the OpenAI function-calling format.
-    """
+"""
     return [
         {
             "type": "function",
@@ -129,6 +130,7 @@ def format_tools_for_openrouter(mcp_tools):
         }
         for tool in mcp_tools
     ]
+
 
 
 def _create_with_retry(client, max_retries=5, **kwargs):
@@ -152,6 +154,7 @@ def _create_with_retry(client, max_retries=5, **kwargs):
             delay = min(delay * 2, 30)
 
 
+
 def format_tools_for_anthropic(mcp_tools):
     """Convert MCP tool definitions to Anthropic format."""
     return [
@@ -162,6 +165,7 @@ def format_tools_for_anthropic(mcp_tools):
         }
         for tool in mcp_tools
     ]
+
 
 
 # ─────────────────────────────────────────────
@@ -235,8 +239,6 @@ async def run_agent(question: str, employee_id: str) -> dict:
         "citations": citations,
         "error": None,
     }
-
-
 # ─────────────────────────────────────────────
 # OPENROUTER AGENT LOOP
 # Uses OpenAI-compatible function calling
@@ -358,7 +360,7 @@ async def _run_openrouter_agent(
                                 "args": {},
                                 "result": f"RAG unavailable: {str(rag_err)[:100]}",
                                 "timestamp": timestamp,
-                                "status": "⚠️ Warning",
+                                "status": ":warning: Warning",
                             })
 
                     # Add tool result to conversation
@@ -389,6 +391,7 @@ async def _run_openrouter_agent(
             break
 
     return answer, tool_trace, citations
+
 
 
 # ─────────────────────────────────────────────
@@ -492,6 +495,7 @@ async def _run_anthropic_agent(
     return answer, tool_trace, citations
 
 
+
 # ─────────────────────────────────────────────
 # SYNCHRONOUS WRAPPER
 # Streamlit can't run async — use this instead
@@ -507,11 +511,12 @@ def run_agent_sync(question: str, employee_id: str) -> dict:
     return asyncio.run(run_agent(question, employee_id))
 
 
+
 # ─────────────────────────────────────────────
 # QUICK TEST
 # ─────────────────────────────────────────────
 if __name__ == "__main__":
-    print("🌼 Testing Daisy Health Agent...\n")
+    print(":blossom: Testing Daisy Health Agent...\n")
     print(f"Using: {'Anthropic Claude' if USE_ANTHROPIC else 'OpenRouter'}\n")
 
     result = run_agent_sync(

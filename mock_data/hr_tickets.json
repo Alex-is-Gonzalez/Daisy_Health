@@ -103,6 +103,19 @@
       "created_date": "2026-08-15",
       "resolved_date": null,
       "assigned_to": "Aisha Thompson"
+    },
+    {
+      "ticket_id": "TKT-0009",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "HR Case",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Workplace Concern Report",
+      "description": "Employee reports a workplace concern.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
     }
   ]
 }
