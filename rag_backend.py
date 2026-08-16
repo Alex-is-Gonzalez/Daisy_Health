@@ -13,14 +13,22 @@ from langchain_classic.chains.combine_documents import (
     create_stuff_documents_chain,
 )
 
+
+# ============================================================
+# ENVIRONMENT
+# ============================================================
+
 load_dotenv()
 
 
-# ─────────────────────────────────────────────
-# ENVIRONMENT
-# ─────────────────────────────────────────────
-
 def get_config():
+    """
+    Load and validate required environment variables.
+
+    This function does NOT initialize any models or external
+    services. It only reads configuration.
+    """
+
     required_vars = {
         "OPENROUTER_API_KEY": os.getenv("OPENROUTER_API_KEY"),
         "CHROMADB_API_KEY": os.getenv("CHROMADB_API_KEY"),
@@ -29,7 +37,8 @@ def get_config():
     }
 
     missing = [
-        name for name, value in required_vars.items()
+        name
+        for name, value in required_vars.items()
         if not value
     ]
 
@@ -41,17 +50,21 @@ def get_config():
     return required_vars
 
 
-# ─────────────────────────────────────────────
-# LAZY RAG INITIALIZATION
-# ─────────────────────────────────────────────
+# ============================================================
+# CACHED RAG COMPONENTS
+# ============================================================
 
 _rag_components = None
 
 
 def get_rag_components():
     """
-    Initialize the RAG stack only when it is actually needed.
-    Components are cached for the lifetime of the Python process.
+    Initialize the complete RAG stack only when it is actually
+    needed.
+
+    The components are cached for the lifetime of the Python
+    process so the HuggingFace embedding model is not loaded
+    repeatedly.
     """
 
     global _rag_components
@@ -61,9 +74,9 @@ def get_rag_components():
 
     config = get_config()
 
-    # ─────────────────────────────────────────
+    # ========================================================
     # LLM
-    # ─────────────────────────────────────────
+    # ========================================================
 
     llm = ChatOpenAI(
         model="google/gemma-4-26b-a4b-it:free",
@@ -73,17 +86,19 @@ def get_rag_components():
         max_tokens=512,
     )
 
-    # ─────────────────────────────────────────
+    # ========================================================
     # EMBEDDINGS
-    # ─────────────────────────────────────────
+    # ========================================================
 
+    # This is intentionally loaded ONLY when a RAG query
+    # actually requires it.
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    # ─────────────────────────────────────────
+    # ========================================================
     # CHROMA CLOUD
-    # ─────────────────────────────────────────
+    # ========================================================
 
     chroma_client = chromadb.CloudClient(
         api_key=config["CHROMADB_API_KEY"],
@@ -97,17 +112,17 @@ def get_rag_components():
         embedding_function=embeddings,
     )
 
-    # ─────────────────────────────────────────
+    # ========================================================
     # RETRIEVER
-    # ─────────────────────────────────────────
+    # ========================================================
 
     retriever = vectorstore.as_retriever(
         search_kwargs={"k": 4}
     )
 
-    # ─────────────────────────────────────────
+    # ========================================================
     # PROMPT
-    # ─────────────────────────────────────────
+    # ========================================================
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -165,9 +180,9 @@ Employee question:
         ]
     )
 
-    # ─────────────────────────────────────────
+    # ========================================================
     # CHAINS
-    # ─────────────────────────────────────────
+    # ========================================================
 
     document_chain = create_stuff_documents_chain(
         llm,
@@ -178,6 +193,10 @@ Employee question:
         retriever,
         document_chain,
     )
+
+    # ========================================================
+    # CACHE EVERYTHING
+    # ========================================================
 
     _rag_components = {
         "llm": llm,
@@ -192,13 +211,20 @@ Employee question:
     return _rag_components
 
 
-# ─────────────────────────────────────────────
-# RAG FUNCTION
-# ─────────────────────────────────────────────
+# ============================================================
+# RAG CHAT
+# ============================================================
 
 def chat(question: str):
     """
     Run a question through the RAG pipeline.
+
+    Returns:
+
+        {
+            "answer": str,
+            "documents": list
+        }
     """
 
     if not isinstance(question, str):
@@ -212,9 +238,18 @@ def chat(question: str):
             "documents": [],
         }
 
+    # This is where the expensive RAG stack is initialized.
     rag = get_rag_components()
 
+    # --------------------------------------------------------
+    # Retrieve relevant documents
+    # --------------------------------------------------------
+
     documents = rag["retriever"].invoke(question)
+
+    # --------------------------------------------------------
+    # Run RAG chain
+    # --------------------------------------------------------
 
     response = rag["rag_chain"].invoke(
         {
@@ -228,9 +263,31 @@ def chat(question: str):
     }
 
 
+# ============================================================
+# DOCUMENT COUNT
+# ============================================================
+
 def get_document_count():
-    """Return the number of documents/chunks in Chroma."""
+    """
+    Return the number of chunks stored in Chroma Cloud.
 
-    rag = get_rag_components()
+    IMPORTANT:
+    This function intentionally DOES NOT initialize the
+    HuggingFace embedding model or the RAG chain.
 
-    return rag["vectorstore"]._collection.count()
+    This keeps Streamlit startup lightweight.
+    """
+
+    config = get_config()
+
+    chroma_client = chromadb.CloudClient(
+        api_key=config["CHROMADB_API_KEY"],
+        tenant=config["CHROMADB_TENANT"],
+        database=config["CHROMADB_DB"],
+    )
+
+    collection = chroma_client.get_collection(
+        name="medical_hr_documents_hf"
+    )
+
+    return collection.count()

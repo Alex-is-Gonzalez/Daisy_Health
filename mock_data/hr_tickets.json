@@ -116,6 +116,19 @@
       "created_date": "2026-08-15",
       "resolved_date": null,
       "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0010",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "HR Case",
+      "status": "Open",
+      "priority": "High",
+      "subject": "Workplace Concern Report",
+      "description": "Employee EMP-001 reports a workplace concern.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
     }
   ]
 }
