@@ -200,7 +200,7 @@ async def health_check():
             "mock_data": mock_data_status,
             "agent": "online" if AGENT_AVAILABLE else "unavailable",
         },
-        "llm_provider": "OpenAI (gpt-40-mini)",
+        "llm_provider": "OpenAI (gpt-4o-mini)",
         "embedding_model": "OpenAI text-embedding-3-small",
         "vector_db": "Chroma Cloud",
         "mcp_tools": [
