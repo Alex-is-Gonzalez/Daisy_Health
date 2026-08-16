@@ -37,38 +37,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── Add project root to path ──
 sys.path.insert(0, str(Path(__file__).parent))
 
-# ── Import RAG backend (used only for the document-count status display) ──
-# try:
-#     from rag_backend import get_document_count
-#     RAG_AVAILABLE = True
-# except Exception as e:
-#     RAG_AVAILABLE = False
-#     def get_document_count(): return "Unavailable"
-# RAG_AVAILABLE = True
-# RAG_IMPORT_ERROR = None
 
-# def get_document_count():
-#     try:
-#         from rag_backend import get_document_count as _get_document_count
-#         return _get_document_count()
-#     except Exception as e:
-#         return "Unavailable"
-# ── Import the real agent orchestrator ──
-# agent.py spawns mcp/mcp_server.py as a stdio subprocess, discovers its
-# tools via MCP's ClientSession.list_tools(), and lets the LLM decide which
-# tools to call via session.call_tool(). This is the actual agentic/MCP path.
-# try:
-#     from agent import run_agent_sync
-#     AGENT_AVAILABLE = True
-# except Exception as e:
-#     AGENT_AVAILABLE = False
-#     AGENT_IMPORT_ERROR = str(e)
-
-# AGENT_AVAILABLE = False
-# AGENT_IMPORT_ERROR = "Temporarily disabled for Render startup test"
+# ── RAG backend ──
 try:
     from rag_backend import get_document_count
     RAG_AVAILABLE = True
@@ -80,8 +52,15 @@ except Exception as e:
     def get_document_count():
         return "Unavailable"
 
-def get_document_count():
-    return "Unavailable"
+
+# ── Agent orchestrator ──
+try:
+    from agent import run_agent_sync
+    AGENT_AVAILABLE = True
+    AGENT_IMPORT_ERROR = None
+except Exception as e:
+    AGENT_AVAILABLE = False
+    AGENT_IMPORT_ERROR = str(e)
 # ============================================================
 # PAGE CONFIG
 # ============================================================
