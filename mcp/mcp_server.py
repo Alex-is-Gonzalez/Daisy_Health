@@ -166,10 +166,14 @@ async def search_policy_documents(query: str, top_k: int = 3) -> str:
     top_k = max(1, min(top_k, 5))
     try:
         from rag_backend import get_rag_components
+    except Exception as e:
+        return f"Policy search unavailable: RAG backend import failed ({e})."
+
+    try:
         rag = get_rag_components()
         retriever = rag["retriever"]
     except Exception as e:
-        return f"Policy search unavailable: RAG backend failed to load ({e})."
+        return f"Policy search unavailable: RAG backend initialization failed ({e})."
 
     docs = retriever.invoke(query)[:top_k]
     if not docs:
