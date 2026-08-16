@@ -10,13 +10,23 @@
 **Deployed API and chat UI:**
 
 ```
-Deploy the included `render.yaml`; paste the generated Render URL here before submission.
+FastAPI:
+https://daisy-health.onrender.com
+
+Health:
+https://daisy-health.onrender.com/health
+
+Demo:
+https://daisy-health.onrender.com/demo
+
+Streamlit:
+https://daisy-health-streamlit.onrender.com
 ```
 
 **Health Endpoint:**
 
 ```
-<your-render-url>/health
+https://daisy-health.onrender.com/health
 ```
 
 ---

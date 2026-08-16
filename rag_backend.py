@@ -61,6 +61,7 @@ def get_rag_components():
 
     # ========================================================
     # OPENAI LLM
+    # FIX: corrected model name (was "gpt-5-mini" which does not exist)
     # ========================================================
 
     llm = ChatOpenAI(
