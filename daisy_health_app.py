@@ -53,14 +53,6 @@ except Exception as e:
         return "Unavailable"
 
 
-# ── Agent orchestrator ──
-try:
-    from agent import run_agent_sync
-    AGENT_AVAILABLE = True
-    AGENT_IMPORT_ERROR = None
-except Exception as e:
-    AGENT_AVAILABLE = False
-    AGENT_IMPORT_ERROR = str(e)
 # ============================================================
 # PAGE CONFIG
 # ============================================================
@@ -317,15 +309,20 @@ def do_logout():
 # runs it synchronously for Streamlit and falls back gracefully.
 # ============================================================
 def run_agent(question: str, employee_id: str) -> dict:
-    if not AGENT_AVAILABLE:
+    try:
+        from agent import run_agent_sync
+    except Exception as e:
         return {
             "answer": (
-                "The agent orchestrator is unavailable right now "
-                f"({AGENT_IMPORT_ERROR}). Please contact people@daisyhealth.com."
+                "The agent orchestrator is unavailable right now. "
+                f"Error: {e}"
             ),
             "tool_trace": [{
-                "tool": "Agent", "args": {}, "result": AGENT_IMPORT_ERROR,
-                "timestamp": datetime.now().strftime("%H:%M:%S"), "status": "✗ Error",
+                "tool": "Agent",
+                "args": {},
+                "result": str(e)[:200],
+                "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "status": "✗ Error",
             }],
             "citations": [],
         }
@@ -336,11 +333,14 @@ def run_agent(question: str, employee_id: str) -> dict:
         return {
             "answer": (
                 "I encountered an error processing your request. "
-                f"Please try again or contact people@daisyhealth.com\n\nError: {e}"
+                f"Please try again.\n\nError: {e}"
             ),
             "tool_trace": [{
-                "tool": "Agent", "args": {}, "result": str(e)[:200],
-                "timestamp": datetime.now().strftime("%H:%M:%S"), "status": "✗ Error",
+                "tool": "Agent",
+                "args": {},
+                "result": str(e)[:200],
+                "timestamp": datetime.now().strftime("%H:%M:%S"),
+                "status": "✗ Error",
             }],
             "citations": [],
         }
