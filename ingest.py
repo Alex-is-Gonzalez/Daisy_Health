@@ -3,7 +3,7 @@ import re
 import chromadb
 
 from dotenv import load_dotenv
-
+from pathlib import Path
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import (
     DirectoryLoader,

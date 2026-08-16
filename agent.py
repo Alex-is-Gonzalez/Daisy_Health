@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).parent
 
 sys.path.insert(0, str(BASE_DIR))
 
-LLM_MODEL = "gpt-4o-mini"  # fixed: was "gpt-5-mini" which does not exist
+LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini") 
 
 # Deterministic classification is faster and more predictable.
 USE_LLM_CLASSIFICATION = False

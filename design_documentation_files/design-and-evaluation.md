@@ -160,7 +160,8 @@ Deterministic token-window chunking using LangChain's `RecursiveCharacterTextSpl
 - Chunk size: 800 characters
 - Chunk overlap: 150 characters
 
-**Justification:** Heading-aware chunking preserves section context, which improves citation accuracy — the agent can cite the specific section (e.g. "Section 3 — Clinical Staff Requirements") rather than just the document.
+**Justification:**
+We use RecursiveCharacterTextSplitter with 800-character chunks and 150-character overlap. This is a deterministic character-window strategy rather than heading-aware chunking.
 
 ### Embedding Model
 

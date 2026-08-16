@@ -39,7 +39,7 @@ The assistant is instructed to:
 | **LangChain**                      | Orchestrates document loading, chunking, retrieval, and the RAG chain  |
 | **OpenAI embeddings**              | Generates `text-embedding-3-small` vectors for documents and questions |
 | **Chroma Cloud**                   | Stores document embeddings and performs similarity search              |
-| **OpenAI**                         | `gpt-5-mini` generates grounded employee-facing answers                |
+| **OpenAI**                         | `gpt-4o-mini` generates grounded employee-facing answers               |
 | **PyPDFLoader**                    | Extracts text from HR PDF handbooks                                    |
 | **RecursiveCharacterTextSplitter** | Splits documents into overlapping chunks for retrieval                 |
 | **python-dotenv**                  | Loads environment variables from `.env`                                |
@@ -79,7 +79,7 @@ flowchart TB
     UI --> AG["Agent Orchestrator<br/>agent.py<br/>MCP client + tool-call loop"]
     API --> AG
 
-    AG <--> LLM["LLM Provider<br/>OpenAI gpt-5-mini"]
+    AG <--> LLM["LLM Provider<br/>OpenAI gpt-4o-mini"]
     AG <-- "stdio (MCP protocol)" --> MCP["MCP Server<br/>mcp/mcp_server.py<br/>7 tools via @server.tool()"]
 
     MCP --> TOOLS["mcp/mcp_tools.py<br/>tool implementations"]
@@ -209,7 +209,7 @@ This gives the LLM the relevant HR policy information needed to answer the emplo
 
 ## 4. LLM Response
 
-The retrieved context is supplied to `gpt-5-mini` through OpenAI.
+The retrieved context is supplied to `gpt-4o-mini` through OpenAI.
 
 The model is instructed to:
 
@@ -299,7 +299,7 @@ Create an account and obtain an API key:
 
 [OpenAI](https://platform.openai.com/)
 
-The application uses `gpt-5-mini` for final response synthesis and `text-embedding-3-small` for retrieval.
+The application uses `gpt-4o-mini` for final response synthesis and `text-embedding-3-small` for retrieval.
 
 ---
 
@@ -391,7 +391,7 @@ Before running the application, make sure you have:
 ## 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone <https://github.com/Alex-is-Gonzalez/Daisy_Health/commits/alex-openAILMM>
 cd Daisy_Health
 ```
 
@@ -666,7 +666,7 @@ flowchart TB
     C --> D["Top 4 Relevant<br/>Chunks"]
     D --> E["LangChain RAG<br/>Chain"]
     E --> F["OpenAI"]
-    F --> G["gpt-5-mini"]
+    F --> G["gpt-4o-mini"]
     G --> H(["HR Response"])
 
     class A input
@@ -752,7 +752,7 @@ Instead, it performs similarity search and retrieves the most relevant chunks.
 
 ## OpenAI
 
-OpenAI provides the `gpt-5-mini` response model and `text-embedding-3-small` embedding model. The same embedding model is used at ingestion and query time.
+OpenAI provides the `gpt-4o-mini` response model and `text-embedding-3-small` embedding model. The same embedding model is used at ingestion and query time.
 
 ---
 
