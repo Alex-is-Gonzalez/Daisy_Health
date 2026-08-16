@@ -41,12 +41,12 @@ load_dotenv()
 sys.path.insert(0, str(Path(__file__).parent))
 
 # ── Import RAG backend (used only for the document-count status display) ──
-# try:
-#     from rag_backend import get_document_count
-#     RAG_AVAILABLE = True
-# except Exception as e:
-#     RAG_AVAILABLE = False
-#     def get_document_count(): return "Unavailable"
+try:
+    from rag_backend import get_document_count
+    RAG_AVAILABLE = True
+except Exception as e:
+    RAG_AVAILABLE = False
+    def get_document_count(): return "Unavailable"
 
 # ── Import the real agent orchestrator ──
 # agent.py spawns mcp/mcp_server.py as a stdio subprocess, discovers its
@@ -58,7 +58,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 # except Exception as e:
 #     AGENT_AVAILABLE = False
 #     AGENT_IMPORT_ERROR = str(e)
-RAG_AVAILABLE = False
+
 AGENT_AVAILABLE = False
 AGENT_IMPORT_ERROR = "Temporarily disabled for Render startup test"
 
