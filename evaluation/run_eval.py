@@ -16,7 +16,7 @@ results.json so a human grader can spot-check any score by hand.
 
 Usage:
     python evaluation/run_eval.py
-Requires the same .env as agent.py / rag_backend.py (OPENROUTER_API_KEY,
+Requires the same .env as agent.py / rag_backend.py (OPENAI_API_KEY,
 CHROMADB_API_KEY, CHROMADB_TENANT, CHROMADB_DB).
 """
 
@@ -134,7 +134,9 @@ def score_question(q: dict, result: dict, elapsed: float) -> dict:
 
 def run_ablation():
     """Compare retrieval k=3 vs k=5 on three multi-document questions."""
-    from rag_backend import vectorstore
+    from rag_backend import get_rag_components
+
+    vectorstore = get_rag_components()["vectorstore"]
 
     ablation_qs = [q for q in evaluation_questions if q["id"] in ("Q08", "Q12", "Q13")]
     results = []

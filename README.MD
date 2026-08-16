@@ -2,7 +2,7 @@
 
 Daisy Health is an agentic AI system that helps employees at a hypothetical virtual-care company complete HR policy and operations tasks. It combines **Retrieval-Augmented Generation (RAG)** over a corpus of internal HR policy documents with an **agentic orchestration layer** that calls tools exposed by a **Model Context Protocol (MCP) server** to look up mock employee/PTO/benefits data, check policy compliance, and take mock actions (creating HR tickets, drafting emails).
 
-The system uses **LangChain**, **Chroma Cloud**, **Hugging Face (Sentence Transformers) embeddings**, the official **MCP Python SDK**, and **OpenRouter** (swappable to Anthropic) to produce grounded, cited, tool-driven responses.
+The system uses **LangChain**, **Chroma Cloud**, OpenAI's `text-embedding-3-small`, the official **MCP Python SDK**, and OpenAI's `gpt-4o-mini` to produce grounded, cited, tool-driven responses.
 
 ---
 
@@ -29,22 +29,21 @@ The assistant is instructed to:
 
 # Tech Stack
 
-| Technology                               | Role                                                                              |
-| ----------------------------------------- | ---------------------------------------------------------------------------------- |
-| **Python**                                | Application language                                                              |
-| **Streamlit**                             | Chat UI (`daisy_health_app.py`)                                                   |
-| **FastAPI**                               | `/health`, `/chat`, `/demo` API endpoints for the grader (`api.py`)               |
-| **MCP Python SDK** (`mcp[cli]`)           | MCP server (`mcp/mcp_server.py`) exposing HR tools over stdio                     |
-| **agent.py**                              | Agent orchestrator — MCP client + tool-calling loop against the LLM               |
-| **LangChain**                             | Orchestrates document loading, chunking, retrieval, and the RAG chain             |
-| **Hugging Face / Sentence Transformers**  | Generates embeddings locally (`all-MiniLM-L6-v2`) for HR documents and questions  |
-| **Chroma Cloud**                          | Stores document embeddings and performs similarity search                        |
-| **OpenRouter** (default) / **Anthropic**  | LLM provider for the agent loop — toggled with `USE_ANTHROPIC` in `agent.py`      |
-| **Gemma** (`openai/gpt-oss-20b:free` / `google/gemma-3-27b-it:free`) | Default model used through OpenRouter for tool-calling and answers |
-| **PyPDFLoader**                           | Extracts text from HR PDF handbooks                                              |
-| **RecursiveCharacterTextSplitter**        | Splits documents into overlapping chunks for retrieval                           |
-| **python-dotenv**                         | Loads environment variables from `.env`                                          |
-| **mock_data/*.json**                      | Synthetic employee, PTO, benefits, and HR ticket records                         |
+| Technology                         | Role                                                                   |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| **Python**                         | Application language                                                   |
+| **Streamlit**                      | Chat UI (`daisy_health_app.py`)                                        |
+| **FastAPI**                        | `/health`, `/chat`, `/demo` API endpoints for the grader (`api.py`)    |
+| **MCP Python SDK** (`mcp[cli]`)    | MCP server (`mcp/mcp_server.py`) exposing HR tools over stdio          |
+| **agent.py**                       | Agent orchestrator — MCP client + tool-calling loop against the LLM    |
+| **LangChain**                      | Orchestrates document loading, chunking, retrieval, and the RAG chain  |
+| **OpenAI embeddings**              | Generates `text-embedding-3-small` vectors for documents and questions |
+| **Chroma Cloud**                   | Stores document embeddings and performs similarity search              |
+| **OpenAI**                         | `gpt-4o-mini` generates grounded employee-facing answers               |
+| **PyPDFLoader**                    | Extracts text from HR PDF handbooks                                    |
+| **RecursiveCharacterTextSplitter** | Splits documents into overlapping chunks for retrieval                 |
+| **python-dotenv**                  | Loads environment variables from `.env`                                |
+| **mock_data/\*.json**              | Synthetic employee, PTO, benefits, and HR ticket records               |
 
 ---
 
@@ -53,7 +52,7 @@ The assistant is instructed to:
 Daisy Health has four cooperating layers:
 
 1. **Web layer** — Streamlit chat UI + FastAPI `/health`, `/chat`, `/demo` endpoints
-2. **Agent orchestrator** (`agent.py`) — an MCP client that runs a tool-calling loop against the LLM (OpenRouter by default, Anthropic optional)
+2. **Agent orchestrator** (`agent.py`) — an MCP client with deterministic workflow routing and an LLM synthesis step
 3. **MCP server** (`mcp/mcp_server.py`) — exposes 7 tools over stdio, backed by `mcp/mcp_tools.py`
 4. **Data layer** — the RAG index (Chroma Cloud, built by `ingest.py` from `data/handbooks/*.pdf`) and mock structured data (`mock_data/*.json`)
 
@@ -80,14 +79,14 @@ flowchart TB
     UI --> AG["Agent Orchestrator<br/>agent.py<br/>MCP client + tool-call loop"]
     API --> AG
 
-    AG <--> LLM["LLM Provider<br/>OpenRouter (Gemma) or Anthropic"]
+    AG <--> LLM["LLM Provider<br/>OpenAI gpt-4o-mini"]
     AG <-- "stdio (MCP protocol)" --> MCP["MCP Server<br/>mcp/mcp_server.py<br/>7 tools via @server.tool()"]
 
     MCP --> TOOLS["mcp/mcp_tools.py<br/>tool implementations"]
     TOOLS --> MOCK[("mock_data/*.json<br/>employees, PTO,<br/>benefits, tickets")]
     TOOLS --> RAG["rag_backend.py<br/>LangChain retrieval chain"]
 
-    RAG --> VDB[("Chroma Cloud<br/>medical_hr_documents_hf")]
+    RAG --> VDB[("Chroma Cloud<br/>medical_hr_documents_openai")]
     ING["ingest.py<br/>PyPDFLoader + splitter"] --> VDB
     PDF[("data/handbooks/*.pdf<br/>12 HR policy documents")] --> ING
 
@@ -116,15 +115,15 @@ flowchart TB
 
 The MCP server (`mcp/mcp_server.py`) exposes these tools over stdio; the agent discovers them via `session.list_tools()` and calls them via `session.call_tool()`:
 
-| Tool | Uses |
-| --- | --- |
-| `lookup_employee_profile` | mock data (`mock_data/employees.json`) |
-| `check_pto_balance` | mock data (`mock_data/pto_balances.json`) |
-| `lookup_benefits_status` | mock data (`mock_data/benefits.json`) |
-| `search_policy_documents` | RAG index (Chroma Cloud via `rag_backend.py`) |
-| `check_policy_compliance` | mock data + rule logic (remote work, PTO, expense, benefits) |
-| `create_mock_hr_ticket` | mock action — writes to `mock_data/hr_tickets.json` |
-| `draft_hr_email` | mock action — returns an unsent draft email |
+| Tool                      | Uses                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| `lookup_employee_profile` | mock data (`mock_data/employees.json`)                                               |
+| `check_pto_balance`       | mock data (`mock_data/pto_balances.json`)                                            |
+| `lookup_benefits_status`  | mock data (`mock_data/benefits.json`)                                                |
+| `search_policy_documents` | RAG index (Chroma Cloud via `rag_backend.py`)                                        |
+| `check_policy_compliance` | structured employee facts; final decisions are grounded in retrieved policy evidence |
+| `create_mock_hr_ticket`   | mock action — writes to `mock_data/hr_tickets.json`                                  |
+| `draft_hr_email`          | mock action — returns an unsent draft email                                          |
 
 ## Demo Workflows
 
@@ -165,7 +164,7 @@ The extracted text is divided into smaller chunks using `RecursiveCharacterTextS
 The chunks are converted into vector embeddings using:
 
 ```text
-sentence-transformers/all-MiniLM-L6-v2
+text-embedding-3-small
 ```
 
 The embeddings and document metadata are stored in a Chroma Cloud collection.
@@ -174,7 +173,7 @@ The embeddings and document metadata are stored in a Chroma Cloud collection.
 
 ## 2. Vector Search
 
-When an employee asks a question, the question is converted into an embedding using the **same Hugging Face embedding model** used during ingestion.
+When an employee asks a question, the question is converted into an embedding using the **same OpenAI embedding model** used during ingestion.
 
 For example:
 
@@ -210,7 +209,7 @@ This gives the LLM the relevant HR policy information needed to answer the emplo
 
 ## 4. LLM Response
 
-The retrieved context is sent to the Gemma model through OpenRouter.
+The retrieved context is supplied to `gpt-4o-mini` through OpenAI.
 
 The model is instructed to:
 
@@ -289,18 +288,18 @@ The project uses:
 
 ```text
 Database: HR_IT
-Collection: medical_hr_documents_hf
+Collection: medical_hr_documents_openai
 ```
 
-## OpenRouter
+## OpenAI
 
-OpenRouter provides access to the language model used to generate the final response.
+OpenAI provides the language model and embedding endpoints used by the application.
 
 Create an account and obtain an API key:
 
-[OpenRouter](https://openrouter.ai/)
+[OpenAI](https://platform.openai.com/)
 
-The application currently uses a Gemma model through OpenRouter.
+The application uses `gpt-4o-mini` for final response synthesis and `text-embedding-3-small` for retrieval.
 
 ---
 
@@ -311,7 +310,7 @@ This project does **not** use OpenAI for embeddings.
 Embeddings are generated locally using:
 
 ```text
-sentence-transformers/all-MiniLM-L6-v2
+text-embedding-3-small
 ```
 
 The model runs locally on the development machine.
@@ -331,7 +330,7 @@ config:
     fontSize: "17px"
 ---
 flowchart TB
-    A["Hugging Face /<br/>Sentence Transformers"] --> B["Local Embedding Model"]
+    A["OpenAI"] --> B["text-embedding-3-small"]
     B --> C[("Chroma Cloud")]
 
     class A source
@@ -358,7 +357,7 @@ config:
     fontSize: 17px
 ---
 flowchart TB
-    D["OpenRouter"] --> E["Gemma"]
+    D["OpenAI"] --> E["gpt-4o-mini"]
 
      D:::gateway
      E:::language
@@ -382,7 +381,7 @@ Before running the application, make sure you have:
 - A Chroma Cloud API key
 - A Chroma Cloud tenant ID
 - A Chroma Cloud database
-- An OpenRouter API key
+- An OpenAI API key
 - HR PDF documents
 
 ---
@@ -392,7 +391,7 @@ Before running the application, make sure you have:
 ## 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone <https://github.com/Alex-is-Gonzalez/Daisy_Health/commits/alex-openAILMM>
 cd Daisy_Health
 ```
 
@@ -431,7 +430,7 @@ pip install -r requirements.txt
 Create a file named `.env` in the root of the project.
 
 ```env
-OPENROUTER_API_KEY=your_openrouter_api_key
+OPENAI_API_KEY=your_openai_api_key
 CHROMADB_API_KEY=your_chroma_api_key
 CHROMADB_TENANT=your_chroma_tenant_id
 CHROMADB_DB=HR_IT
@@ -526,7 +525,7 @@ This will:
 1. Find the PDF files in `data/handbooks`
 2. Extract their text
 3. Split the text into chunks
-4. Generate Hugging Face embeddings
+4. Generate OpenAI embeddings
 5. Upload the embeddings to Chroma Cloud
 6. Store metadata about the source documents
 
@@ -536,8 +535,8 @@ You should see output similar to:
 Daisy Health - HR Document Ingestion
 -------------------------------------
 Chroma database: HR_IT
-Collection: medical_hr_documents_hf
-Embedding model: all-MiniLM-L6-v2
+Collection: medical_hr_documents_openai
+Embedding model: text-embedding-3-small
 
 Loading HR documents...
 Loaded XX pages.
@@ -596,10 +595,10 @@ Running `ingest.py` repeatedly against the same collection can add duplicate doc
 
 For a clean rebuild, use a new/empty collection or clear the existing collection before re-ingesting.
 
-The current Hugging Face collection is:
+The current collection is:
 
 ```text
-medical_hr_documents_hf
+medical_hr_documents_openai
 ```
 
 This collection is separate from the older:
@@ -620,7 +619,7 @@ After the documents have been ingested, run the Streamlit UI:
 streamlit run daisy_health_app.py
 ```
 
-Select an employee (e.g. `EMP-001`) in the sidebar and ask a question in the chat input. Each question runs the full agentic pipeline in `agent.py`: it spawns the MCP server as a stdio subprocess, discovers its tools, and lets the LLM decide which tools to call before producing a final, cited answer.
+Select an employee (e.g. `EMP-001`) in the sidebar and ask a question in the chat input. Each question runs the full pipeline in `agent.py`: it spawns the MCP server as a stdio subprocess, discovers its tools, applies the documented deterministic workflow policy, and produces a final, cited answer using the MCP results.
 
 Optionally, in a second terminal, start the API for the grader:
 
@@ -662,12 +661,12 @@ config:
     fontSize: "17px"
 ---
 flowchart TB
-    A["Employee Question"] --> B["Hugging Face<br/>Embedding"]
+    A["Employee Question"] --> B["OpenAI<br/>Embedding"]
     B --> C[("Chroma Similarity<br/>Search")]
     C --> D["Top 4 Relevant<br/>Chunks"]
     D --> E["LangChain RAG<br/>Chain"]
-    E --> F["OpenRouter"]
-    F --> G["Gemma"]
+    E --> F["OpenAI"]
+    F --> G["gpt-4o-mini"]
     G --> H(["HR Response"])
 
     class A input
@@ -719,7 +718,7 @@ The prompt also instructs the assistant to mention the source document when poss
 
 ## Local Embeddings
 
-The project uses `all-MiniLM-L6-v2` instead of a paid embedding API.
+The project uses OpenAI `text-embedding-3-small` consistently for ingestion and query retrieval.
 
 Benefits include:
 
@@ -751,13 +750,9 @@ Instead, it performs similarity search and retrieves the most relevant chunks.
 
 ---
 
-## OpenRouter
+## OpenAI
 
-OpenRouter provides the language model endpoint.
-
-The application uses LangChain's OpenAI-compatible `ChatOpenAI` interface with OpenRouter's API endpoint.
-
-This allows the application to interact with the selected Gemma model while keeping the LLM provider separate from the rest of the RAG architecture.
+OpenAI provides the `gpt-4o-mini` response model and `text-embedding-3-small` embedding model. The same embedding model is used at ingestion and query time.
 
 ---
 

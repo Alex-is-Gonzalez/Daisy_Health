@@ -1,4 +1,5 @@
 # Deployed — Daisy Health HR Assistant
+
 **AI Engineering Techniques and Architectures — Quantic MSAIE**
 **Team:** Jessica Huang & Alexis Gonzalez
 
@@ -6,14 +7,26 @@
 
 ## Deployed Application URL
 
-**Streamlit UI:**
+**Deployed API and chat UI:**
+
 ```
-[To be added after deployment]
+FastAPI:
+https://daisy-health.onrender.com
+
+Health:
+https://daisy-health.onrender.com/health
+
+Demo:
+https://daisy-health.onrender.com/demo
+
+Streamlit:
+https://daisy-health-streamlit.onrender.com
 ```
 
 **Health Endpoint:**
+
 ```
-[To be added after deployment]/health
+https://daisy-health.onrender.com/health
 ```
 
 ---
@@ -34,8 +47,8 @@ Once deployed, the `/health` endpoint returns:
     "mock_data": "online (30 employees)",
     "agent": "online"
   },
-  "llm_provider": "OpenRouter (google/gemma-3-27b-it:free)",
-  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "llm_provider": "OpenAI (gpt-4o-mini)",
+  "embedding_model": "OpenAI text-embedding-3-small",
   "vector_db": "Chroma Cloud",
   "mcp_tools": [
     "lookup_employee_profile",
@@ -62,6 +75,7 @@ Once deployed, the `/health` endpoint returns:
 ## Deployment Instructions
 
 ### Prerequisites
+
 - GitHub repository: `https://github.com/Alex-is-Gonzalez/Daisy_Health`
 - Render.com account (free)
 - All API keys ready as environment variables
@@ -69,35 +83,40 @@ Once deployed, the `/health` endpoint returns:
 ### Steps
 
 **1. Connect GitHub to Render**
+
 - Go to render.com → New Web Service
 - Connect GitHub account
 - Select `Alex-is-Gonzalez/Daisy_Health` repository
 
 **2. Configure the service**
+
 - Name: `daisy-health-hr-assistant`
 - Runtime: Python 3
 - Build command:
+
 ```
 pip install -r requirements.txt
 ```
-- Start command:
+
+- Start command (already defined in `render.yaml`):
+
 ```
-streamlit run daisy_health_app.py --server.port $PORT --server.address 0.0.0.0
+uvicorn api:app --host 0.0.0.0 --port $PORT
 ```
 
 **3. Add environment variables**
 
 Add these in the Render dashboard under Environment:
 
-| Key | Value |
-|---|---|
-| `OPENROUTER_API_KEY` | Your OpenRouter key |
+| Key                | Value                 |
+| ------------------ | --------------------- |
+| `OPENAI_API_KEY`   | Your OpenAI key       |
 | `CHROMADB_API_KEY` | Your Chroma Cloud key |
-| `CHROMADB_TENANT` | Your Chroma tenant ID |
-| `CHROMADB_DB` | `HR_IT` |
-| `ANTHROPIC_API_KEY` | Your Anthropic key (optional) |
+| `CHROMADB_TENANT`  | Your Chroma tenant ID |
+| `CHROMADB_DB`      | `HR_IT`               |
 
 **4. Deploy**
+
 - Click **Create Web Service**
 - Wait 3-5 minutes for the first deploy to complete
 - Visit the provided Render URL
@@ -113,6 +132,7 @@ Render free tier **spins down after 15 minutes of inactivity.** When the service
 - Subsequent requests are fast (warm start: 2-5 seconds)
 
 **For the demo:** Visit the health endpoint URL about 2 minutes before the demo begins to warm up the service:
+
 ```
 [deployed-url]/health
 ```
@@ -124,6 +144,7 @@ Render free tier **spins down after 15 minutes of inactivity.** When the service
 To run locally without deployment:
 
 **Terminal 1 — Streamlit UI:**
+
 ```bash
 source .venv/bin/activate
 streamlit run daisy_health_app.py
@@ -131,6 +152,7 @@ streamlit run daisy_health_app.py
 ```
 
 **Terminal 2 — FastAPI endpoints:**
+
 ```bash
 source .venv/bin/activate
 uvicorn api:app --port 8000
@@ -138,6 +160,7 @@ uvicorn api:app --port 8000
 ```
 
 **Test the agent directly:**
+
 ```bash
 python agent.py
 ```
@@ -147,6 +170,7 @@ python agent.py
 ## CI/CD
 
 GitHub Actions workflow runs automatically on every push to `main`:
+
 - Installs dependencies
 - Validates project structure
 - Validates mock data JSON files
@@ -155,9 +179,10 @@ GitHub Actions workflow runs automatically on every push to `main`:
 - Verifies all 7 MCP tools are defined
 - Tests mock data tool logic directly
 
-Deployment to Render is triggered automatically after all tests pass via Render's GitHub integration.
+Deployment is defined by `render.yaml` and should be enabled through Render's GitHub integration after CI passes.
 
 View workflow runs at:
+
 ```
 https://github.com/Alex-is-Gonzalez/Daisy_Health/actions
 ```

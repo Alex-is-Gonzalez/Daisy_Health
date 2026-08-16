@@ -23,6 +23,7 @@ Install dependencies:
     pip install fastapi uvicorn
 """
 
+import asyncio
 import json
 import sys
 import os
@@ -31,7 +32,10 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+from mcp import ClientSession
+from mcp.client.stdio import StdioServerParameters, stdio_client
 
 # Add project root to path so we can import agent and rag_backend
 sys.path.insert(0, str(Path(__file__).parent))
@@ -41,7 +45,7 @@ load_dotenv()
 
 # ── Try importing the agent orchestrator ──
 try:
-    from agent import run_agent_sync
+    from agent import run_agent
     AGENT_AVAILABLE = True
 except ImportError:
     AGENT_AVAILABLE = False
@@ -57,7 +61,24 @@ except ImportError:
 
 # ── Try importing MCP check ──
 MCP_SERVER_PATH = Path(__file__).parent / "mcp" / "mcp_server.py"
-MCP_AVAILABLE = MCP_SERVER_PATH.exists()
+async def check_mcp_connectivity() -> tuple[bool, str]:
+    """Verify live MCP discovery instead of treating a source file as online."""
+    if not MCP_SERVER_PATH.exists():
+        return False, "server file is missing"
+
+    params = StdioServerParameters(
+        command=sys.executable,
+        args=[str(MCP_SERVER_PATH)],
+        env=os.environ.copy(),
+    )
+    try:
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                tools = (await session.list_tools()).tools
+        return bool(tools), f"{len(tools)} tools discovered"
+    except Exception as exc:
+        return False, str(exc)[:120]
 
 # ── Try importing mock data ──
 MOCK_DATA_PATH = Path(__file__).parent / "mock_data" / "employees.json"
@@ -164,9 +185,8 @@ async def health_check():
     except Exception:
         mock_data_status = "error"
 
-    # Determine overall status
-    # App is healthy if at least MCP and mock data are available
-    overall_status = "ok" if MCP_AVAILABLE and MOCK_DATA_AVAILABLE else "degraded"
+    mcp_online, mcp_detail = await check_mcp_connectivity()
+    overall_status = "ok" if mcp_online and MOCK_DATA_AVAILABLE else "degraded"
 
     return {
         "status": overall_status,
@@ -174,14 +194,14 @@ async def health_check():
         "app": "Daisy Health HR Assistant",
         "version": "1.0.0",
         "components": {
-            "mcp_server": "online" if MCP_AVAILABLE else "unavailable",
+            "mcp_server": "online" if mcp_online else f"unavailable: {mcp_detail}",
             "rag_index": rag_status,
             "chroma_docs": chroma_count,
             "mock_data": mock_data_status,
             "agent": "online" if AGENT_AVAILABLE else "unavailable",
         },
-        "llm_provider": "OpenRouter (google/gemma-3-27b-it:free)",
-        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "llm_provider": "OpenAI (gpt-4o-mini)",
+        "embedding_model": "OpenAI text-embedding-3-small",
         "vector_db": "Chroma Cloud",
         "mcp_tools": [
             "lookup_employee_profile",
@@ -244,7 +264,7 @@ async def chat(request: ChatRequest):
     start_time = datetime.now()
 
     try:
-        result = run_agent_sync(
+        result = await run_agent(
             question=request.question,
             employee_id=emp_id,
         )
@@ -343,15 +363,15 @@ async def demo_tasks():
 # ─────────────────────────────────────────────
 # ROOT ENDPOINT
 # ─────────────────────────────────────────────
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """Root endpoint — confirms API is running."""
-    return {
-        "message": "Daisy Health HR Assistant API is running.",
-        "endpoints": {
-            "health": "GET /health — system status",
-            "chat": "POST /chat — agentic HR Q&A",
-            "demo": "GET /demo — demo task descriptions",
-            "docs": "GET /docs — interactive API documentation",
-        }
-    }
+    """A lightweight deployed chat UI; Streamlit remains available locally."""
+    return """<!doctype html>
+<html><head><meta charset="utf-8"><title>Daisy Health HR Assistant</title>
+<style>body{font-family:system-ui;max-width:760px;margin:3rem auto;padding:0 1rem;color:#173b36}textarea,input,button{font:inherit;padding:.7rem;margin:.35rem 0;width:100%;box-sizing:border-box}button{background:#147d73;color:white;border:0;border-radius:.4rem;cursor:pointer}.card{border:1px solid #c8deda;border-radius:.6rem;padding:1rem;margin-top:1rem;white-space:pre-wrap}</style></head>
+<body><h1>Daisy Health HR Assistant</h1><p>Ask a policy or HR workflow question. Responses include retrieved citations and an operational MCP tool trace.</p>
+<label>Employee ID<input id="employee" value="EMP-001" aria-label="Employee ID"></label>
+<label>Question<textarea id="question" rows="4" aria-label="HR question" placeholder="Can I expense a home office chair?"></textarea></label>
+<button onclick="ask()">Ask Daisy</button><div id="result" class="card" hidden></div>
+<script>async function ask(){const out=document.getElementById('result');out.hidden=false;out.textContent='Working…';const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({employee_id:document.getElementById('employee').value,question:document.getElementById('question').value})});const x=await r.json();out.textContent=r.ok?x.answer+'\\n\\nCitations: '+JSON.stringify(x.citations,null,2)+'\\n\\nTool trace: '+JSON.stringify(x.tool_trace,null,2):JSON.stringify(x,null,2);}</script>
+</body></html>"""

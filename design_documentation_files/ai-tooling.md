@@ -34,7 +34,7 @@ This document describes how we used AI code generation tools throughout the deve
 - Excellent at explaining technical concepts in plain language during the build process
 
 **What did not work well:**
-- Required multiple iterations to get the MCP server working with mcp 2.0 — the correct class (`MCPServer` vs `Server`) and handler signatures changed between versions
+- Required multiple iterations to get the MCP server working with the pinned SDK; the final implementation uses the public `FastMCP` API.
 - The `@tool` decorator approach required checking the actual installed package to find the right import path
 - Some generated code needed to be adapted for the specific Python 3.14 environment on the development machine
 
@@ -44,8 +44,8 @@ This document describes how we used AI code generation tools throughout the deve
 **Used by:** Alexis Gonzalez
 **How we used it:**
 - Generated the RAG ingestion pipeline (`ingest.py`) for loading PDF policy documents into Chroma Cloud
-- Built the RAG backend (`rag_backend.py`) with similarity search, citation extraction, and OpenRouter integration
-- Set up the ChromaDB Cloud connection and embedding pipeline using `all-MiniLM-L6-v2`
+- Built the RAG backend (`rag_backend.py`) with similarity search, citation extraction, and OpenAI integration
+- Set up the ChromaDB Cloud connection and embedding pipeline using `text-embedding-3-small`
 - Debugged Streamlit integration with the RAG backend
 - Generated the initial `daisy_health_app.py` with teal color scheme and sidebar layout
 - Updated the README with setup and local run instructions

@@ -3,32 +3,32 @@ Daisy Health — HR Assistant Web Application
 Streamlit dashboard with:
 - Employee login (ID + password)
 - Teal sidebar with MCP tool trace
-- Chat interface with real MCP tool calls
+- Chat interface powered by the deployed FastAPI backend
 - Policy citations panel
-- Real RAG retrieval via rag_backend.py
+- Real RAG retrieval via the FastAPI /chat endpoint
 
 Architecture:
-    Streamlit UI
+    Streamlit UI  (this file, daisy-health-streamlit.onrender.com)
+        ↓  HTTP POST /chat
+    FastAPI backend  (daisy-health.onrender.com)
         ↓
     agent.py — LLM tool-calling loop, MCP client (stdio)
         ↓
-    mcp/mcp_server.py — MCP server (MCPServer, @tool)
+    mcp/mcp_server.py — MCP server (FastMCP, @tool)
         ↓                    ↓
-    mock_data/ JSON      rag_backend.py → Chroma Cloud + OpenRouter
+    mock_data/ JSON      rag_backend.py → Chroma Cloud + OpenAI
 
-Run:
-    streamlit run daisy_health_app.py
+Run locally:
+    FASTAPI_URL=http://localhost:8000 streamlit run daisy_health_app.py
 
 Requires:
-    pip install streamlit python-dotenv
-    .env with OPENROUTER_API_KEY, CHROMADB_API_KEY,
-              CHROMADB_TENANT, CHROMADB_DB
+    pip install streamlit python-dotenv requests
+    Environment variable: FASTAPI_URL (set in Render dashboard for this service)
 """
 
 import html
-import json
-import re
-import sys
+import os
+import requests as _requests
 from datetime import datetime
 from pathlib import Path
 
@@ -37,21 +37,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-sys.path.insert(0, str(Path(__file__).parent))
-
-
-# ── RAG backend ──
-try:
-    from rag_backend import get_document_count
-    RAG_AVAILABLE = True
-    RAG_IMPORT_ERROR = None
-except Exception as e:
-    RAG_AVAILABLE = False
-    RAG_IMPORT_ERROR = str(e)
-
-    def get_document_count():
-        return "Unavailable"
-
+# ── FastAPI backend URL ──────────────────────────────────────
+# Set FASTAPI_URL in Render → Streamlit service → Environment Variables.
+# Value should be: https://daisy-health.onrender.com
+FASTAPI_URL = os.environ.get(
+    "FASTAPI_URL", "https://daisy-health.onrender.com/"
+).rstrip("/")
 
 # ============================================================
 # PAGE CONFIG
@@ -302,54 +293,117 @@ def do_logout():
         st.session_state[k] = False if k == "logged_in" else ([] if k in ["messages","tool_trace","citations"] else ("login" if k == "login_mode" else (None if k in ["selected_emp_id","pending_input"] else "")))
 
 # ============================================================
-# AGENT — real MCP-based orchestrator (agent.py)
-# The LLM decides which MCP tools to call; agent.py spawns
-# mcp/mcp_server.py over stdio and invokes tools via MCP's
-# ClientSession.call_tool(). This function is a thin adapter that
-# runs it synchronously for Streamlit and falls back gracefully.
+# AGENT — calls the deployed FastAPI /chat endpoint
+#
+# The Streamlit service does NOT run agent.py locally.
+# All LLM orchestration, MCP tool calls, and RAG retrieval
+# happen inside the FastAPI service. This function is just
+# an HTTP client that sends the question and returns the result.
+#
+# To configure the backend URL:
+#   Render dashboard → daisy-health-streamlit → Environment
+#   Add:  FASTAPI_URL = https://daisy-health.onrender.com
 # ============================================================
 def run_agent(question: str, employee_id: str) -> dict:
+    """POST to FastAPI /chat and return answer, tool_trace, citations."""
     try:
-        from agent import run_agent_sync
-    except Exception as e:
+        response = _requests.post(
+            f"{FASTAPI_URL}/chat",
+            json={"question": question, "employee_id": employee_id},
+            timeout=60,  # agent calls can take a while on first wake-up
+        )
+        response.raise_for_status()
+        data = response.json()
+        return {
+            "answer":     data.get("answer", ""),
+            "tool_trace": data.get("tool_trace", []),
+            "citations":  data.get("citations", []),
+        }
+
+    except _requests.exceptions.Timeout:
         return {
             "answer": (
-                "The agent orchestrator is unavailable right now. "
-                f"Error: {e}"
+                "⏳ The request timed out. The backend may be warming up on Render's "
+                "free tier — please wait 30 seconds and try again."
             ),
-            "tool_trace": [{
-                "tool": "Agent",
-                "args": {},
-                "result": str(e)[:200],
-                "timestamp": datetime.now().strftime("%H:%M:%S"),
-                "status": "✗ Error",
-            }],
+            "tool_trace": [],
             "citations": [],
         }
 
-    try:
-        result = run_agent_sync(question, employee_id)
-    except Exception as e:
+    except _requests.exceptions.ConnectionError:
         return {
             "answer": (
-                "I encountered an error processing your request. "
-                f"Please try again.\n\nError: {e}"
+                f"❌ Could not reach the FastAPI backend at `{FASTAPI_URL}`. "
+                "Make sure the **FASTAPI_URL** environment variable is set correctly "
+                "in the Streamlit service on Render."
             ),
-            "tool_trace": [{
-                "tool": "Agent",
-                "args": {},
-                "result": str(e)[:200],
-                "timestamp": datetime.now().strftime("%H:%M:%S"),
-                "status": "✗ Error",
-            }],
+            "tool_trace": [],
             "citations": [],
         }
 
-    return {
-        "answer": result.get("answer", ""),
-        "tool_trace": result.get("tool_trace", []),
-        "citations": result.get("citations", []),
-    }
+    except _requests.exceptions.HTTPError as e:
+        return {
+            "answer": f"❌ The backend returned an error: {e}",
+            "tool_trace": [],
+            "citations": [],
+        }
+
+    except Exception as e:
+        return {
+            "answer": f"❌ Unexpected error contacting the backend: {e}",
+            "tool_trace": [],
+            "citations": [],
+        }
+
+
+# ============================================================
+# HEALTH CHECK — hits FastAPI /health endpoint directly
+# ============================================================
+def get_backend_status() -> str:
+    """Return an HTML snippet showing FastAPI health status."""
+    try:
+        resp = _requests.get(f"{FASTAPI_URL}/health", timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+
+        # Build status rows from whatever keys the /health endpoint returns
+        rows = ""
+        status_map = {
+            True:  ("●", "#2E7D5E"),
+            False: ("●", "#B94A48"),
+            "ok":  ("●", "#2E7D5E"),
+        }
+        for key, val in data.items():
+            if key in ("status", "timestamp"):
+                continue
+            if isinstance(val, dict):
+                # e.g. {"rag": {"status": "ok", "doc_count": 42}}
+                ok = val.get("status") == "ok" or val.get("available") is True
+            else:
+                ok = bool(val)
+            sym, color = status_map.get(ok, ("●", "#E8A838"))
+            label = key.replace("_", " ").title()
+            rows += f'<span style="color:{color};">{sym}</span> {label}<br>'
+
+        overall = data.get("status", "unknown")
+        overall_color = "#2E7D5E" if overall == "ok" else "#B94A48"
+
+        return (
+            f'<div class="system-status">'
+            f'<strong>System Status</strong> — '
+            f'<span style="color:{overall_color};">{overall.upper()}</span><br>'
+            f'<div style="margin-top:6px; line-height:1.8;">{rows}</div>'
+            f'</div>'
+        )
+
+    except Exception as e:
+        return (
+            f'<div class="system-status">'
+            f'<strong>System Status</strong><br>'
+            f'<span style="color:#B94A48;">● Backend unreachable — {html.escape(str(e))}</span>'
+            f'</div>'
+        )
+
 
 # ============================================================
 # SIDEBAR
@@ -611,32 +665,15 @@ else:
                 </div>
                 """, unsafe_allow_html=True)
 
-        # ── Real system status check ──
+        # ── Backend health status ──
         # Cache in session state so it doesn't re-check on every rerun
-        if "system_status" not in st.session_state:
-            try:
-                from health_check import get_system_status, render_status_html
-                st.session_state.system_status = get_system_status()
-                st.session_state.status_html = render_status_html(
-                    st.session_state.system_status
-                )
-            except Exception as e:
-                st.session_state.status_html = (
-                    f'<div class="system-status">'
-                    f'<strong>System Status</strong><br>'
-                    f'<span style="color:#f87171;">● Health check unavailable</span>'
-                    f'</div>'
-                )
+        if "status_html" not in st.session_state:
+            st.session_state.status_html = get_backend_status()
 
-        st.markdown(
-            st.session_state.get("status_html", ""),
-            unsafe_allow_html=True
-        )
+        st.markdown(st.session_state.status_html, unsafe_allow_html=True)
 
         # Refresh button
         if st.button("↻ Refresh Status", use_container_width=True):
-            # Clear cached status to force re-check
-            for k in ["system_status", "status_html"]:
-                if k in st.session_state:
-                    del st.session_state[k]
+            if "status_html" in st.session_state:
+                del st.session_state["status_html"]
             st.rerun()

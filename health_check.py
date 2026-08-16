@@ -62,7 +62,7 @@ def check_rag_backend() -> tuple:
     except Exception as e:
         err = str(e)[:60]
         if "API" in err or "key" in err.lower() or "auth" in err.lower():
-            return ("⚠️", "No API Key", "Add OPENROUTER_API_KEY to .env")
+            return ("⚠️", "No API Key", "Add OPENAI_API_KEY to .env")
         return ("✗", "Unavailable", err)
 
 
@@ -89,39 +89,24 @@ def check_chroma() -> tuple:
 
 def check_llm() -> tuple:
     """
-    Checks if the OpenRouter API key is present and valid format.
-    Does a minimal connectivity check without wasting tokens.
+    Checks whether the OpenAI API key is configured.
     """
     try:
-        api_key = os.getenv("OPENROUTER_API_KEY", "")
+        api_key = os.getenv("OPENAI_API_KEY", "")
         if not api_key:
-            return ("⚠️", "No API Key", "Add OPENROUTER_API_KEY to .env")
-
-        # Check key format (OpenRouter keys start with sk-or-)
-        if api_key.startswith("sk-or-"):
-            model = os.getenv("OPENROUTER_MODEL", "google/gemma-3-27b-it:free")
-            model_short = model.split("/")[-1] if "/" in model else model
-            return ("✓", "OpenRouter", model_short)
-        else:
-            return ("⚠️", "OpenRouter", "Key present (non-standard format)")
+            return ("⚠️", "No API Key", "Add OPENAI_API_KEY to .env")
+        return ("✓", "OpenAI", "gpt-4o-mini")
     except Exception as e:
         return ("✗", "Unavailable", str(e)[:60])
 
 
 def check_embeddings() -> tuple:
     """
-    Checks if the sentence-transformers model is available.
-    Tries to import and verify without loading the full model.
+    Reports the configured embedding model. Embeddings are provided by OpenAI.
     """
-    try:
-        import importlib.util
-        spec = importlib.util.find_spec("sentence_transformers")
-        if spec is not None:
-            return ("✓", "all-MiniLM-L6-v2", "sentence-transformers ready")
-        else:
-            return ("⚠️", "Not installed", "pip install sentence-transformers")
-    except Exception as e:
-        return ("✗", "Unavailable", str(e)[:60])
+    if os.getenv("OPENAI_API_KEY"):
+        return ("✓", "text-embedding-3-small", "OpenAI embeddings configured")
+    return ("⚠️", "Unavailable", "Add OPENAI_API_KEY to .env")
 
 
 # ─────────────────────────────────────────────
