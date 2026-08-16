@@ -164,7 +164,9 @@ async def search_policy_documents(query: str, top_k: int = 3) -> str:
     """
     top_k = max(1, min(top_k, 5))
     try:
-        from rag_backend import retriever
+        from rag_backend import get_rag_components
+        rag = get_rag_components()
+        retriever = rag["retriever"]
     except Exception as e:
         return f"Policy search unavailable: RAG backend failed to load ({e})."
 

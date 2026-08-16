@@ -13,20 +13,19 @@ from langchain_classic.chains.combine_documents import (
     create_stuff_documents_chain,
 )
 
+load_dotenv()
+
 
 # ============================================================
 # ENVIRONMENT
 # ============================================================
 
-load_dotenv()
-
-
 def get_config():
     """
-    Load and validate required environment variables.
+    Load and validate environment variables.
 
-    This function does NOT initialize any models or external
-    services. It only reads configuration.
+    This is intentionally called only when RAG functionality
+    is actually needed.
     """
 
     required_vars = {
@@ -51,20 +50,79 @@ def get_config():
 
 
 # ============================================================
-# CACHED RAG COMPONENTS
+# RAG STATE
 # ============================================================
 
 _rag_components = None
 
 
+# ============================================================
+# LIGHTWEIGHT CHROMA CLIENT
+# ============================================================
+
+def get_chroma_client():
+    """
+    Create a lightweight Chroma Cloud client.
+
+    This does NOT load:
+        - Hugging Face
+        - Sentence Transformers
+        - PyTorch
+        - LangChain chains
+        - LLM
+
+    It is safe to use for lightweight operations such as
+    checking the collection count.
+    """
+
+    config = get_config()
+
+    return chromadb.CloudClient(
+        api_key=config["CHROMADB_API_KEY"],
+        tenant=config["CHROMADB_TENANT"],
+        database=config["CHROMADB_DB"],
+    )
+
+
+# ============================================================
+# DOCUMENT COUNT
+# ============================================================
+
+def get_document_count():
+    """
+    Return the number of chunks in Chroma Cloud.
+
+    IMPORTANT:
+    This function intentionally does NOT call
+    get_rag_components().
+
+    Therefore Streamlit's system-status check does not
+    initialize the Hugging Face embedding model.
+    """
+
+    try:
+        chroma_client = get_chroma_client()
+
+        collection = chroma_client.get_collection(
+            name="medical_hr_documents_hf"
+        )
+
+        return collection.count()
+
+    except Exception as e:
+        return f"Unavailable: {e}"
+
+
+# ============================================================
+# LAZY RAG INITIALIZATION
+# ============================================================
+
 def get_rag_components():
     """
-    Initialize the complete RAG stack only when it is actually
-    needed.
+    Initialize the complete RAG stack only when a user actually
+    asks a question that requires RAG.
 
-    The components are cached for the lifetime of the Python
-    process so the HuggingFace embedding model is not loaded
-    repeatedly.
+    Components are cached for the lifetime of the process.
     """
 
     global _rag_components
@@ -90,8 +148,10 @@ def get_rag_components():
     # EMBEDDINGS
     # ========================================================
 
-    # This is intentionally loaded ONLY when a RAG query
-    # actually requires it.
+    # WARNING:
+    # This loads the Hugging Face / Sentence Transformers model.
+    # It is intentionally loaded ONLY when RAG is actually used.
+
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
@@ -117,7 +177,9 @@ def get_rag_components():
     # ========================================================
 
     retriever = vectorstore.as_retriever(
-        search_kwargs={"k": 4}
+        search_kwargs={
+            "k": 4
+        }
     )
 
     # ========================================================
@@ -181,13 +243,17 @@ Employee question:
     )
 
     # ========================================================
-    # CHAINS
+    # DOCUMENT CHAIN
     # ========================================================
 
     document_chain = create_stuff_documents_chain(
         llm,
         prompt,
     )
+
+    # ========================================================
+    # RETRIEVAL CHAIN
+    # ========================================================
 
     rag_chain = create_retrieval_chain(
         retriever,
@@ -225,10 +291,15 @@ def chat(question: str):
             "answer": str,
             "documents": list
         }
+
+    The expensive RAG stack is initialized only when this
+    function is actually called.
     """
 
     if not isinstance(question, str):
-        raise TypeError("Question must be a string.")
+        raise TypeError(
+            "Question must be a string."
+        )
 
     question = question.strip()
 
@@ -238,14 +309,19 @@ def chat(question: str):
             "documents": [],
         }
 
-    # This is where the expensive RAG stack is initialized.
+    # --------------------------------------------------------
+    # Initialize RAG only now
+    # --------------------------------------------------------
+
     rag = get_rag_components()
 
     # --------------------------------------------------------
-    # Retrieve relevant documents
+    # Retrieve documents
     # --------------------------------------------------------
 
-    documents = rag["retriever"].invoke(question)
+    documents = rag["retriever"].invoke(
+        question
+    )
 
     # --------------------------------------------------------
     # Run RAG chain
@@ -261,33 +337,3 @@ def chat(question: str):
         "answer": response["answer"],
         "documents": documents,
     }
-
-
-# ============================================================
-# DOCUMENT COUNT
-# ============================================================
-
-def get_document_count():
-    """
-    Return the number of chunks stored in Chroma Cloud.
-
-    IMPORTANT:
-    This function intentionally DOES NOT initialize the
-    HuggingFace embedding model or the RAG chain.
-
-    This keeps Streamlit startup lightweight.
-    """
-
-    config = get_config()
-
-    chroma_client = chromadb.CloudClient(
-        api_key=config["CHROMADB_API_KEY"],
-        tenant=config["CHROMADB_TENANT"],
-        database=config["CHROMADB_DB"],
-    )
-
-    collection = chroma_client.get_collection(
-        name="medical_hr_documents_hf"
-    )
-
-    return collection.count()
