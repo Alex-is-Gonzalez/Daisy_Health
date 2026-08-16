@@ -18,7 +18,8 @@ from datetime import datetime
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
-
+from dotenv import load_dotenv
+load_dotenv()
 # ─────────────────────────────────────────────
 # PATHS
 # ─────────────────────────────────────────────

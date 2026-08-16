@@ -1,33 +1,3 @@
-"""
-Daisy Health — HR Agent
-
-Architecture:
-
-    Streamlit
-        ↓
-    Deterministic workflow detection
-        ↓
-    MCP tools
-        ↓
-    One final OpenAI call when useful
-        ↓
-    Structured employee-facing response
-
-Key guarantees:
-
-- No LLM classification by default.
-- MCP schemas are inspected before tool calls.
-- Required MCP arguments are populated dynamically.
-- Policy search runs at most once.
-- Duplicate tool calls are prevented.
-- Raw MCP output is never returned to the employee.
-- Citations are always normalized dictionaries.
-- HR-case responses explicitly describe completed actions.
-- "Mock ticket" terminology never appears in employee-facing text.
-- Policy citations are returned separately for Streamlit.
-- GPT-4o-compatible OpenAI parameters are used.
-"""
-
 import asyncio
 import json
 import os
@@ -53,7 +23,7 @@ BASE_DIR = Path(__file__).parent
 
 sys.path.insert(0, str(BASE_DIR))
 
-LLM_MODEL = "gpt-5-mini"
+LLM_MODEL = "gpt-4o-mini"  # fixed: was "gpt-5-mini" which does not exist
 
 # Deterministic classification is faster and more predictable.
 USE_LLM_CLASSIFICATION = False
@@ -68,7 +38,9 @@ MCP_SERVER_PATH = BASE_DIR / "mcp" / "mcp_server.py"
 MCP_SERVER_PARAMS = StdioServerParameters(
     command=sys.executable,
     args=[str(MCP_SERVER_PATH)],
-    env=None,
+    env=os.environ.copy(),  # fixed: explicitly pass all env vars to the MCP subprocess
+                            # so rag_backend.py can read OPENAI_API_KEY, CHROMADB_API_KEY,
+                            # CHROMADB_TENANT, and CHROMADB_DB on Render
 )
 
 
@@ -410,8 +382,6 @@ def get_workflow_tools(workflow, available_names):
 def get_tool_schema(available_tools, tool_name):
     for tool in available_tools:
         if tool.name == tool_name:
-            # The MCP Python SDK serializes this field as `inputSchema`.
-            # Some older clients expose the Pythonic `input_schema` instead.
             return (
                 getattr(tool, "input_schema", None)
                 or getattr(tool, "inputSchema", None)
@@ -637,13 +607,9 @@ async def execute_tool(
         duration = time.perf_counter() - start
         result_text = extract_mcp_text(result)
 
-        # MCP tool validation failures arrive as a normal protocol response
-        # with `isError=True`, not necessarily as a Python exception.
         if getattr(result, "isError", False):
             raise RuntimeError(result_text or "MCP tool returned an error")
 
-        # A tool may intentionally return a user-safe dependency error as
-        # text. Keep it out of citations and mark it as a failed operation.
         if is_tool_error(result_text):
             raise RuntimeError(result_text)
 
@@ -758,7 +724,6 @@ def extract_citations(policy_result):
         source = match.group("source").strip()
         snippet = match.group("snippet").strip()
 
-        # Remove stray control characters from PDF extraction.
         title = clean_text(title)
         section = clean_text(section)
         source = clean_text(source)
@@ -829,9 +794,7 @@ def extract_citations(policy_result):
 
 
 def clean_text(value):
-    """
-    Remove PDF/control-character artifacts.
-    """
+    """Remove PDF/control-character artifacts."""
 
     value = str(value or "")
 
@@ -858,9 +821,7 @@ def clean_text(value):
 
 
 def format_policy_citations(citations):
-    """
-    Create a short employee-facing policy section.
-    """
+    """Create a short employee-facing policy section."""
 
     if not citations:
         return ""
@@ -927,17 +888,13 @@ def format_policy_citations(citations):
 
 
 def clean_policy_summary(snippet):
-    """
-    Make policy excerpts readable without dumping PDF text.
-    """
+    """Make policy excerpts readable without dumping PDF text."""
 
     text = clean_text(snippet)
 
-    # Remove common PDF bullet artifacts.
-    text = text.replace("", "")
+    text = text.replace("", "")
     text = text.replace("•", " ")
 
-    # Collapse repeated whitespace.
     text = re.sub(
         r"\s+",
         " ",
@@ -974,9 +931,7 @@ def build_final_context(tool_results):
 # ============================================================
 
 def extract_ticket_details(ticket_result):
-    """
-    Pull useful employee-safe details from an HR case result.
-    """
+    """Pull useful employee-safe details from an HR case result."""
 
     if not ticket_result or is_tool_error(ticket_result):
         return {}
@@ -1027,27 +982,7 @@ def build_hr_case_response(
     email_result,
     citations,
 ):
-    """
-    HR case responses are deliberately deterministic.
-
-    This guarantees the UX requested by the employee:
-
-        Thanks, Jordan — I can help you report this.
-
-        ### What I did for you right now
-
-        - ...
-        - ...
-        - ...
-
-        ### Relevant policy
-
-        - ...
-    """
-
-    first_name = first_name_from_profile(
-        profile
-    )
+    first_name = first_name_from_profile(profile)
 
     lines = [
         f"Thanks, {first_name} — I can help you report this.",
@@ -1055,10 +990,6 @@ def build_hr_case_response(
         "### What I did for you right now",
         "",
     ]
-
-    # --------------------------------------------------------
-    # Employee profile
-    # --------------------------------------------------------
 
     if profile and not is_tool_error(profile):
         employee_match = re.search(
@@ -1096,52 +1027,31 @@ def build_hr_case_response(
                 f"({employee_name})."
             )
 
-    # --------------------------------------------------------
-    # HR case
-    # --------------------------------------------------------
-
-    ticket_details = extract_ticket_details(
-        ticket_result
-    )
+    ticket_details = extract_ticket_details(ticket_result)
 
     if ticket_result and not is_tool_error(ticket_result):
         ticket_text = "Created an HR case for People Operations"
 
         if ticket_details.get("ticket_id"):
-            ticket_text += (
-                f": {ticket_details['ticket_id']}"
-            )
+            ticket_text += f": {ticket_details['ticket_id']}"
 
         metadata = []
 
         if ticket_details.get("ticket_type"):
             ticket_type = ticket_details["ticket_type"]
-            ticket_type = ticket_type.replace(
-                "_",
-                " ",
-            ).title()
+            ticket_type = ticket_type.replace("_", " ").title()
             metadata.append(ticket_type)
 
         if ticket_details.get("priority"):
-            metadata.append(
-                f"{ticket_details['priority'].title()} priority"
-            )
+            metadata.append(f"{ticket_details['priority'].title()} priority")
 
         if ticket_details.get("status"):
-            metadata.append(
-                f"Status: {ticket_details['status'].title()}"
-            )
+            metadata.append(f"Status: {ticket_details['status'].title()}")
 
         if metadata:
-            ticket_text += (
-                " (" + ", ".join(metadata) + ")"
-            )
+            ticket_text += " (" + ", ".join(metadata) + ")"
 
         lines.append(f"- {ticket_text}.")
-
-    # --------------------------------------------------------
-    # Email
-    # --------------------------------------------------------
 
     if email_result and not is_tool_error(email_result):
         lines.append(
@@ -1149,53 +1059,22 @@ def build_hr_case_response(
             "Operations for you to review (not sent)."
         )
 
-    # --------------------------------------------------------
-    # No successful actions
-    # --------------------------------------------------------
-
-    successful_ticket = (
-        ticket_result
-        and not is_tool_error(ticket_result)
-    )
-
-    successful_email = (
-        email_result
-        and not is_tool_error(email_result)
-    )
+    successful_ticket = ticket_result and not is_tool_error(ticket_result)
+    successful_email = email_result and not is_tool_error(email_result)
 
     if not successful_ticket and not successful_email:
         lines.append(
-            "- I wasn't able to complete the HR follow-up "
-            "right now."
+            "- I wasn't able to complete the HR follow-up right now."
         )
 
-    # --------------------------------------------------------
-    # Policy
-    # --------------------------------------------------------
-
-    policy_section = format_policy_citations(
-        citations
-    )
+    policy_section = format_policy_citations(citations)
 
     if policy_section:
-        lines.extend(
-            [
-                "",
-                policy_section,
-            ]
-        )
-
-    # --------------------------------------------------------
-    # Contact
-    # --------------------------------------------------------
+        lines.extend(["", policy_section])
 
     if not successful_ticket and not successful_email:
         lines.extend(
-            [
-                "",
-                "Please contact people@daisyhealth.com "
-                "for assistance.",
-            ]
+            ["", "Please contact people@daisyhealth.com for assistance."]
         )
 
     return "\n".join(lines)
@@ -1213,29 +1092,19 @@ async def generate_final_answer(
     tool_results,
     citations,
 ):
-    """
-    One final OpenAI call for normal informational requests.
-
-    HR-case responses are handled deterministically because
-    those responses contain explicit operational actions.
-    """
+    """One final OpenAI call for normal informational requests."""
 
     if workflow == "hr_case":
         return None
 
-    context = build_final_context(
-        tool_results
-    )
+    context = build_final_context(tool_results)
 
     policy_context = ""
 
     if citations:
         policy_context = (
             "\n\nRelevant policy citations:\n"
-            + json.dumps(
-                citations,
-                ensure_ascii=False,
-            )
+            + json.dumps(citations, ensure_ascii=False)
         )
 
     prompt = f"""
@@ -1280,14 +1149,8 @@ Return ONLY the final employee-facing answer.
         response = await client.chat.completions.create(
             model=LLM_MODEL,
             messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT,
-                },
-                {
-                    "role": "user",
-                    "content": prompt,
-                },
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
             ],
             max_completion_tokens=FINAL_MAX_COMPLETION_TOKENS,
         )
@@ -1295,15 +1158,12 @@ Return ONLY the final employee-facing answer.
         duration = time.perf_counter() - start
 
         print(
-            f"[TIMING] Final OpenAI LLM call: "
-            f"{duration:.2f}s",
+            f"[TIMING] Final OpenAI LLM call: {duration:.2f}s",
             flush=True,
         )
 
         answer = (
-            response.choices[0]
-            .message.content
-            or ""
+            response.choices[0].message.content or ""
         ).strip()
 
         if not answer:
@@ -1320,15 +1180,11 @@ Return ONLY the final employee-facing answer.
         duration = time.perf_counter() - start
 
         print(
-            f"[TIMING] Final OpenAI call ERROR: "
-            f"{duration:.2f}s",
+            f"[TIMING] Final OpenAI call ERROR: {duration:.2f}s",
             flush=True,
         )
 
-        print(
-            f"[AGENT] Final OpenAI error: {exc}",
-            flush=True,
-        )
+        print(f"[AGENT] Final OpenAI error: {exc}", flush=True)
 
         return None
 
@@ -1337,126 +1193,51 @@ Return ONLY the final employee-facing answer.
 # DETERMINISTIC FALLBACK
 # ============================================================
 
-def deterministic_fallback(
-    workflow,
-    tool_results,
-    citations,
-):
-    """
-    Clean fallback when OpenAI does not return an answer.
-    """
+def deterministic_fallback(workflow, tool_results, citations):
+    """Clean fallback when OpenAI does not return an answer."""
 
     if workflow == "hr_case":
         return build_hr_case_response(
-            profile=tool_results.get(
-                "lookup_employee_profile",
-                "",
-            ),
-            ticket_result=tool_results.get(
-                "create_mock_hr_ticket",
-                "",
-            ),
-            email_result=tool_results.get(
-                "draft_hr_email",
-                "",
-            ),
+            profile=tool_results.get("lookup_employee_profile", ""),
+            ticket_result=tool_results.get("create_mock_hr_ticket", ""),
+            email_result=tool_results.get("draft_hr_email", ""),
             citations=citations,
         )
 
-    pto = tool_results.get(
-        "check_pto_balance",
-        "",
-    )
-
-    benefits = tool_results.get(
-        "lookup_benefits",
-        "",
-    )
-
-    policy = tool_results.get(
-        "search_policy_documents",
-        "",
-    )
-
-    compliance = tool_results.get(
-        "check_policy_compliance",
-        "",
-    )
-
-    # --------------------------------------------------------
-    # PTO
-    # --------------------------------------------------------
+    pto = tool_results.get("check_pto_balance", "")
+    benefits = tool_results.get("lookup_benefits", "")
+    policy = tool_results.get("search_policy_documents", "")
+    compliance = tool_results.get("check_policy_compliance", "")
 
     if workflow == "pto":
         if pto and not is_tool_error(pto):
             answer = clean_text(pto)
-
-            policy_section = format_policy_citations(
-                citations
-            )
-
+            policy_section = format_policy_citations(citations)
             if policy_section:
-                answer += (
-                    "\n\n" + policy_section
-                )
-
+                answer += "\n\n" + policy_section
             return answer
-
-    # --------------------------------------------------------
-    # Benefits
-    # --------------------------------------------------------
 
     if workflow == "benefits":
         if benefits and not is_tool_error(benefits):
             answer = clean_text(benefits)
-
-            policy_section = format_policy_citations(
-                citations
-            )
-
+            policy_section = format_policy_citations(citations)
             if policy_section:
-                answer += (
-                    "\n\n" + policy_section
-                )
-
+                answer += "\n\n" + policy_section
             return answer
 
-    # --------------------------------------------------------
-    # Policy questions
-    # --------------------------------------------------------
-
-    if workflow in {
-        "remote_work",
-        "expense",
-        "general",
-    }:
-
+    if workflow in {"remote_work", "expense", "general"}:
         if policy and not is_tool_error(policy):
             answer = clean_policy_summary(policy)
-
             if compliance and not is_tool_error(compliance):
-                answer += (
-                    "\n\n"
-                    + clean_text(compliance)
-                )
-
-            policy_section = format_policy_citations(
-                citations
-            )
-
+                answer += "\n\n" + clean_text(compliance)
+            policy_section = format_policy_citations(citations)
             if policy_section:
-                answer = (
-                    answer
-                    + "\n\n"
-                    + policy_section
-                )
-
+                answer = answer + "\n\n" + policy_section
             return answer
 
     return (
         "I don't have enough information from the available "
-        "HR documentation. Please contact "
-        "people@daisyhealth.com."
+        "HR documentation. Please contact people@daisyhealth.com."
     )
 
 
@@ -1464,10 +1245,7 @@ def deterministic_fallback(
 # MAIN AGENT
 # ============================================================
 
-async def run_agent(
-    question,
-    employee_id,
-):
+async def run_agent(question, employee_id):
     total_start = time.perf_counter()
 
     tool_trace = []
@@ -1528,38 +1306,24 @@ async def run_agent(
                             Return only the category.
                             """,
                     },
-                    {
-                        "role": "user",
-                        "content": question,
-                    },
+                    {"role": "user", "content": question},
                 ],
                 max_completion_tokens=20,
             )
 
             workflow = (
-                response.choices[0]
-                .message.content
-                .strip()
-                .lower()
+                response.choices[0].message.content.strip().lower()
             )
 
             if workflow not in {
-                "pto",
-                "benefits",
-                "remote_work",
-                "expense",
-                "hr_case",
-                "general",
+                "pto", "benefits", "remote_work", "expense", "hr_case", "general",
             }:
                 workflow = "general"
 
         else:
             workflow = detect_workflow(question)
 
-        print(
-            f"[AGENT] Workflow: {workflow}",
-            flush=True,
-        )
+        print(f"[AGENT] Workflow: {workflow}", flush=True)
 
         print(
             f"[TIMING] Workflow detection: "
@@ -1571,9 +1335,7 @@ async def run_agent(
         # MCP
         # ----------------------------------------------------
 
-        async with stdio_client(
-            MCP_SERVER_PARAMS
-        ) as (read, write):
+        async with stdio_client(MCP_SERVER_PARAMS) as (read, write):
 
             print(
                 f"[TIMING] MCP startup: "
@@ -1581,13 +1343,9 @@ async def run_agent(
                 flush=True,
             )
 
-            async with ClientSession(
-                read,
-                write,
-            ) as session:
+            async with ClientSession(read, write) as session:
 
                 start = time.perf_counter()
-
                 await session.initialize()
 
                 print(
@@ -1597,7 +1355,6 @@ async def run_agent(
                 )
 
                 start = time.perf_counter()
-
                 tools_response = await session.list_tools()
                 available_tools = tools_response.tools
 
@@ -1607,19 +1364,12 @@ async def run_agent(
                     flush=True,
                 )
 
-                available_names = [
-                    tool.name
-                    for tool in available_tools
-                ]
+                available_names = [tool.name for tool in available_tools]
 
-                required_tools = get_workflow_tools(
-                    workflow,
-                    available_names,
-                )
+                required_tools = get_workflow_tools(workflow, available_names)
 
                 print(
-                    "[AGENT] Required tools: "
-                    + ", ".join(required_tools),
+                    "[AGENT] Required tools: " + ", ".join(required_tools),
                     flush=True,
                 )
 
@@ -1633,14 +1383,8 @@ async def run_agent(
 
                 for tool_name in required_tools:
 
-                    if (
-                        tool_name
-                        == "search_policy_documents"
-                    ):
-                        if (
-                            policy_search_count
-                            >= MAX_POLICY_SEARCHES
-                        ):
+                    if tool_name == "search_policy_documents":
+                        if policy_search_count >= MAX_POLICY_SEARCHES:
                             continue
 
                     tool_input = build_tool_arguments(
@@ -1651,18 +1395,10 @@ async def run_agent(
                         available_tools=available_tools,
                     )
 
-                    # --------------------------------------------
-                    # Required schema validation
-                    # --------------------------------------------
-
-                    required_fields = get_required_fields(
-                        available_tools,
-                        tool_name,
-                    )
+                    required_fields = get_required_fields(available_tools, tool_name)
 
                     missing_fields = [
-                        field
-                        for field in required_fields
+                        field for field in required_fields
                         if field not in tool_input
                     ]
 
@@ -1673,52 +1409,29 @@ async def run_agent(
                             f"{', '.join(missing_fields)}"
                         )
 
-                        print(
-                            f"[AGENT] {error_text}",
-                            flush=True,
-                        )
+                        print(f"[AGENT] {error_text}", flush=True)
 
-                        tool_trace.append(
-                            {
-                                "tool": tool_name,
-                                "args": tool_input,
-                                "result": error_text,
-                                "timestamp": datetime.now().strftime(
-                                    "%H:%M:%S"
-                                ),
-                                "status": "✗ Missing arguments",
-                                "duration_seconds": 0,
-                            }
-                        )
+                        tool_trace.append({
+                            "tool": tool_name,
+                            "args": tool_input,
+                            "result": error_text,
+                            "timestamp": datetime.now().strftime("%H:%M:%S"),
+                            "status": "✗ Missing arguments",
+                            "duration_seconds": 0,
+                        })
 
-                        tool_results[
-                            tool_name
-                        ] = error_text
-
+                        tool_results[tool_name] = error_text
                         continue
 
-                    # --------------------------------------------
-                    # Duplicate protection
-                    # --------------------------------------------
-
                     signature = (
-                        tool_name
-                        + ":"
-                        + json.dumps(
-                            tool_input,
-                            sort_keys=True,
-                            default=str,
-                        )
+                        tool_name + ":"
+                        + json.dumps(tool_input, sort_keys=True, default=str)
                     )
 
                     if signature in executed_signatures:
                         continue
 
                     executed_signatures.add(signature)
-
-                    # --------------------------------------------
-                    # Execute
-                    # --------------------------------------------
 
                     result_text = await execute_tool(
                         session=session,
@@ -1727,19 +1440,11 @@ async def run_agent(
                         tool_trace=tool_trace,
                     )
 
-                    tool_results[
-                        tool_name
-                    ] = result_text
+                    tool_results[tool_name] = result_text
 
-                    if (
-                        tool_name
-                        == "search_policy_documents"
-                    ):
+                    if tool_name == "search_policy_documents":
                         policy_search_count += 1
-
-                        citations = extract_citations(
-                            result_text
-                        )
+                        citations = extract_citations(result_text)
 
                 # ------------------------------------------------
                 # HR CASE RESPONSE
@@ -1747,18 +1452,9 @@ async def run_agent(
 
                 if workflow == "hr_case":
                     answer = build_hr_case_response(
-                        profile=tool_results.get(
-                            "lookup_employee_profile",
-                            "",
-                        ),
-                        ticket_result=tool_results.get(
-                            "create_mock_hr_ticket",
-                            "",
-                        ),
-                        email_result=tool_results.get(
-                            "draft_hr_email",
-                            "",
-                        ),
+                        profile=tool_results.get("lookup_employee_profile", ""),
+                        ticket_result=tool_results.get("create_mock_hr_ticket", ""),
+                        email_result=tool_results.get("draft_hr_email", ""),
                         citations=citations,
                     )
 
@@ -1783,49 +1479,21 @@ async def run_agent(
                             citations=citations,
                         )
 
-                    # --------------------------------------------
-                    # Always make citations visible to employee
-                    # --------------------------------------------
+                    policy_section = format_policy_citations(citations)
 
-                    policy_section = format_policy_citations(
-                        citations
-                    )
-
-                    if (
-                        policy_section
-                        and "### Relevant policy"
-                        not in answer
-                    ):
-                        answer = (
-                            answer.rstrip()
-                            + "\n\n"
-                            + policy_section
-                        )
+                    if policy_section and "### Relevant policy" not in answer:
+                        answer = answer.rstrip() + "\n\n" + policy_section
 
         # ----------------------------------------------------
         # COMPLETE
         # ----------------------------------------------------
 
-        total_time = (
-            time.perf_counter()
-            - total_start
-        )
+        total_time = time.perf_counter() - total_start
 
+        print(f"[TIMING] TOTAL agent runtime: {total_time:.2f}s", flush=True)
+        print(f"[TIMING] Tool calls: {len(tool_trace)}", flush=True)
         print(
-            f"[TIMING] TOTAL agent runtime: "
-            f"{total_time:.2f}s",
-            flush=True,
-        )
-
-        print(
-            f"[TIMING] Tool calls: "
-            f"{len(tool_trace)}",
-            flush=True,
-        )
-
-        print(
-            f"[AGENT] Returning answer to Streamlit "
-            f"({len(answer)} characters).",
+            f"[AGENT] Returning answer to Streamlit ({len(answer)} characters).",
             flush=True,
         )
 
@@ -1834,10 +1502,7 @@ async def run_agent(
             "tool_trace": tool_trace,
             "citations": citations,
             "error": None,
-            "runtime_seconds": round(
-                total_time,
-                2,
-            ),
+            "runtime_seconds": round(total_time, 2),
         }
 
     except Exception as exc:
@@ -1845,21 +1510,10 @@ async def run_agent(
 
         traceback.print_exc()
 
-        total_time = (
-            time.perf_counter()
-            - total_start
-        )
+        total_time = time.perf_counter() - total_start
 
-        print(
-            f"[AGENT] Top-level error: {exc}",
-            flush=True,
-        )
-
-        print(
-            f"[TIMING] TOTAL agent runtime: "
-            f"{total_time:.2f}s",
-            flush=True,
-        )
+        print(f"[AGENT] Top-level error: {exc}", flush=True)
+        print(f"[TIMING] TOTAL agent runtime: {total_time:.2f}s", flush=True)
 
         return {
             "answer": (
@@ -1870,10 +1524,7 @@ async def run_agent(
             "tool_trace": tool_trace,
             "citations": citations,
             "error": str(exc),
-            "runtime_seconds": round(
-                total_time,
-                2,
-            ),
+            "runtime_seconds": round(total_time, 2),
         }
 
 
@@ -1881,15 +1532,9 @@ async def run_agent(
 # STREAMLIT WRAPPER
 # ============================================================
 
-def run_agent_sync(
-    question,
-    employee_id,
-):
+def run_agent_sync(question, employee_id):
     return asyncio.run(
-        run_agent(
-            question=question,
-            employee_id=employee_id,
-        )
+        run_agent(question=question, employee_id=employee_id)
     )
 
 
@@ -1914,14 +1559,8 @@ if __name__ == "__main__":
     print("\n==============================")
     print("PERFORMANCE")
     print("==============================")
-    print(
-        f"Total runtime: "
-        f"{result.get('runtime_seconds', '?')}s"
-    )
-    print(
-        f"Tool calls: "
-        f"{len(result['tool_trace'])}"
-    )
+    print(f"Total runtime: {result.get('runtime_seconds', '?')}s")
+    print(f"Tool calls: {len(result['tool_trace'])}")
 
     print("\n==============================")
     print("TOOL TRACE")
@@ -1934,10 +1573,7 @@ if __name__ == "__main__":
             f"({tool.get('duration_seconds', '?')}s)"
         )
 
-    print(
-        f"\nCitations: "
-        f"{len(result['citations'])}"
-    )
+    print(f"\nCitations: {len(result['citations'])}")
 
     for citation in result["citations"]:
         print(
@@ -1945,3 +1581,4 @@ if __name__ == "__main__":
             f"— "
             f"{citation.get('policy_id', '')}"
         )
+        
