@@ -8,8 +8,6 @@ An agentic AI system for HR policy and operations tasks at **Daisy Health**, a h
 - Streamlit UI: https://daisy-health-streamlit.onrender.com
 - Health endpoint: https://daisy-health.onrender.com/health
 
----
-
 ## Project Overview
 
 Daisy Health's HR assistant (named "Daisy") answers employee questions about PTO, benefits, expense reimbursement, remote work, workplace conduct, onboarding, and data security. The system retrieves relevant HR policy documents from a ChromaDB vector store, calls MCP-exposed tools for structured mock employee data, and produces grounded, cited responses.

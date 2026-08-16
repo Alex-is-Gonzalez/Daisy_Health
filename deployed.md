@@ -1,7 +1,5 @@
 # Deployment Notes — Daisy Health HR Assistant
 
----
-
 ## Deployed URLs
 
 | Service         | URL                                         |
