@@ -23,10 +23,12 @@ on:
   push:
     branches:
       - alex-openAILMM
+      - main
 
   pull_request:
     branches:
       - alex-openAILMM
+      - main
 
 jobs:
   # ============================================================

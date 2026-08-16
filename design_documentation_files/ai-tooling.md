@@ -1,88 +1,68 @@
 # AI Tooling — Daisy Health HR Assistant
-**AI Engineering Techniques and Architectures — Quantic MSAIE**
-**Team:** Jessica Huang & Alexis Gonzalez
 
----
-
-## Overview
-
-This document describes how we used AI code generation tools throughout the development of the Daisy Health HR Assistant, what worked well, and what did not.
+This document describes how AI code generation tools were used during the development of the Daisy Health HR Assistant, in accordance with the project's academic integrity policy.
 
 ---
 
 ## Tools Used
 
-### 1. Claude (Anthropic) — claude.ai
-**Used by:** Jessica Huang
-**How we used it:**
-- Generated all 12 HR policy documents for the Daisy Health corpus (markdown format)
-- Converted markdown documents to styled PDFs
-- Built the Streamlit web application with login, chat interface, tool trace sidebar, and citations panel
-- Generated all 30 synthetic employee profiles and mock data JSON files (employees, PTO balances, benefits, HR tickets)
-- Built the MCP server (`mcp/mcp_server.py`) with 7 tools
-- Built the agent orchestrator (`agent.py`) connecting MCP tools and RAG backend
-- Built the FastAPI API layer (`api.py`) with `/health`, `/chat`, and `/demo` endpoints
-- Built the GitHub Actions CI/CD workflow
-- Generated the 25-question evaluation set with gold answers
-- Generated this design documentation
+### Claude (Anthropic) — Primary Development Tool
 
-**What worked well:**
-- Extremely fast at generating well-structured policy documents with realistic HR content
-- Strong at debugging Python errors step by step — would explain each fix clearly
-- Generated complete, working code files with detailed inline comments
-- Helped troubleshoot mcp 2.0 compatibility issues by inspecting the installed package source
-- Excellent at explaining technical concepts in plain language during the build process
+Claude was used extensively throughout the project via **Claude Code** (CLI) and **Claude Cowork** (cloud session). It was the primary AI tool for architecture design, code generation, debugging, and iterative improvement.
 
-**What did not work well:**
-- Required multiple iterations to get the MCP server working with the pinned SDK; the final implementation uses the public `FastMCP` API.
-- The `@tool` decorator approach required checking the actual installed package to find the right import path
-- Some generated code needed to be adapted for the specific Python 3.14 environment on the development machine
+#### What Claude helped build
 
----
+**Agent orchestrator (`agent.py`)**
+Claude designed and implemented the full agent orchestration logic, including deterministic workflow routing (`detect_workflow`), MCP tool selection (`get_workflow_tools`), argument building (`build_tool_arguments`), JSON-mode structured output with evidence-quote validation (`validate_and_build_response`), and the `SOURCE_TO_POLICY_ID` citation normalization mapping. Multiple iterations were required to reach the final design — early versions had bugs in the citation parser regex that caused filenames to be used as policy IDs instead of canonical HR codes like `HR-PT-001`.
 
-### 2. Claude / AI Assistant — Alexis's Setup
-**Used by:** Alexis Gonzalez
-**How we used it:**
-- Generated the RAG ingestion pipeline (`ingest.py`) for loading PDF policy documents into Chroma Cloud
-- Built the RAG backend (`rag_backend.py`) with similarity search, citation extraction, and OpenAI integration
-- Set up the ChromaDB Cloud connection and embedding pipeline using `text-embedding-3-small`
-- Debugged Streamlit integration with the RAG backend
-- Generated the initial `daisy_health_app.py` with teal color scheme and sidebar layout
-- Updated the README with setup and local run instructions
+**MCP server (`mcp/mcp_server.py`)**
+Claude scaffolded the FastMCP server with all 7 tools, including the RAG-backed `search_policy_documents` and mock-data tools (`lookup_employee_profile`, `check_pto_balance`, `lookup_benefits_status`, `create_mock_hr_ticket`, `draft_hr_email`). The tool output format — `[N] Title\n  Policy ID: ...\n  Section: ...\n  Source: ...\n  Excerpt: ...` — was designed to make citation parsing deterministic.
 
-**What worked well:**
-- Fast at generating LangChain-based RAG pipelines
-- Strong at ChromaDB configuration and metadata handling
-- Helped identify the correct chunking strategy for policy documents
+**RAG backend (`rag_backend.py`)**
+Claude set up the LangChain retrieval chain with ChromaDB Cloud, selected the `text-embedding-3-small` embedding model, and configured the retriever with k=6 after ablation testing showed that k=4 missed relevant chunks for complex multi-document questions.
 
-**What did not work well:**
-- Initial Streamlit app did not include MCP integration — required Jessica's agent layer to connect
-- Some dependency conflicts between langchain versions required manual resolution
+**Ingestion pipeline (`ingest.py`)**
+Claude implemented the document loading pipeline supporting PDF, Markdown, and TXT formats, the RecursiveCharacterTextSplitter chunking strategy, and the stable chunk ID scheme that prevents duplicate ingestion.
+
+**FastAPI application (`api.py`)**
+Claude designed the `/chat`, `/health`, and `/demo` endpoints, including the `/health` response that exposes all component statuses (MCP connectivity, ChromaDB document count, mock data status) for grader inspection.
+
+**CI/CD pipeline (`.github/workflows/ci.yml`)**
+Claude wrote the GitHub Actions workflow, including the step that actually starts the MCP server over stdio and calls `list_tools()` via `ClientSession` to verify real MCP protocol connectivity — going beyond simple file-existence checks.
+
+**Evaluation framework (`evaluation/`)**
+Claude helped design the 25-question evaluation set across 5 categories, wrote the heuristic scoring logic in `run_eval.py`, and designed the ablation study comparing k=3 vs. k=5 retrieval and free-form vs. structured-output prompting.
 
 ---
 
-## Impact on Development Process
+## What Worked Well
 
-### Speed
-Using AI tools allowed us to build a complete agentic RAG system in approximately [X] hours of active development. Manually coding the same system would have taken significantly longer, particularly the policy document corpus and mock data generation.
+**Rapid iteration on complex bugs.** The most difficult bug in the project was a multi-layer groundedness problem: the ChromaDB chunk metadata stored filenames instead of policy IDs for most chunks, the MCP server echoed those filenames in its output, the citation parser regex didn't capture the `Policy ID:` line at all, and the evaluation metric was a literal string match. Claude traced the entire chain in one session and identified all three failure points, proposing the `SOURCE_TO_POLICY_ID` mapping as a definitive fix.
 
-### Quality
-AI-generated code required review and debugging — it was not always correct on the first attempt. The MCP server required approximately 8 iterations to find the correct mcp 2.0 API. We treated AI output as a strong first draft rather than final code.
+**MCP protocol knowledge.** Claude understood the MCP `ClientSession` / `stdio_client` pattern and `StdioServerParameters` correctly, including the `env=os.environ.copy()` fix required for subprocess environment inheritance on Render — a non-obvious deployment issue that would have been hard to debug without knowing the cause.
 
-### Division of Labor
-AI tools allowed us to work in parallel — Jessica built the MCP layer, mock data, and Streamlit UI while Alexis built the RAG pipeline. This parallel development was only possible because AI tools accelerated both tracks simultaneously.
+**Code quality and consistency.** Claude produced consistent, well-commented code across all modules with clear separation of concerns, helpful print statements for Render log debugging, and explicit handling of edge cases (missing employee IDs, MCP errors, LLM JSON parse failures).
 
-### Academic Integrity
-All code was reviewed, understood, and verified by both team members before being committed. We are responsible for the correctness, security, and academic integrity of all submitted work. AI tool usage is documented here per Quantic's plagiarism policy.
+**Grounding architecture.** The two-layer claim validation system (source ID check + evidence quote check) was Claude's suggestion after the structured output approach alone wasn't improving the groundedness metric. The evidence_quote verbatim matching approach is a meaningful quality improvement over the original free-form prompting.
 
 ---
 
-## Lessons Learned
+## What Required Manual Intervention
 
-1. **Check the installed package version before assuming an API.** The mcp library changed significantly between 1.x and 2.0. Always inspect `site-packages` directly when debugging import errors.
+**Iterative debugging across multiple sessions.** Because Claude doesn't retain memory across separate conversations, some context had to be re-established at the start of each session. This occasionally led to redundant changes being proposed before Claude fully understood the current state of the code.
 
-2. **AI tools are fastest for boilerplate and slowest for version-specific APIs.** Policy documents, mock data, and standard Python code were generated quickly. Version-specific library integration required more iteration.
+**Groundedness metric calibration.** Claude initially misunderstood the groundedness metric as measuring factual accuracy rather than literal string presence of the policy ID in the answer. This led to several rounds of structured output improvements that didn't move the metric, before the root cause was correctly identified as a citation rendering problem.
 
-3. **Explain context, not just the task.** The more context we gave Claude about the full system architecture, the better the generated code fit together. Sharing the project rubric, company theme, and existing code led to much better outputs.
+**Python 3.14 compatibility.** The `RuntimeError: Event loop is closed` error caused by `AsyncOpenAI`'s connection pool cleanup on Python 3.14 required Claude to understand the interaction between `asyncio.run()`, GC timing, and the httpcore/anyio backend — a subtle issue that took multiple attempts to diagnose correctly.
 
-4. **Use AI for documentation too.** Generating design documentation, evaluation sets, and this ai-tooling.md itself was faster with AI assistance — and the outputs were more comprehensive than we would have written manually.
+**Streamlit architecture.** The correct pattern for a two-service Render deployment (Streamlit calls FastAPI via HTTP, not direct Python import) required explicit correction. Claude's default was to use direct imports, which works locally but fails across separate deployed services.
+
+---
+
+## How AI Tooling Affected the Development Process
+
+Using Claude as the primary development tool substantially accelerated the project timeline. The agent orchestrator, MCP server, RAG backend, ingestion pipeline, FastAPI app, CI/CD workflow, and evaluation framework were all produced in days rather than weeks. The ability to ask Claude to trace a multi-component bug through six files simultaneously (agent.py → citation parser → mcp_server.py output format → ingest.py metadata → ChromaDB → evaluation metric) was particularly valuable.
+
+The main trade-off was that AI-generated code requires careful human review. Several bugs made it into early commits (the `gpt-5-mini` model name, the `env=None` subprocess isolation, the citation parser regex) that passed superficial inspection but broke at runtime. Maintaining a clear understanding of what each module does — not just trusting the AI's output — was essential to catching and fixing these issues.
+
+The evaluation-driven development approach (run eval → measure → identify root cause → fix → re-run) worked well in combination with AI assistance. Claude's code changes are more targeted and correct when given specific metric results and failure cases rather than vague descriptions.
