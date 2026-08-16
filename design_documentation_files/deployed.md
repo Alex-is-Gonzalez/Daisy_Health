@@ -1,39 +1,27 @@
-# Deployed — Daisy Health HR Assistant
-
-**AI Engineering Techniques and Architectures — Quantic MSAIE**
-**Team:** Jessica Huang & Alexis Gonzalez
+# Deployment Notes — Daisy Health HR Assistant
 
 ---
 
-## Deployed Application URL
+## Deployed URLs
 
-**Deployed API and chat UI:**
-
-```
-FastAPI:
-https://daisy-health.onrender.com
-
-Health:
-https://daisy-health.onrender.com/health
-
-Demo:
-https://daisy-health.onrender.com/demo
-
-Streamlit:
-https://daisy-health-streamlit.onrender.com
-```
-
-**Health Endpoint:**
-
-```
-https://daisy-health.onrender.com/health
-```
+| Service         | URL                                         |
+| --------------- | ------------------------------------------- |
+| FastAPI backend | https://daisy-health.onrender.com           |
+| Streamlit UI    | https://daisy-health-streamlit.onrender.com |
+| Health endpoint | https://daisy-health.onrender.com/health    |
+| Demo endpoint   | https://daisy-health.onrender.com/demo      |
 
 ---
 
-## Health Endpoint Response
+## Health Check
 
-Once deployed, the `/health` endpoint returns:
+The `/health` endpoint returns the status of all system components and can be used to verify the deployment is live:
+
+```bash
+curl https://daisy-health.onrender.com/health
+```
+
+Expected response:
 
 ```json
 {
@@ -43,7 +31,7 @@ Once deployed, the `/health` endpoint returns:
   "components": {
     "mcp_server": "online",
     "rag_index": "online",
-    "chroma_docs": "[number of indexed chunks]",
+    "chroma_docs": 153,
     "mock_data": "online (30 employees)",
     "agent": "online"
   },
@@ -64,125 +52,91 @@ Once deployed, the `/health` endpoint returns:
 
 ---
 
-## Deployment Platform
+## Platform
 
-**Platform:** Render.com (free tier)
-**Type:** Single web service
-**Region:** Oregon (US West)
+Both services are deployed on **Render** (free tier):
 
----
+- **FastAPI service:** Web service running `uvicorn api:app --host 0.0.0.0 --port $PORT`
+- **Streamlit service:** Web service running `streamlit run daisy_health_app.py --server.port $PORT --server.address 0.0.0.0`
 
-## Deployment Instructions
+### Single-Service Architecture
 
-### Prerequisites
+To remain within Render's free-tier resource limits (512 MB RAM per service), the FastAPI service co-locates the web API, agent orchestrator, MCP client, MCP server subprocess, and RAG backend in a single deployed process. The MCP server (`mcp_server.py`) is launched as a subprocess over stdio each time a `/chat` request is processed.
 
-- GitHub repository: `https://github.com/Alex-is-Gonzalez/Daisy_Health`
-- Render.com account (free)
-- All API keys ready as environment variables
+### Vector Store
 
-### Steps
-
-**1. Connect GitHub to Render**
-
-- Go to render.com → New Web Service
-- Connect GitHub account
-- Select `Alex-is-Gonzalez/Daisy_Health` repository
-
-**2. Configure the service**
-
-- Name: `daisy-health-hr-assistant`
-- Runtime: Python 3
-- Build command:
-
-```
-pip install -r requirements.txt
-```
-
-- Start command (already defined in `render.yaml`):
-
-```
-uvicorn api:app --host 0.0.0.0 --port $PORT
-```
-
-**3. Add environment variables**
-
-Add these in the Render dashboard under Environment:
-
-| Key                | Value                 |
-| ------------------ | --------------------- |
-| `OPENAI_API_KEY`   | Your OpenAI key       |
-| `CHROMADB_API_KEY` | Your Chroma Cloud key |
-| `CHROMADB_TENANT`  | Your Chroma tenant ID |
-| `CHROMADB_DB`      | `HR_IT`               |
-
-**4. Deploy**
-
-- Click **Create Web Service**
-- Wait 3-5 minutes for the first deploy to complete
-- Visit the provided Render URL
+The policy document index is hosted on **ChromaDB Cloud** (free tier), not built locally at startup. This means the 153 embedded chunks persist across deployments and cold starts without requiring the ingestion script to run on the server. Connection credentials are configured as Render environment variables.
 
 ---
 
-## Cold Start Behavior
+## Environment Variables
 
-Render free tier **spins down after 15 minutes of inactivity.** When the service is inactive:
+The following environment variables must be configured in Render's service settings (Settings → Environment):
 
-- First request after inactivity triggers a cold start
-- Cold start takes approximately **30-60 seconds**
-- Subsequent requests are fast (warm start: 2-5 seconds)
+| Variable           | Description                                               |
+| ------------------ | --------------------------------------------------------- |
+| `OPENAI_API_KEY`   | OpenAI API key for gpt-4o-mini and text-embedding-3-small |
+| `CHROMADB_API_KEY` | ChromaDB Cloud API key                                    |
+| `CHROMADB_TENANT`  | ChromaDB Cloud tenant name                                |
+| `CHROMADB_DB`      | ChromaDB Cloud database name                              |
 
-**For the demo:** Visit the health endpoint URL about 2 minutes before the demo begins to warm up the service:
-
-```
-[deployed-url]/health
-```
+No secrets are committed to the repository. The `.env` file is listed in `.gitignore`.
 
 ---
 
-## Local Development
+## Free-Tier Cold-Start Behavior
 
-To run locally without deployment:
+Render's free tier spins down services after **15 minutes of inactivity**. When a request arrives after a spin-down, the service must restart before it can respond. This is expected behavior and not a deployment failure.
 
-**Terminal 1 — Streamlit UI:**
+**Expected cold-start time:** 30–60 seconds for the FastAPI service.
+
+**What happens during a cold start:**
+
+1. Render starts the container (~10s)
+2. Python imports and dependency loading (~5s)
+3. First `/chat` request spawns the MCP subprocess and connects to ChromaDB Cloud (~15-30s total for first request)
+4. Subsequent warm requests respond in 4–7 seconds (p50 ~4.87s, p95 ~6.33s)
+
+**Recommendation for graders:** If the health endpoint or a chat request times out or returns a 503, wait 60 seconds and retry. The service is warming up, not broken. A successful `/health` response with `"status": "ok"` confirms the service is warm and all components are connected.
+
+**The Streamlit UI** may also experience a cold start if it has been idle. The first page load may take 30–60 seconds.
+
+---
+
+## Reproducing the Demo Tasks
+
+Both demo tasks can be reproduced via the API without the Streamlit UI:
+
+### Task 1 — Expense Compliance
 
 ```bash
-source .venv/bin/activate
-streamlit run daisy_health_app.py
-# Opens at http://localhost:8501
+curl -X POST https://daisy-health.onrender.com/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Can I expense a home office chair?", "employee_id": "EMP-002"}'
 ```
 
-**Terminal 2 — FastAPI endpoints:**
+### Task 2 — HR Case Triage
 
 ```bash
-source .venv/bin/activate
-uvicorn api:app --port 8000
-# Opens at http://localhost:8000
+curl -X POST https://daisy-health.onrender.com/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question": "I want to report a harassment concern about a coworker. What should I do and can you help me open a case?", "employee_id": "EMP-002"}'
 ```
 
-**Test the agent directly:**
+Full task descriptions including expected tool sequences are available at:
 
 ```bash
-python agent.py
+curl https://daisy-health.onrender.com/demo
 ```
 
 ---
 
-## CI/CD
+## Deployment History
 
-GitHub Actions workflow runs automatically on every push to `main`:
-
-- Installs dependencies
-- Validates project structure
-- Validates mock data JSON files
-- Checks Python syntax
-- Runs API smoke test (`/health` returns 200)
-- Verifies all 7 MCP tools are defined
-- Tests mock data tool logic directly
-
-Deployment is defined by `render.yaml` and should be enabled through Render's GitHub integration after CI passes.
-
-View workflow runs at:
-
-```
-https://github.com/Alex-is-Gonzalez/Daisy_Health/actions
-```
+| Date                              | Change                                                                |
+| --------------------------------- | --------------------------------------------------------------------- |
+| Initial deployment                | FastAPI + Streamlit on Render free tier                               |
+| Fix: MCP subprocess env isolation | `env=os.environ.copy()` so credentials reach the MCP server           |
+| Fix: Model name                   | `gpt-4o-mini` (was `gpt-5-mini`, which does not exist)                |
+| Fix: Citation normalization       | `SOURCE_TO_POLICY_ID` mapping for groundedness                        |
+| Fix: Event loop cleanup           | `await client.close()` in finally block for Python 3.14 compatibility |
