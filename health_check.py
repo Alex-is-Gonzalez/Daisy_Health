@@ -95,7 +95,7 @@ def check_llm() -> tuple:
         api_key = os.getenv("OPENAI_API_KEY", "")
         if not api_key:
             return ("⚠️", "No API Key", "Add OPENAI_API_KEY to .env")
-        return ("✓", "OpenAI", "gpt-5-mini")
+        return ("✓", "OpenAI", "gpt-4o-mini")
     except Exception as e:
         return ("✗", "Unavailable", str(e)[:60])
 

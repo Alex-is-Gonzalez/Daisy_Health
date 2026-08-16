@@ -69,7 +69,7 @@ async def check_mcp_connectivity() -> tuple[bool, str]:
     params = StdioServerParameters(
         command=sys.executable,
         args=[str(MCP_SERVER_PATH)],
-        env=None,
+        env=os.environ.copy(),
     )
     try:
         async with stdio_client(params) as (read, write):
@@ -200,7 +200,7 @@ async def health_check():
             "mock_data": mock_data_status,
             "agent": "online" if AGENT_AVAILABLE else "unavailable",
         },
-        "llm_provider": "OpenAI (gpt-5-mini)",
+        "llm_provider": "OpenAI (gpt-40-mini)",
         "embedding_model": "OpenAI text-embedding-3-small",
         "vector_db": "Chroma Cloud",
         "mcp_tools": [

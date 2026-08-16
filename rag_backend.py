@@ -64,7 +64,7 @@ def get_rag_components():
     # ========================================================
 
     llm = ChatOpenAI(
-        model="gpt-5-mini",
+        model="gpt-4o-mini",
         api_key=config["OPENAI_API_KEY"],
         temperature=0,
         max_tokens=512,

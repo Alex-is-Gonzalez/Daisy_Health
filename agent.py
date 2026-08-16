@@ -25,7 +25,7 @@ Key guarantees:
 - HR-case responses explicitly describe completed actions.
 - "Mock ticket" terminology never appears in employee-facing text.
 - Policy citations are returned separately for Streamlit.
-- GPT-5-compatible OpenAI parameters are used.
+- GPT-4o-compatible OpenAI parameters are used.
 """
 
 import asyncio

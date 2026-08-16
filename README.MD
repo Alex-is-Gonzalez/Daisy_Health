@@ -2,7 +2,7 @@
 
 Daisy Health is an agentic AI system that helps employees at a hypothetical virtual-care company complete HR policy and operations tasks. It combines **Retrieval-Augmented Generation (RAG)** over a corpus of internal HR policy documents with an **agentic orchestration layer** that calls tools exposed by a **Model Context Protocol (MCP) server** to look up mock employee/PTO/benefits data, check policy compliance, and take mock actions (creating HR tickets, drafting emails).
 
-The system uses **LangChain**, **Chroma Cloud**, OpenAI's `text-embedding-3-small`, the official **MCP Python SDK**, and OpenAI's `gpt-5-mini` to produce grounded, cited, tool-driven responses.
+The system uses **LangChain**, **Chroma Cloud**, OpenAI's `text-embedding-3-small`, the official **MCP Python SDK**, and OpenAI's `gpt-4o-mini` to produce grounded, cited, tool-driven responses.
 
 ---
 
@@ -29,21 +29,21 @@ The assistant is instructed to:
 
 # Tech Stack
 
-| Technology                               | Role                                                                              |
-| ----------------------------------------- | ---------------------------------------------------------------------------------- |
-| **Python**                                | Application language                                                              |
-| **Streamlit**                             | Chat UI (`daisy_health_app.py`)                                                   |
-| **FastAPI**                               | `/health`, `/chat`, `/demo` API endpoints for the grader (`api.py`)               |
-| **MCP Python SDK** (`mcp[cli]`)           | MCP server (`mcp/mcp_server.py`) exposing HR tools over stdio                     |
-| **agent.py**                              | Agent orchestrator — MCP client + tool-calling loop against the LLM               |
-| **LangChain**                             | Orchestrates document loading, chunking, retrieval, and the RAG chain             |
-| **OpenAI embeddings**                     | Generates `text-embedding-3-small` vectors for documents and questions            |
-| **Chroma Cloud**                          | Stores document embeddings and performs similarity search                        |
-| **OpenAI**                                | `gpt-5-mini` generates grounded employee-facing answers                            |
-| **PyPDFLoader**                           | Extracts text from HR PDF handbooks                                              |
-| **RecursiveCharacterTextSplitter**        | Splits documents into overlapping chunks for retrieval                           |
-| **python-dotenv**                         | Loads environment variables from `.env`                                          |
-| **mock_data/*.json**                      | Synthetic employee, PTO, benefits, and HR ticket records                         |
+| Technology                         | Role                                                                   |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| **Python**                         | Application language                                                   |
+| **Streamlit**                      | Chat UI (`daisy_health_app.py`)                                        |
+| **FastAPI**                        | `/health`, `/chat`, `/demo` API endpoints for the grader (`api.py`)    |
+| **MCP Python SDK** (`mcp[cli]`)    | MCP server (`mcp/mcp_server.py`) exposing HR tools over stdio          |
+| **agent.py**                       | Agent orchestrator — MCP client + tool-calling loop against the LLM    |
+| **LangChain**                      | Orchestrates document loading, chunking, retrieval, and the RAG chain  |
+| **OpenAI embeddings**              | Generates `text-embedding-3-small` vectors for documents and questions |
+| **Chroma Cloud**                   | Stores document embeddings and performs similarity search              |
+| **OpenAI**                         | `gpt-5-mini` generates grounded employee-facing answers                |
+| **PyPDFLoader**                    | Extracts text from HR PDF handbooks                                    |
+| **RecursiveCharacterTextSplitter** | Splits documents into overlapping chunks for retrieval                 |
+| **python-dotenv**                  | Loads environment variables from `.env`                                |
+| **mock_data/\*.json**              | Synthetic employee, PTO, benefits, and HR ticket records               |
 
 ---
 
@@ -115,15 +115,15 @@ flowchart TB
 
 The MCP server (`mcp/mcp_server.py`) exposes these tools over stdio; the agent discovers them via `session.list_tools()` and calls them via `session.call_tool()`:
 
-| Tool | Uses |
-| --- | --- |
-| `lookup_employee_profile` | mock data (`mock_data/employees.json`) |
-| `check_pto_balance` | mock data (`mock_data/pto_balances.json`) |
-| `lookup_benefits_status` | mock data (`mock_data/benefits.json`) |
-| `search_policy_documents` | RAG index (Chroma Cloud via `rag_backend.py`) |
+| Tool                      | Uses                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| `lookup_employee_profile` | mock data (`mock_data/employees.json`)                                               |
+| `check_pto_balance`       | mock data (`mock_data/pto_balances.json`)                                            |
+| `lookup_benefits_status`  | mock data (`mock_data/benefits.json`)                                                |
+| `search_policy_documents` | RAG index (Chroma Cloud via `rag_backend.py`)                                        |
 | `check_policy_compliance` | structured employee facts; final decisions are grounded in retrieved policy evidence |
-| `create_mock_hr_ticket` | mock action — writes to `mock_data/hr_tickets.json` |
-| `draft_hr_email` | mock action — returns an unsent draft email |
+| `create_mock_hr_ticket`   | mock action — writes to `mock_data/hr_tickets.json`                                  |
+| `draft_hr_email`          | mock action — returns an unsent draft email                                          |
 
 ## Demo Workflows
 
@@ -357,7 +357,7 @@ config:
     fontSize: 17px
 ---
 flowchart TB
-    D["OpenAI"] --> E["gpt-5-mini"]
+    D["OpenAI"] --> E["gpt-4o-mini"]
 
      D:::gateway
      E:::language
