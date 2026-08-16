@@ -129,6 +129,32 @@
       "created_date": "2026-08-15",
       "resolved_date": null,
       "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0011",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "HR Case",
+      "status": "Open",
+      "priority": "High",
+      "subject": "HR Complaint",
+      "description": "Employee would like to file an HR complaint.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
+    },
+    {
+      "ticket_id": "TKT-0012",
+      "employee_id": "EMP-001",
+      "employee_name": "Jordan Rivera",
+      "ticket_type": "HR Case",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Workplace Concern Report",
+      "description": "Employee reports a workplace concern and seeks guidance on next steps.",
+      "created_date": "2026-08-15",
+      "resolved_date": null,
+      "assigned_to": "Dr. Priya Anand"
     }
   ]
 }

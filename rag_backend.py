@@ -4,8 +4,7 @@ import chromadb
 from dotenv import load_dotenv
 
 from langchain_chroma import Chroma
-from langchain_openai import ChatOpenAI
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 
 from langchain_classic.chains import create_retrieval_chain
@@ -17,16 +16,10 @@ load_dotenv()
 
 
 # ============================================================
-# ENVIRONMENT
+# CONFIG
 # ============================================================
 
 def get_config():
-    """
-    Load and validate environment variables.
-
-    This is intentionally called only when RAG functionality
-    is actually needed.
-    """
 
     required_vars = {
         "OPENROUTER_API_KEY": os.getenv("OPENROUTER_API_KEY"),
@@ -50,80 +43,13 @@ def get_config():
 
 
 # ============================================================
-# RAG STATE
+# LAZY INITIALIZATION
 # ============================================================
 
 _rag_components = None
 
 
-# ============================================================
-# LIGHTWEIGHT CHROMA CLIENT
-# ============================================================
-
-def get_chroma_client():
-    """
-    Create a lightweight Chroma Cloud client.
-
-    This does NOT load:
-        - Hugging Face
-        - Sentence Transformers
-        - PyTorch
-        - LangChain chains
-        - LLM
-
-    It is safe to use for lightweight operations such as
-    checking the collection count.
-    """
-
-    config = get_config()
-
-    return chromadb.CloudClient(
-        api_key=config["CHROMADB_API_KEY"],
-        tenant=config["CHROMADB_TENANT"],
-        database=config["CHROMADB_DB"],
-    )
-
-
-# ============================================================
-# DOCUMENT COUNT
-# ============================================================
-
-def get_document_count():
-    """
-    Return the number of chunks in Chroma Cloud.
-
-    IMPORTANT:
-    This function intentionally does NOT call
-    get_rag_components().
-
-    Therefore Streamlit's system-status check does not
-    initialize the Hugging Face embedding model.
-    """
-
-    try:
-        chroma_client = get_chroma_client()
-
-        collection = chroma_client.get_collection(
-            name="medical_hr_documents_hf"
-        )
-
-        return collection.count()
-
-    except Exception as e:
-        return f"Unavailable: {e}"
-
-
-# ============================================================
-# LAZY RAG INITIALIZATION
-# ============================================================
-
 def get_rag_components():
-    """
-    Initialize the complete RAG stack only when a user actually
-    asks a question that requires RAG.
-
-    Components are cached for the lifetime of the process.
-    """
 
     global _rag_components
 
@@ -131,6 +57,7 @@ def get_rag_components():
         return _rag_components
 
     config = get_config()
+
 
     # ========================================================
     # LLM
@@ -144,17 +71,17 @@ def get_rag_components():
         max_tokens=512,
     )
 
+
     # ========================================================
-    # EMBEDDINGS
+    # REMOTE EMBEDDINGS
     # ========================================================
 
-    # WARNING:
-    # This loads the Hugging Face / Sentence Transformers model.
-    # It is intentionally loaded ONLY when RAG is actually used.
-
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    embeddings = OpenAIEmbeddings(
+        model="text-embedding-3-small",
+        api_key=config["OPENROUTER_API_KEY"],
+        base_url="https://openrouter.ai/api/v1",
     )
+
 
     # ========================================================
     # CHROMA CLOUD
@@ -168,19 +95,19 @@ def get_rag_components():
 
     vectorstore = Chroma(
         client=chroma_client,
-        collection_name="medical_hr_documents_hf",
+        collection_name="medical_hr_documents_openai",
         embedding_function=embeddings,
     )
+
 
     # ========================================================
     # RETRIEVER
     # ========================================================
 
     retriever = vectorstore.as_retriever(
-        search_kwargs={
-            "k": 4
-        }
+        search_kwargs={"k": 4}
     )
+
 
     # ========================================================
     # PROMPT
@@ -191,40 +118,23 @@ def get_rag_components():
             (
                 "system",
                 """
-You are a Medical HR Assistant for a company called Daisy Health.
+You are a Medical HR Assistant for Daisy Health.
 
-Your job is to answer questions using ONLY
-the information contained in the retrieved
-HR documentation.
-
-The documentation may contain information about:
-
-- Employee policies
-- PTO
-- Benefits
-- Leave
-- HIPAA training
-- Compliance
-- Employee handbooks
-- Workplace policies
-- Credentialing
-- Medical staff policies
-- Scheduling
-- HR procedures
+Answer questions ONLY using the retrieved HR
+documentation.
 
 Do not invent policies.
 
 Do not use outside knowledge.
 
 If the retrieved documentation does not contain
-enough information to answer the question, say:
+enough information, say:
 
 "I don't know based on the available HR
 documentation. Please e-mail HR at
 people@daisyhealth.com"
 
-When possible, mention the source document
-used to answer the question.
+When possible, mention the source document.
 """,
             ),
             (
@@ -242,8 +152,9 @@ Employee question:
         ]
     )
 
+
     # ========================================================
-    # DOCUMENT CHAIN
+    # CHAINS
     # ========================================================
 
     document_chain = create_stuff_documents_chain(
@@ -251,18 +162,11 @@ Employee question:
         prompt,
     )
 
-    # ========================================================
-    # RETRIEVAL CHAIN
-    # ========================================================
-
     rag_chain = create_retrieval_chain(
         retriever,
         document_chain,
     )
 
-    # ========================================================
-    # CACHE EVERYTHING
-    # ========================================================
 
     _rag_components = {
         "llm": llm,
@@ -278,28 +182,13 @@ Employee question:
 
 
 # ============================================================
-# RAG CHAT
+# CHAT
 # ============================================================
 
 def chat(question: str):
-    """
-    Run a question through the RAG pipeline.
-
-    Returns:
-
-        {
-            "answer": str,
-            "documents": list
-        }
-
-    The expensive RAG stack is initialized only when this
-    function is actually called.
-    """
 
     if not isinstance(question, str):
-        raise TypeError(
-            "Question must be a string."
-        )
+        raise TypeError("Question must be a string.")
 
     question = question.strip()
 
@@ -309,23 +198,9 @@ def chat(question: str):
             "documents": [],
         }
 
-    # --------------------------------------------------------
-    # Initialize RAG only now
-    # --------------------------------------------------------
-
     rag = get_rag_components()
 
-    # --------------------------------------------------------
-    # Retrieve documents
-    # --------------------------------------------------------
-
-    documents = rag["retriever"].invoke(
-        question
-    )
-
-    # --------------------------------------------------------
-    # Run RAG chain
-    # --------------------------------------------------------
+    documents = rag["retriever"].invoke(question)
 
     response = rag["rag_chain"].invoke(
         {
@@ -337,3 +212,14 @@ def chat(question: str):
         "answer": response["answer"],
         "documents": documents,
     }
+
+
+# ============================================================
+# DOCUMENT COUNT
+# ============================================================
+
+def get_document_count():
+
+    rag = get_rag_components()
+
+    return rag["vectorstore"]._collection.count()

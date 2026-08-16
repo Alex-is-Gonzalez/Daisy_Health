@@ -65,6 +65,8 @@ try:
     RAG_AVAILABLE = True
 except ImportError:
     RAG_AVAILABLE = False
+    RAG_IMPORT_ERROR = str(e)
+    rag_chat = None
 
 # ─────────────────────────────────────────────
 # PATHS

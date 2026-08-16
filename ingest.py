@@ -8,7 +8,8 @@ from langchain_community.document_loaders import (
     DirectoryLoader,
     PyPDFLoader,
 )
-from langchain_huggingface import HuggingFaceEmbeddings
+# from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
@@ -21,7 +22,7 @@ load_dotenv()
 CHROMADB_API_KEY = os.getenv("CHROMADB_API_KEY")
 CHROMADB_TENANT = os.getenv("CHROMADB_TENANT")
 CHROMADB_DB = os.getenv("CHROMADB_DB")
-
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 if not CHROMADB_API_KEY:
     raise RuntimeError("CHROMADB_API_KEY is missing.")
@@ -37,8 +38,10 @@ if not CHROMADB_DB:
 # Hugging Face Embeddings
 # ============================================================
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-small",
+    api_key=OPENROUTER_API_KEY,
+    base_url="https://openrouter.ai/api/v1",
 )
 
 
@@ -55,7 +58,7 @@ chroma_client = chromadb.CloudClient(
 
 vectorstore = Chroma(
     client=chroma_client,
-    collection_name="medical_hr_documents_hf",
+    collection_name="medical_hr_documents_openai",
     embedding_function=embeddings,
 )
 
