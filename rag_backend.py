@@ -20,87 +20,100 @@ load_dotenv()
 # ENVIRONMENT
 # ─────────────────────────────────────────────
 
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-CHROMADB_API_KEY = os.getenv("CHROMADB_API_KEY")
-CHROMADB_TENANT = os.getenv("CHROMADB_TENANT")
-CHROMADB_DB = os.getenv("CHROMADB_DB")
+def get_config():
+    required_vars = {
+        "OPENROUTER_API_KEY": os.getenv("OPENROUTER_API_KEY"),
+        "CHROMADB_API_KEY": os.getenv("CHROMADB_API_KEY"),
+        "CHROMADB_TENANT": os.getenv("CHROMADB_TENANT"),
+        "CHROMADB_DB": os.getenv("CHROMADB_DB"),
+    }
+
+    missing = [
+        name for name, value in required_vars.items()
+        if not value
+    ]
+
+    if missing:
+        raise RuntimeError(
+            f"Missing environment variables: {', '.join(missing)}"
+        )
+
+    return required_vars
 
 
-required_vars = {
-    "OPENROUTER_API_KEY": OPENROUTER_API_KEY,
-    "CHROMADB_API_KEY": CHROMADB_API_KEY,
-    "CHROMADB_TENANT": CHROMADB_TENANT,
-    "CHROMADB_DB": CHROMADB_DB,
-}
+# ─────────────────────────────────────────────
+# LAZY RAG INITIALIZATION
+# ─────────────────────────────────────────────
 
-missing = [
-    name for name, value in required_vars.items()
-    if not value
-]
+_rag_components = None
 
-if missing:
-    raise RuntimeError(
-        f"Missing environment variables: {', '.join(missing)}"
+
+def get_rag_components():
+    """
+    Initialize the RAG stack only when it is actually needed.
+    Components are cached for the lifetime of the Python process.
+    """
+
+    global _rag_components
+
+    if _rag_components is not None:
+        return _rag_components
+
+    config = get_config()
+
+    # ─────────────────────────────────────────
+    # LLM
+    # ─────────────────────────────────────────
+
+    llm = ChatOpenAI(
+        model="google/gemma-4-26b-a4b-it:free",
+        api_key=config["OPENROUTER_API_KEY"],
+        base_url="https://openrouter.ai/api/v1",
+        temperature=0,
+        max_tokens=512,
     )
 
+    # ─────────────────────────────────────────
+    # EMBEDDINGS
+    # ─────────────────────────────────────────
 
-# ─────────────────────────────────────────────
-# LLM
-# ─────────────────────────────────────────────
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
 
-llm = ChatOpenAI(
-    model="google/gemma-4-26b-a4b-it:free",
-    api_key=OPENROUTER_API_KEY,
-    base_url="https://openrouter.ai/api/v1",
-    temperature=0,
-    max_tokens=512,
-)
+    # ─────────────────────────────────────────
+    # CHROMA CLOUD
+    # ─────────────────────────────────────────
 
+    chroma_client = chromadb.CloudClient(
+        api_key=config["CHROMADB_API_KEY"],
+        tenant=config["CHROMADB_TENANT"],
+        database=config["CHROMADB_DB"],
+    )
 
-# ─────────────────────────────────────────────
-# EMBEDDINGS
-# ─────────────────────────────────────────────
+    vectorstore = Chroma(
+        client=chroma_client,
+        collection_name="medical_hr_documents_hf",
+        embedding_function=embeddings,
+    )
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
+    # ─────────────────────────────────────────
+    # RETRIEVER
+    # ─────────────────────────────────────────
 
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": 4}
+    )
 
-# ─────────────────────────────────────────────
-# CHROMA CLOUD
-# ─────────────────────────────────────────────
+    # ─────────────────────────────────────────
+    # PROMPT
+    # ─────────────────────────────────────────
 
-chroma_client = chromadb.CloudClient(
-    api_key=CHROMADB_API_KEY,
-    tenant=CHROMADB_TENANT,
-    database=CHROMADB_DB,
-)
-
-vectorstore = Chroma(
-    client=chroma_client,
-    collection_name="medical_hr_documents_hf",
-    embedding_function=embeddings,
-)
-
-
-# ─────────────────────────────────────────────
-# RETRIEVER
-# ─────────────────────────────────────────────
-
-retriever = vectorstore.as_retriever(
-    search_kwargs={"k": 4}
-)
-
-
-# ─────────────────────────────────────────────
-# PROMPT
-# ─────────────────────────────────────────────
-
-prompt = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            """
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                """
 You are a Medical HR Assistant for a company called Daisy Health.
 
 Your job is to answer questions using ONLY
@@ -136,10 +149,10 @@ people@daisyhealth.com"
 When possible, mention the source document
 used to answer the question.
 """,
-        ),
-        (
-            "human",
-            """
+            ),
+            (
+                "human",
+                """
 Retrieved HR documentation:
 
 {context}
@@ -148,24 +161,35 @@ Employee question:
 
 {input}
 """,
-        ),
-    ]
-)
+            ),
+        ]
+    )
 
+    # ─────────────────────────────────────────
+    # CHAINS
+    # ─────────────────────────────────────────
 
-# ─────────────────────────────────────────────
-# CHAINS
-# ─────────────────────────────────────────────
+    document_chain = create_stuff_documents_chain(
+        llm,
+        prompt,
+    )
 
-document_chain = create_stuff_documents_chain(
-    llm,
-    prompt,
-)
+    rag_chain = create_retrieval_chain(
+        retriever,
+        document_chain,
+    )
 
-rag_chain = create_retrieval_chain(
-    retriever,
-    document_chain,
-)
+    _rag_components = {
+        "llm": llm,
+        "embeddings": embeddings,
+        "chroma_client": chroma_client,
+        "vectorstore": vectorstore,
+        "retriever": retriever,
+        "document_chain": document_chain,
+        "rag_chain": rag_chain,
+    }
+
+    return _rag_components
 
 
 # ─────────────────────────────────────────────
@@ -175,12 +199,6 @@ rag_chain = create_retrieval_chain(
 def chat(question: str):
     """
     Run a question through the RAG pipeline.
-
-    Returns:
-        {
-            "answer": str,
-            "documents": list
-        }
     """
 
     if not isinstance(question, str):
@@ -194,12 +212,11 @@ def chat(question: str):
             "documents": [],
         }
 
-    # Retrieve documents first so we can expose
-    # them to the Streamlit citation panel.
-    documents = retriever.invoke(question)
+    rag = get_rag_components()
 
-    # Run the normal RAG chain.
-    response = rag_chain.invoke(
+    documents = rag["retriever"].invoke(question)
+
+    response = rag["rag_chain"].invoke(
         {
             "input": question
         }
@@ -214,4 +231,6 @@ def chat(question: str):
 def get_document_count():
     """Return the number of documents/chunks in Chroma."""
 
-    return vectorstore._collection.count()
+    rag = get_rag_components()
+
+    return rag["vectorstore"]._collection.count()
