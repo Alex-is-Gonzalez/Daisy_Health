@@ -363,12 +363,11 @@ def early_response(question, employee_id):
 
     if is_oos and not has_hr_intent:
         return (
-            "I'm sorry, that question is outside my scope. "
-            "I'm Daisy Health's HR assistant and I'm only able to help "
-            "with HR topics such as PTO, benefits, policies, expenses, "
-            "and workplace support. "
-            "For this request, please contact the appropriate team or "
-            "reach out to it@daisyhealth.com."
+              "I'm sorry, that question is outside my scope. "
+              "I'm Daisy Health's HR assistant and I'm only able to help "
+            "with HR policies and topics such as PTO, benefits, expenses, "
+            "and workplace support. For this request, please contact the "
+            "appropriate team or reach out to it@daisyhealth.com."
         )
 
     # --------------------------------------------------------
@@ -399,10 +398,9 @@ def needs_clarification(normalized_question):
             q,
         ):
             return (
-                "I can help with time off. "
-                "Could you clarify what you need: "
-                "your current PTO balance, the PTO policy, "
-                "or submitting a request for specific dates?"
+                "I can help with time off. Could you clarify the dates or number "
+                "of days you need, or whether you're asking about your current "
+                "PTO balance or the PTO policy?"
             )
 
     # Ambiguous remote work: no location or duration
