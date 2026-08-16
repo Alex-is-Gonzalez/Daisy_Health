@@ -272,6 +272,19 @@
       "created_date": "2026-08-16",
       "resolved_date": null,
       "assigned_to": "Aisha Thompson"
+    },
+    {
+      "ticket_id": "TKT-0022",
+      "employee_id": "EMP-002",
+      "employee_name": "Morgan Chen",
+      "ticket_type": "workplace_concern",
+      "status": "Open",
+      "priority": "Normal",
+      "subject": "Workplace concern",
+      "description": "I am a colleague reporting a workplace harassment concern. What should happen next?",
+      "created_date": "2026-08-16",
+      "resolved_date": null,
+      "assigned_to": "Aisha Thompson"
     }
   ]
 }

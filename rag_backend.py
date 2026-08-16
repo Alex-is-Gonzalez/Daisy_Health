@@ -103,8 +103,11 @@ def get_rag_components():
     # RETRIEVER
     # ========================================================
 
+    # Increased k from 4 to 6 so more candidate chunks are retrieved,
+    # giving the evidence-quote validator more material to work with
+    # and reducing the chance that the correct answer chunk is missed.
     retriever = vectorstore.as_retriever(
-        search_kwargs={"k": 4}
+        search_kwargs={"k": 6}
     )
 
 

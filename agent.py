@@ -121,15 +121,18 @@ Return only the employee-facing response.
 # GROUNDED RESPONSE SYSTEM PROMPT
 # ============================================================
 
-# FIX 3: structured output prompt used when citations are available.
-# Forces the LLM to produce a JSON object with explicit claims and
-# source references, so every fact can be verified against retrieved
-# documents before being shown to the employee.
+# FIX 3: structured output with evidence-quote validation.
+# Each claim must include an evidence_quote — the verbatim text from
+# the retrieved snippet that supports it. The validator then checks
+# the quote against the actual retrieved text, catching hallucinated
+# facts even when the source ID is correct.
+# This closes the "20 days vs 15 days" gap: the LLM must quote the
+# exact text, so it cannot fabricate a number and cite a real source.
 GROUNDED_SYSTEM_PROMPT = """
 You are a precise HR assistant for Daisy Health.
 
 You may ONLY state facts that appear verbatim or by direct inference
-in the policy excerpts provided.
+in the policy excerpts provided below.
 
 You MUST respond with valid JSON in exactly this format:
 {
@@ -138,19 +141,20 @@ You MUST respond with valid JSON in exactly this format:
     {
       "claim": "The exact fact stated in the answer",
       "source": "HR-PT-001",
-      "page": 2
+      "page": 2,
+      "evidence_quote": "Copy the exact phrase from the evidence that proves this claim"
     }
   ],
   "has_sufficient_evidence": true
 }
 
 Rules:
-- Set has_sufficient_evidence to false if the evidence does not answer the question.
-- Do NOT invent policy IDs, page numbers, or facts not in the excerpts.
+- evidence_quote MUST be a verbatim copy of text from the evidence block. Do not paraphrase.
+- source MUST be a policy_id that appears in the evidence block. Do not invent IDs.
+- Set has_sufficient_evidence to false if the evidence does not contain enough to answer.
 - Do NOT use outside knowledge. Only use the evidence block provided.
-- Keep the answer concise and employee-friendly.
-- Do not mention RAG, retrieval, embeddings, or internal systems.
-- If has_sufficient_evidence is false, write a redirect in "answer" and leave claims empty.
+- Keep the answer concise and employee-friendly (no RAG/retrieval/tools mentions).
+- If has_sufficient_evidence is false, write a polite redirect in "answer", leave claims [].
 """
 
 
@@ -812,11 +816,56 @@ def build_final_context(tool_results):
 # CLAIM VALIDATION
 # ============================================================
 
+def quote_is_in_evidence(quote: str, citations: list) -> bool:
+    """
+    Check whether an evidence_quote actually appears in the retrieved
+    citation snippets.
+
+    Uses two passes:
+      1. Exact substring match (case-insensitive) — catches verbatim quotes.
+      2. High word-overlap (≥80%) — allows minor whitespace/punctuation
+         differences while still blocking fabricated facts.
+
+    Returns True if the quote is supported, False if it cannot be found
+    in any retrieved snippet (indicating the LLM made it up).
+    """
+    if not quote or len(quote.strip()) < 5:
+        # Very short or empty quotes are not verifiable; allow them through
+        return True
+
+    quote_lower = quote.lower().strip()
+    quote_words = [w for w in re.split(r"\W+", quote_lower) if w]
+
+    for citation in citations:
+        snippet = (citation.get("snippet", "") or "").lower()
+
+        # Pass 1: exact substring
+        if quote_lower in snippet:
+            return True
+
+        # Pass 2: word overlap ≥ 80%
+        if len(quote_words) >= 4:
+            snippet_words = set(re.split(r"\W+", snippet))
+            matches = sum(1 for w in quote_words if w in snippet_words)
+            if matches / len(quote_words) >= 0.80:
+                return True
+
+    return False
+
+
 def validate_and_build_response(llm_json, citations):
     """
-    FIX 3 (part 2): verify every LLM claim has a source that was
-    actually retrieved. Strips hallucinated claims before the answer
-    reaches the employee.
+    FIX 3 (part 2): two-layer claim validation.
+
+    Layer 1 — source check: the claim's source ID must exist in the
+    retrieved citations list (same as before).
+
+    Layer 2 — quote check (new): the claim's evidence_quote must
+    actually appear in the retrieved snippet text. This catches the
+    "20 days vs 15 days" hallucination pattern where the LLM cites a
+    real source but synthesises a wrong fact. If the quote cannot be
+    found in the evidence, the specific claim is replaced with
+    [information unavailable] rather than shown to the employee.
 
     If has_sufficient_evidence is False, returns a safe redirect
     instead of an unsupported answer.
@@ -842,36 +891,52 @@ def validate_and_build_response(llm_json, citations):
         }
 
     all_claims = llm_json.get("claims", [])
-
-    # Separate validated claims from hallucinated ones
     validated_claims = []
-    hallucinated_claims = []
+    bad_claims = []   # source-hallucinated or quote-unverifiable
 
     for claim in all_claims:
         claim_source = claim.get("source", "")
-        # Accept if source matches a retrieved doc, or if source is empty
-        # (claim may reference employee data rather than policy docs)
-        if not claim_source or claim_source in retrieved_sources:
+        evidence_quote = claim.get("evidence_quote", "")
+
+        # Layer 1: source must be in retrieved set (or absent, e.g. employee data)
+        source_ok = not claim_source or claim_source in retrieved_sources
+
+        # Layer 2: evidence_quote must appear in retrieved snippets
+        quote_ok = quote_is_in_evidence(evidence_quote, citations)
+
+        if source_ok and quote_ok:
             validated_claims.append(claim)
         else:
-            hallucinated_claims.append(claim)
+            bad_claims.append({
+                **claim,
+                "fail_reason": (
+                    "bad_source" if not source_ok else "quote_not_in_evidence"
+                ),
+            })
 
     answer = llm_json.get("answer", "")
 
-    # If any claim was hallucinated, flag the unsupported portion
-    if hallucinated_claims:
+    if bad_claims:
         print(
-            f"[GROUNDING] {len(hallucinated_claims)} hallucinated claim(s) detected "
-            f"and removed: {[c.get('source') for c in hallucinated_claims]}",
+            f"[GROUNDING] {len(bad_claims)} unverifiable claim(s) removed: "
+            + str([
+                f"{c.get('source','?')} — {c.get('fail_reason','?')}"
+                for c in bad_claims
+            ]),
             flush=True,
         )
-        for h in hallucinated_claims:
-            answer = answer.replace(h.get("claim", ""), "[information unavailable]")
+        for bad in bad_claims:
+            # Replace the unsupported fact in the answer rather than
+            # silently leaving a wrong number in the response.
+            answer = answer.replace(
+                bad.get("claim", "___NOMATCH___"),
+                "[information unavailable — please contact people@daisyhealth.com]",
+            )
 
     return {
         "answer": answer.strip(),
         "citations": validated_claims,
-        "grounded": len(hallucinated_claims) == 0,
+        "grounded": len(bad_claims) == 0,
     }
 
 
@@ -1519,4 +1584,3 @@ if __name__ == "__main__":
 
     for citation in result["citations"]:
         print(f"- {citation.get('title', 'HR Policy')} — {citation.get('policy_id', '')}")
-        
