@@ -22,7 +22,7 @@ load_dotenv()
 def get_config():
 
     required_vars = {
-        "OPENROUTER_API_KEY": os.getenv("OPENROUTER_API_KEY"),
+        "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
         "CHROMADB_API_KEY": os.getenv("CHROMADB_API_KEY"),
         "CHROMADB_TENANT": os.getenv("CHROMADB_TENANT"),
         "CHROMADB_DB": os.getenv("CHROMADB_DB"),
@@ -60,26 +60,24 @@ def get_rag_components():
 
 
     # ========================================================
-    # LLM
+    # OPENAI LLM
     # ========================================================
 
     llm = ChatOpenAI(
-        model="google/gemma-4-26b-a4b-it:free",
-        api_key=config["OPENROUTER_API_KEY"],
-        base_url="https://openrouter.ai/api/v1",
+        model="gpt-5-mini",
+        api_key=config["OPENAI_API_KEY"],
         temperature=0,
         max_tokens=512,
     )
 
 
     # ========================================================
-    # REMOTE EMBEDDINGS
+    # OPENAI EMBEDDINGS
     # ========================================================
 
     embeddings = OpenAIEmbeddings(
         model="text-embedding-3-small",
-        api_key=config["OPENROUTER_API_KEY"],
-        base_url="https://openrouter.ai/api/v1",
+        api_key=config["OPENAI_API_KEY"],
     )
 
 
@@ -194,7 +192,7 @@ def chat(question: str):
 
     if not question:
         return {
-            "answer": "Please enter a question.",
+            "answer": "",
             "documents": [],
         }
 
@@ -202,14 +200,8 @@ def chat(question: str):
 
     documents = rag["retriever"].invoke(question)
 
-    response = rag["rag_chain"].invoke(
-        {
-            "input": question
-        }
-    )
-
     return {
-        "answer": response["answer"],
+        "answer": "",
         "documents": documents,
     }
 
